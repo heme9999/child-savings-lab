@@ -6,7 +6,7 @@
       "effectiveFrom": "2026-01-01",
       "effectiveTo": null,
       "value": { "maximumAgeExclusive": 18, "measuredAt": "election-year-end" },
-      "sourceId": "IRS-FORM-4547-INSTRUCTIONS",
+      "sourceId": "TREASURY-TD-10056",
       "verifiedAt": "2026-10-08"
     },
     {
@@ -14,7 +14,39 @@
       "effectiveFrom": "2026-01-01",
       "effectiveTo": null,
       "value": { "required": true, "issuedBeforeElection": true, "validForEmployment": true },
-      "sourceId": "IRS-FORM-4547-INSTRUCTIONS",
+      "sourceId": "TREASURY-TD-10056",
+      "verifiedAt": "2026-10-08"
+    },
+    {
+      "ruleId": "automatic-enrollment",
+      "effectiveFrom": "2026-09-30",
+      "effectiveTo": null,
+      "value": { "beganOnOrAbout": "2026-10-01", "periodicThereafter": true, "manualElectionExpectedToBeRare": true },
+      "sourceId": "TREASURY-TD-10056",
+      "verifiedAt": "2026-10-08"
+    },
+    {
+      "ruleId": "auto-account-private-contribution-gate",
+      "effectiveFrom": "2026-09-30",
+      "effectiveTo": null,
+      "value": { "claimRequired": true, "receivingAccountActivationRequired": true },
+      "sourceId": "TREASURY-TD-10056",
+      "verifiedAt": "2026-10-08"
+    },
+    {
+      "ruleId": "growth-period-end",
+      "effectiveFrom": "2026-09-30",
+      "effectiveTo": null,
+      "value": { "measuredAt": "December 31 of calendar year beneficiary attains age 17" },
+      "sourceId": "TREASURY-TD-10056",
+      "verifiedAt": "2026-10-08"
+    },
+    {
+      "ruleId": "eligible-investment-fund-expense-limit",
+      "effectiveFrom": "2026-07-04",
+      "effectiveTo": null,
+      "value": { "maximumPercent": 0.1, "appliesTo": "investment fund, not separate trustee fees" },
+      "sourceId": "IRS-PROPOSED-INVESTMENTS-2026",
       "verifiedAt": "2026-10-08"
     },
     {

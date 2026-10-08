@@ -84,6 +84,7 @@ fieldset { margin: 0; padding: 0; border: 0; }
 .radio-option input { min-height: auto; width: auto; }
 .form-actions { display: flex; align-items: center; gap: .8rem; margin-top: 1.2rem; }
 .privacy-note { display: flex; gap: .65rem; align-items: flex-start; margin: 1rem 0; padding: .8rem; border-radius: 12px; background: var(--sage); color: var(--ink); font-size: .9rem; }
+.site-notice { padding: .75rem 0; background: #fff3cd; border-bottom: 1px solid #e2c66b; color: #4b3b08; font-size: .9rem; }
 .status { display: inline-flex; align-items: center; gap: .45rem; padding: .4rem .65rem; border-radius: 999px; font-weight: 800; }
 .status.yes { background: #d7f4e4; color: #0b5a35; }
 .status.no { background: #f8dede; color: #842020; }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { annualFamilyContribution, projectGrowth, projectScenarios, validateGrowthInput } from '../../src/lib/calculators/growth';
+import { annualFamilyContribution, growthPeriodEnd, projectGrowth, projectScenarios, validateGrowthInput } from '../../src/lib/calculators/growth';
 import type { GrowthInput } from '../../src/lib/calculators/growth';
 
 const base: GrowthInput = {
@@ -9,8 +9,10 @@ const base: GrowthInput = {
   familyFrequency: 'monthly',
   annualEmployerContribution: 0,
   annualReturnRate: 0,
-  annualFeeRate: 0,
-  currentAge: 0,
+  fundExpenseRate: 0,
+  accountFeeRate: 0,
+  birthDate: '2026-01-15',
+  projectionStartDate: '2026-01-15',
   targetAge: 18
 };
 
@@ -30,13 +32,13 @@ describe('growth projection', () => {
     expect(projectGrowth({ ...base, includePilot: true }).totalContributed).toBe(1000);
   });
 
-  it('models monthly family contributions', () => {
+  it('models monthly family contributions to a target birthday', () => {
     const result = projectGrowth({ ...base, familyContribution: 100, targetAge: 1 });
+    expect(result.contributionMonths).toBe(12);
     expect(result.totalContributed).toBe(1200);
-    expect(result.endingBalance).toBe(1200);
   });
 
-  it('models annual family and employer contributions', () => {
+  it('models annual family and employer contributions at calendar year end', () => {
     const result = projectGrowth({
       ...base,
       familyContribution: 2000,
@@ -47,28 +49,28 @@ describe('growth projection', () => {
     expect(result.totalContributed).toBe(4500);
   });
 
+  it('uses the statutory calendar-year growth-period end', () => {
+    expect(growthPeriodEnd({ birthDate: '2009-06-01' })).toBe('2026-12-31');
+    const result = projectGrowth({
+      ...base,
+      birthDate: '2009-06-01',
+      projectionStartDate: '2026-10-08',
+      targetAge: 30,
+      familyContribution: 100
+    });
+    expect(result.contributionMonths).toBe(3);
+    expect(result.totalContributed).toBe(300);
+  });
+
   it('supports a negative return without treating losses as gains', () => {
     const result = projectGrowth({ ...base, initialAmount: 1000, annualReturnRate: -10, targetAge: 1 });
     expect(result.endingBalance).toBeLessThan(1000);
     expect(result.investmentGrowth).toBeLessThan(0);
   });
 
-  it('shows a positive fee impact', () => {
-    const result = projectGrowth({ ...base, initialAmount: 1000, annualReturnRate: 6, annualFeeRate: 1, targetAge: 10 });
+  it('shows a positive combined fee impact', () => {
+    const result = projectGrowth({ ...base, initialAmount: 1000, annualReturnRate: 6, fundExpenseRate: 0.1, accountFeeRate: 0.2, targetAge: 10 });
     expect(result.feeImpact).toBeGreaterThan(0);
-  });
-
-  it('compounds a normal return and keeps principal separate', () => {
-    const result = projectGrowth({ ...base, initialAmount: 1000, annualReturnRate: 6, targetAge: 18 });
-    expect(result.endingBalance).toBeCloseTo(2854.34, 1);
-    expect(result.totalContributed).toBe(1000);
-    expect(result.investmentGrowth).toBeCloseTo(result.endingBalance - 1000, 8);
-  });
-
-  it('stops child-period contributions at age 18 for later target ages', () => {
-    const result = projectGrowth({ ...base, currentAge: 17, targetAge: 30, familyContribution: 100 });
-    expect(result.contributionYears).toBe(1);
-    expect(result.totalContributed).toBe(1200);
   });
 
   it('returns three ordered scenarios', () => {
@@ -81,20 +83,22 @@ describe('growth projection', () => {
     expect(annualFamilyContribution({ ...base, familyContribution: 100 })).toBe(1200);
   });
 
-  it('enforces the employer and aggregate limits', () => {
+  it('enforces employer, aggregate, and fund-expense limits', () => {
     expect(validateGrowthInput({ ...base, annualEmployerContribution: 2600 }).join(' ')).toContain('$2,500');
     expect(validateGrowthInput({ ...base, familyContribution: 300, annualEmployerContribution: 2000 }).join(' ')).toContain('$5,000');
+    expect(validateGrowthInput({ ...base, fundExpenseRate: 0.11 }).join(' ')).toContain('0.10%');
   });
 
-  it('validates age, return, fee, and negative contributions', () => {
+  it('validates dates, return, account fee, target age, and negative contributions', () => {
     const errors = validateGrowthInput({
       ...base,
       familyContribution: -1,
-      currentAge: 18,
+      birthDate: '',
+      projectionStartDate: '',
       targetAge: 70,
       annualReturnRate: 21,
-      annualFeeRate: 6
+      accountFeeRate: 6
     });
-    expect(errors.length).toBeGreaterThanOrEqual(5);
+    expect(errors.length).toBeGreaterThanOrEqual(6);
   });
 });

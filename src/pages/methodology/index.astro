@@ -1,16 +1,16 @@
 ---
 import ArticleLayout from '../../layouts/ArticleLayout.astro';
 ---
-<ArticleLayout title="Research and calculator methodology" description="How Child Savings Lab verifies rules, labels uncertainty, calculates projections, protects privacy, and keeps comparisons independent." sourceIds={['IRS-TRUMP-ACCOUNTS','IRS-FORM-4547-INSTRUCTIONS']}>
+<ArticleLayout title="Research and calculator methodology" description="How Child Savings Lab verifies rules, labels uncertainty, calculates projections, protects privacy, and keeps comparisons independent." sourceIds={['TREASURY-TD-10056','IRS-TRUMP-ACCOUNTS','IRS-FORM-4547-INSTRUCTIONS','IRS-PROPOSED-INVESTMENTS-2026']}>
   <h2>Source hierarchy</h2>
   <p>We begin with statutes, IRS forms and instructions, Treasury or IRS guidance, Federal Register material, and Department of Labor releases. Financial institutions and publishers may inform industry context, but they do not define federal rules.</p>
   <h2>Rule records</h2>
   <p>Each implemented rule has an internal ID, effective dates, a source ID, and a verification date. Rules are not copied into multiple calculators. Proposed rules are stored and presented as proposed.</p>
   <h2>Eligibility logic</h2>
-  <p>The checker treats an account election and a pilot contribution election as separate decisions. It returns reasons rather than only a yes/no answer and avoids collecting the identifiers the IRS itself needs for filing.</p>
+  <p>The checker treats Treasury auto enrollment, account claiming, receiving-account activation, rare manual elections, and the separate pilot contribution election as different states. It returns next steps rather than pretending it can read IRS records.</p>
   <h2>Growth formula</h2>
-  <p>The calculator compounds monthly. It derives a monthly growth rate from the annual return assumption, subtracts the annual fee in twelve monthly portions, and assumes deposits occur at the end of the chosen period. It compares that result with the same cash flows at a zero fee to estimate fee impact.</p>
-  <p>Contributions are modeled only through age 18. Later target ages show continued hypothetical growth without modeling post-growth-period IRA contributions, taxes, withdrawals, inflation, or market sequence.</p>
+  <p>The calculator derives the growth-period end from the birth date—December 31 of the year the child turns 17—then compounds monthly. Monthly deposits occur at month-end and annual family or employer deposits at December 31. The selected eligible-fund expense and separate account-fee assumptions are subtracted monthly.</p>
+  <p>Later target ages show continued hypothetical growth without post-growth-period IRA contributions. Partial months, taxes, withdrawals, inflation, tracking error, and market sequence are not modeled.</p>
   <h2>Comparison policy</h2>
   <p>Accounts are compared by purpose, eligibility, ownership and control, contribution framework, tax treatment, investment limits, withdrawal rules, and age transitions. No account or provider receives a higher position because of compensation.</p>
   <h2>Corrections</h2>

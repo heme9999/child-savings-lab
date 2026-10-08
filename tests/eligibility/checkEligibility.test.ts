@@ -3,94 +3,85 @@ import { checkEligibility } from '../../src/lib/eligibility/checkEligibility';
 import type { EligibilityInput } from '../../src/lib/eligibility/types';
 
 const valid: EligibilityInput = {
-  applicationYear: 2026,
+  checkYear: 2026,
   birthDate: '2026-01-15',
-  hasValidSsn: true,
+  hasEmploymentValidSsn: true,
   isUsCitizen: true,
-  priorAccountElection: false,
-  priorPilotElection: false,
-  qualifyingChildExpected: true,
-  relationship: 'parent'
+  accountStatus: 'unknown',
+  claimAuthority: 'guardian-or-legal-custodian',
+  pilotElectionStatus: 'not-made',
+  qualifyingChildExpected: true
 };
 
 describe('checkEligibility', () => {
-  it('separates account eligibility from pilot eligibility', () => {
-    const result = checkEligibility({ ...valid, birthDate: '2015-06-01' });
-    expect(result.canOpenAccount).toBe(true);
-    expect(result.pilotContributionEligible).toBe(false);
-    expect(result.pilotReasons.join(' ')).toContain('outside');
+  it('routes an unknown account to the official status process', () => {
+    const result = checkEligibility(valid);
+    expect(result.baselineEligible).toBe(true);
+    expect(result.accountPath).toBe('check-official-status');
+    expect(result.requiredActions.join(' ')).toContain('account-status');
   });
 
-  it('allows a child under 18 at election-year end with a valid SSN', () => {
-    expect(checkEligibility({ ...valid, birthDate: '2009-01-01' }).canOpenAccount).toBe(true);
+  it('routes an auto account to claim and activation', () => {
+    const result = checkEligibility({ ...valid, accountStatus: 'auto-account' });
+    expect(result.accountPath).toBe('claim-auto-account');
+    expect(result.canReceiveFamilyOrEmployerContributions).toBe(false);
+    expect(result.requiredActions.join(' ')).toContain('Activate');
+  });
+
+  it('does not treat an uncertain relationship as sufficient claim authority', () => {
+    const result = checkEligibility({ ...valid, accountStatus: 'auto-account', claimAuthority: 'not-sure' });
+    expect(result.accountReasons.join(' ')).toContain('legal custodian');
+  });
+
+  it('routes an election or claim without activation to activation', () => {
+    expect(checkEligibility({ ...valid, accountStatus: 'manual-election-only' }).accountPath).toBe('complete-activation');
+    expect(checkEligibility({ ...valid, accountStatus: 'claim-started' }).accountPath).toBe('complete-activation');
+  });
+
+  it('allows permitted private contributions only after activation', () => {
+    const result = checkEligibility({ ...valid, accountStatus: 'active-account' });
+    expect(result.accountPath).toBe('active');
+    expect(result.canReceiveFamilyOrEmployerContributions).toBe(true);
+  });
+
+  it('uses the manual Form 4547 path only as an exception', () => {
+    const result = checkEligibility({ ...valid, accountStatus: 'no-account-confirmed' });
+    expect(result.accountPath).toBe('manual-exception-review');
+    expect(result.formGuidance).toContain('rare manual-account exceptions');
   });
 
   it('rejects a child who is 18 by election-year end', () => {
     const result = checkEligibility({ ...valid, birthDate: '2008-12-31' });
-    expect(result.canOpenAccount).toBe(false);
+    expect(result.baselineEligible).toBe(false);
     expect(result.accountReasons.join(' ')).toContain('under age 18');
   });
 
-  it('changes age eligibility when the election year changes', () => {
-    expect(checkEligibility({ ...valid, birthDate: '2009-01-01', applicationYear: 2026 }).canOpenAccount).toBe(true);
-    expect(checkEligibility({ ...valid, birthDate: '2009-01-01', applicationYear: 2027 }).canOpenAccount).toBe(false);
+  it('requires an employment-valid SSN issued before election', () => {
+    const result = checkEligibility({ ...valid, hasEmploymentValidSsn: false });
+    expect(result.baselineEligible).toBe(false);
+    expect(result.accountReasons.join(' ')).toContain('valid for employment');
   });
 
-  it('requires a valid SSN for the account', () => {
-    const result = checkEligibility({ ...valid, hasValidSsn: false });
-    expect(result.canOpenAccount).toBe(false);
-    expect(result.accountReasons.join(' ')).toContain('Social Security number');
-  });
-
-  it('treats U.S. citizenship as a pilot rule, not an account rule', () => {
+  it('separates account baseline from pilot citizenship', () => {
     const result = checkEligibility({ ...valid, isUsCitizen: false });
-    expect(result.canOpenAccount).toBe(true);
-    expect(result.pilotContributionEligible).toBe(false);
+    expect(result.baselineEligible).toBe(true);
+    expect(result.pilotStatus).toBe('not-potentially-eligible');
   });
 
-  it('rejects a repeated pilot election without blocking an initial-account result', () => {
-    const result = checkEligibility({ ...valid, priorPilotElection: true });
-    expect(result.canOpenAccount).toBe(true);
-    expect(result.pilotContributionEligible).toBe(false);
+  it('recognizes both pilot-window boundary dates', () => {
+    expect(checkEligibility({ ...valid, birthDate: '2025-01-01' }).pilotStatus).toBe('potentially-eligible-to-elect');
+    expect(checkEligibility({ ...valid, birthDate: '2028-12-31', checkYear: 2029 }).pilotStatus).toBe('potentially-eligible-to-elect');
   });
 
-  it('rejects a prior account election', () => {
-    expect(checkEligibility({ ...valid, priorAccountElection: true }).canOpenAccount).toBe(false);
-  });
-
-  it('accepts both pilot birth-window boundary dates', () => {
-    expect(checkEligibility({ ...valid, birthDate: '2025-01-01' }).pilotContributionEligible).toBe(true);
-    expect(checkEligibility({ ...valid, birthDate: '2028-12-31', applicationYear: 2029 }).pilotContributionEligible).toBe(true);
-  });
-
-  it('rejects dates just outside the pilot birth window', () => {
-    expect(checkEligibility({ ...valid, birthDate: '2024-12-31' }).pilotContributionEligible).toBe(false);
-    expect(checkEligibility({ ...valid, birthDate: '2029-01-01', applicationYear: 2029 }).pilotContributionEligible).toBe(false);
-  });
-
-  it('rejects a birth date after the election year', () => {
-    const result = checkEligibility({ ...valid, birthDate: '2028-01-01', applicationYear: 2026 });
-    expect(result.canOpenAccount).toBe(false);
-    expect(result.accountReasons.join(' ')).toContain('born by the end');
+  it('distinguishes processed, pending, and unknown pilot elections', () => {
+    expect(checkEligibility({ ...valid, pilotElectionStatus: 'processed' }).pilotStatus).toBe('already-processed');
+    expect(checkEligibility({ ...valid, pilotElectionStatus: 'submitted-pending' }).pilotStatus).toBe('pending');
+    expect(checkEligibility({ ...valid, pilotElectionStatus: 'unknown' }).pilotStatus).toBe('check-status');
   });
 
   it('reports missing or invalid inputs', () => {
-    const result = checkEligibility({ ...valid, birthDate: '', applicationYear: 0 });
-    expect(result.canOpenAccount).toBe(false);
+    const result = checkEligibility({ ...valid, birthDate: '', checkYear: 0 });
+    expect(result.baselineEligible).toBe(false);
     expect(result.accountReasons.length).toBeGreaterThanOrEqual(2);
-  });
-
-  it('adds priority-order caution for a grandparent', () => {
-    const result = checkEligibility({ ...valid, relationship: 'grandparent' });
-    expect(result.canOpenAccount).toBe(true);
-    expect(result.requiredActions.join(' ')).toContain('legal guardian, parent, or adult sibling');
-  });
-
-  it('allows the qualifying-child path when both account and pilot elections can be made', () => {
-    expect(checkEligibility({ ...valid, relationship: 'other' }).canOpenAccount).toBe(true);
-  });
-
-  it('rejects an unlisted relationship when only an account election is available', () => {
-    expect(checkEligibility({ ...valid, relationship: 'other', birthDate: '2015-06-01' }).canOpenAccount).toBe(false);
   });
 });

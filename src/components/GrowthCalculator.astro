@@ -7,8 +7,10 @@ const exampleInput = {
   familyFrequency: 'monthly' as const,
   annualEmployerContribution: 0,
   annualReturnRate: 6,
-  annualFeeRate: 0.15,
-  currentAge: 0,
+  fundExpenseRate: 0.1,
+  accountFeeRate: 0,
+  birthDate: '2026-01-15',
+  projectionStartDate: '2026-10-08',
   targetAge: 18
 };
 const example = projectGrowth(exampleInput);
@@ -17,11 +19,20 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
 ---
 <div class="tool-layout" data-growth-calculator>
   <section class="tool-panel" aria-labelledby="growth-form-title">
-    <div class="eyebrow">Assumption builder</div>
+    <div class="eyebrow">Calendar-aware assumptions</div>
     <h2 id="growth-form-title">Model a contribution plan</h2>
-    <p>Contributions are modeled through age 18. If the target age is later, the balance continues to grow with no new child-period contributions.</p>
+    <p>Child-period contributions stop on December 31 of the calendar year in which the child turns 17. The model uses the birth date and projection start date instead of rounding from a whole-number age.</p>
+    <div class="callout"><strong>Account-state check:</strong> family and employer contributions should be modeled only after the receiving Trump Account has been claimed, established, and activated. An unclaimed auto account cannot accept them.</div>
     <form id="growth-form" novalidate>
       <div class="form-grid">
+        <div class="field">
+          <label for="birth-date">Child’s date of birth</label>
+          <input id="birth-date" name="birthDate" type="date" value="2026-01-15" required />
+        </div>
+        <div class="field">
+          <label for="projection-start-date">Projection start date</label>
+          <input id="projection-start-date" name="projectionStartDate" type="date" value="2026-10-08" required />
+        </div>
         <div class="field">
           <label for="initial-amount">Existing starting amount</label>
           <input id="initial-amount" name="initialAmount" type="number" min="0" step="50" value="0" inputmode="decimal" />
@@ -40,26 +51,28 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
         <div class="field">
           <label for="family-frequency">Contribution frequency</label>
           <select id="family-frequency" name="familyFrequency">
-            <option value="monthly" selected>Every month</option>
-            <option value="annual">Once a year</option>
+            <option value="monthly" selected>Every month-end</option>
+            <option value="annual">Each December 31</option>
           </select>
         </div>
         <div class="field">
           <label for="employer-contribution">Annual employer contribution</label>
           <input id="employer-contribution" name="annualEmployerContribution" type="number" min="0" max="2500" step="50" value="0" inputmode="decimal" aria-describedby="employer-help" />
-          <small id="employer-help">Current Section 128 limit: $2,500 per employee.</small>
+          <small id="employer-help">Current Section 128 limit: $2,500 per employee; modeled at December 31.</small>
         </div>
         <div class="field">
           <label for="return-rate">Assumed annual return</label>
           <input id="return-rate" name="annualReturnRate" type="number" min="-99" max="20" step="0.25" value="6" inputmode="decimal" />
         </div>
         <div class="field">
-          <label for="fee-rate">Annual fee rate</label>
-          <input id="fee-rate" name="annualFeeRate" type="number" min="0" max="5" step="0.05" value="0.15" inputmode="decimal" />
+          <label for="fund-expense-rate">Eligible fund expense rate</label>
+          <input id="fund-expense-rate" name="fundExpenseRate" type="number" min="0" max="0.1" step="0.01" value="0.10" inputmode="decimal" aria-describedby="fund-fee-help" />
+          <small id="fund-fee-help">Statutory maximum for the investment fund during the growth period: 0.10%.</small>
         </div>
         <div class="field">
-          <label for="current-age">Child’s current age</label>
-          <input id="current-age" name="currentAge" type="number" min="0" max="17" step="1" value="0" inputmode="numeric" />
+          <label for="account-fee-rate">Separate account/trustee fee assumption</label>
+          <input id="account-fee-rate" name="accountFeeRate" type="number" min="0" max="5" step="0.05" value="0" inputmode="decimal" aria-describedby="account-fee-help" />
+          <small id="account-fee-help">Optional modeling assumption; confirm actual trustee fees and treatment.</small>
         </div>
         <div class="field">
           <label for="target-age">Target age</label>
@@ -71,7 +84,7 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
         <button class="button secondary" type="button" id="print-report">Print report</button>
       </div>
     </form>
-    <div class="privacy-note"><span aria-hidden="true">◉</span><span>This projection runs locally in your browser. It is an illustration, not a forecast, tax estimate, or investment recommendation.</span></div>
+    <div class="privacy-note"><span aria-hidden="true">◉</span><span>This projection runs locally in your browser. It is an illustration, not a forecast, tax estimate, investment recommendation, or confirmation that an account can accept contributions.</span></div>
   </section>
   <section class="result-panel" aria-labelledby="growth-results-title" aria-live="polite" aria-atomic="true">
     <div class="eyebrow" style="color:#9ed5bf">Illustrative projection</div>
@@ -89,7 +102,7 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
         <thead><tr><th scope="col">Annual return</th><th scope="col">Balance</th></tr></thead>
         <tbody id="scenario-rows">{examples.map(({ rate, projection }) => <tr><td>{rate.toFixed(1)}%</td><td>{usd(projection.endingBalance)}</td></tr>)}</tbody>
       </table>
-      <p id="contribution-note">Contributions modeled for {example.contributionYears} years. Returns are not guaranteed. Taxes and withdrawals are not modeled, so this is not spendable after-tax cash.</p>
+      <p id="contribution-note">Contributions modeled for {example.contributionMonths} month-ends, through {example.contributionEndDate}. Returns are not guaranteed. Taxes and withdrawals are not modeled.</p>
     </div>
   </section>
 </div>
@@ -114,8 +127,10 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
       familyFrequency: String(data.get('familyFrequency')) as ContributionFrequency,
       annualEmployerContribution: Number(data.get('annualEmployerContribution')),
       annualReturnRate: Number(data.get('annualReturnRate')),
-      annualFeeRate: Number(data.get('annualFeeRate')),
-      currentAge: Number(data.get('currentAge')),
+      fundExpenseRate: Number(data.get('fundExpenseRate')),
+      accountFeeRate: Number(data.get('accountFeeRate')),
+      birthDate: String(data.get('birthDate') || ''),
+      projectionStartDate: String(data.get('projectionStartDate') || ''),
       targetAge: Number(data.get('targetAge'))
     };
   }
@@ -138,11 +153,11 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
     setText('#total-contributed', usd.format(result.totalContributed));
     setText('#investment-growth', usd.format(result.investmentGrowth));
     setText('#fee-impact', usd.format(result.feeImpact));
-    setText('#contribution-note', `Contributions modeled for ${result.contributionYears} years. Returns are not guaranteed. Taxes and withdrawals are not modeled, so this is not spendable after-tax cash.`);
+    setText('#contribution-note', `Contributions modeled for ${result.contributionMonths} month-ends, through ${result.contributionEndDate}. Projection target: ${result.targetDate}. Returns are not guaranteed. Taxes and withdrawals are not modeled.`);
     const rows = document.querySelector<HTMLElement>('#scenario-rows');
     if (rows) rows.innerHTML = scenarios.map(({ rate, projection }) => `<tr><td>${rate.toFixed(1)}%</td><td>${usd.format(projection.endingBalance)}</td></tr>`).join('');
   }
 
   form?.addEventListener('submit', (event) => { event.preventDefault(); render(); });
-  document.querySelector('#print-report')?.addEventListener('click', () => { render(); window.print(); });
+  document.querySelector<HTMLButtonElement>('#print-report')?.addEventListener('click', () => window.print());
 </script>

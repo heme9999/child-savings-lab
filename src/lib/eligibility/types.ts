@@ -1,23 +1,55 @@
-export type Relationship = 'legal-guardian' | 'parent' | 'adult-sibling' | 'grandparent' | 'other';
+export type AccountStatus =
+  | 'unknown'
+  | 'auto-account'
+  | 'claim-started'
+  | 'manual-election-only'
+  | 'active-account'
+  | 'no-account-confirmed';
+
+export type ClaimAuthority =
+  | 'guardian-or-legal-custodian'
+  | 'beneficiary-with-legal-capacity'
+  | 'not-sure';
+
+export type PilotElectionStatus = 'not-made' | 'submitted-pending' | 'processed' | 'unknown';
+
+export type AccountPath =
+  | 'not-baseline-eligible'
+  | 'check-official-status'
+  | 'claim-auto-account'
+  | 'complete-activation'
+  | 'active'
+  | 'manual-exception-review';
+
+export type PilotStatus =
+  | 'potentially-eligible-to-elect'
+  | 'already-processed'
+  | 'pending'
+  | 'check-status'
+  | 'not-potentially-eligible';
 
 export interface EligibilityInput {
-  applicationYear: number;
+  checkYear: number;
   birthDate: string;
-  hasValidSsn: boolean;
+  hasEmploymentValidSsn: boolean;
   isUsCitizen: boolean;
-  priorAccountElection: boolean;
-  priorPilotElection: boolean;
+  accountStatus: AccountStatus;
+  claimAuthority: ClaimAuthority;
+  pilotElectionStatus: PilotElectionStatus;
   qualifyingChildExpected: boolean;
-  relationship: Relationship;
 }
 
 export interface EligibilityResult {
-  canOpenAccount: boolean;
-  pilotContributionEligible: boolean;
+  baselineEligible: boolean;
+  accountPath: AccountPath;
+  accountPathTitle: string;
+  canReceiveFamilyOrEmployerContributions: boolean;
+  pilotStatus: PilotStatus;
+  pilotStatusTitle: string;
   accountReasons: string[];
   pilotReasons: string[];
   requiredActions: string[];
-  requiredForm: string;
+  formGuidance: string;
   sourceIds: string[];
   rulesVerifiedAt: string;
 }

@@ -9,7 +9,8 @@ interface Props {
   noindex?: boolean;
 }
 
-const { title, description, type = 'website', verifiedAt, noindex = false } = Astro.props;
+const productionReady = import.meta.env.PUBLIC_PRODUCTION_READY === 'true';
+const { title, description, type = 'website', verifiedAt, noindex = !productionReady } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const fullTitle = title === 'Child Savings Lab' ? title : `${title} | Child Savings Lab`;
 const jsonLd = {
@@ -61,6 +62,11 @@ const jsonLd = {
         </nav>
       </div>
     </header>
+    {!productionReady && (
+      <div class="site-notice" role="status">
+        <div class="shell"><strong>Public test environment:</strong> content is being updated for September 30, 2026 temporary regulations and is not approved for production use or search indexing.</div>
+      </div>
+    )}
     <main id="main-content">
       <slot />
     </main>
@@ -84,7 +90,7 @@ const jsonLd = {
           <a href="/terms/">Terms</a>
         </div>
       </div>
-      <div class="shell footer-bottom">Last site-wide source review: October 8, 2026 · Educational information only.</div>
+      <div class="shell footer-bottom">Last site-wide source review: October 8, 2026, including TD 10056 · Educational information only.</div>
     </footer>
   </body>
 </html>

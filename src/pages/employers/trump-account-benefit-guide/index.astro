@@ -1,29 +1,46 @@
 ---
 import ArticleLayout from '../../../layouts/ArticleLayout.astro';
 ---
-<ArticleLayout title="Employer guide to Trump Account contributions" description="A non-legal implementation brief for HR, payroll, and small-business teams evaluating a Section 128 Trump Account contribution program." sourceIds={['DOL-TR-2026-02','IRS-PROPOSED-EMPLOYER-2026','IRS-FORM-4547-INSTRUCTIONS']} effective="Guidance available through October 8, 2026">
-  <div class="callout"><strong>Professional review required:</strong> this page is an educational checklist, not tax, legal, payroll, benefits, or ERISA advice. Proposed regulations remain subject to change.</div>
-  <h2>What the benefit can do</h2>
-  <p>A qualifying program may make employer contributions to an employee’s Trump Account or a dependent’s Trump Account. Under the current framework, up to $2,500 per employee per year may be excluded from federal gross income when program requirements are satisfied; the amount also counts toward the account’s general $5,000 annual limit.</p>
+<ArticleLayout title="Employer guide to Trump Account contributions" description="A status-labeled implementation brief for HR and payroll teams covering account activation, tax treatment, DOL conditions, and proposed Section 128 procedures." sourceIds={['TREASURY-TD-10056','DOL-TR-2026-02','IRS-PROPOSED-EMPLOYER-2026']} effective="Guidance reviewed through October 8, 2026">
+  <div class="callout"><strong>Professional review required:</strong> this educational checklist is not a plan document or tax, payroll, benefits, or ERISA opinion. Treasury’s detailed employer regulations remain proposed.</div>
+  <h2>Current statutory framework</h2>
+  <p>A qualifying Section 128 program may contribute to a Trump Account for an employee or an employee’s dependent during the beneficiary’s growth period. Up to $2,500 per employee per year may be excluded from federal gross income when the requirements are satisfied, and the amount counts inside the account’s general $5,000 annual limit.</p>
+  <p>The $2,500 limit is employee-level, not per child. A single employee cannot multiply it across dependents. Amounts outside a qualifying program, or above an applicable exclusion limit, may be taxable compensation.</p>
+  <h2>Account-status gate added by TD 10056</h2>
+  <p>An unclaimed auto account generally cannot receive family or employer contributions. Before transmitting funds, confirm through a trustee, payroll processor, or other appropriate service that the destination is a valid, established Trump Account capable of receiving the contribution. A claim or Form 4547 submission without subsequent activation is not enough.</p>
+  <h2>Payroll tax treatment</h2>
+  <p>Treasury and the IRS state that qualifying Section 128 contributions are excluded from federal gross income and generally are not subject to federal income tax withholding, but there is no corresponding exclusion from FICA, FUTA, or RRTA wages unless another exclusion applies. For 2026, IRS payroll guidance calls for reporting in Form W-2 Box 12 using Code TA.</p>
+  <p>Payroll teams should verify the final Form W-2 instructions, state and local wage treatment, the employee and employer FICA calculation, FUTA treatment, and correction mechanics before the first deposit.</p>
+  <h2>DOL conditions for avoiding ERISA plan status</h2>
+  <p>DOL Technical Release 2026-02 concludes that employer contributions during the growth period generally do not create an ERISA-covered plan when all of these conditions are maintained:</p>
+  <ul>
+    <li>Employee participation is completely voluntary.</li>
+    <li>The employer does not impose fund-use conditions beyond those permitted by the Internal Revenue Code.</li>
+    <li>The employer does not make or influence investment decisions.</li>
+    <li>The employer does not represent the account or contribution program as an employer pension or welfare plan.</li>
+    <li>The employer receives no payment or compensation in connection with the account.</li>
+  </ul>
+  <p>Employer or trustee restrictions on permitted rollovers beyond Code or regulatory restrictions can also undermine this analysis. Benefits counsel should review communications, vendor contracts, payroll deductions, and any employer endorsement.</p>
+  <h2>Proposed—not yet final—implementation rules</h2>
+  <p>The August 2026 regulations propose requirements for a separate written plan, employee certifications, independent account verification, nondiscrimination testing, employee notices, annual statements, trustee communications, correction notices, and restrictions on forcing employees to use a particular trustee. Their proposed applicability date is generally for plan years beginning on or after publication of a final rule.</p>
+  <p>Salary-reduction treatment is also specialized under the proposal: a Section 125 salary-reduction contribution may be available for a dependent’s account, but not the employee’s own account. Do not implement this design from a summary alone.</p>
   <h2>Implementation checklist</h2>
   <ol>
-    <li><strong>Engage counsel and tax advisers.</strong> Confirm the status and applicability of DOL guidance and Treasury/IRS proposed regulations.</li>
-    <li><strong>Draft a separate written plan.</strong> Define eligibility, contribution amounts, plan year, designation steps, notices, reporting, and correction procedures.</li>
-    <li><strong>Design certifications.</strong> Collect only what is needed to support dependent, growth-period, and account-status certifications.</li>
-    <li><strong>Coordinate payroll.</strong> Map contribution codes, applicable wage-tax treatment, limits across pay periods, and year-end reporting.</li>
-    <li><strong>Verify the receiving account.</strong> Establish a process to confirm that the destination is a Trump Account without steering employees to a required trustee.</li>
-    <li><strong>Test nondiscrimination.</strong> Review eligibility, benefits, and average-benefit requirements before launch and during operation.</li>
-    <li><strong>Prepare employee notices.</strong> Explain eligibility, elections, limits, tax treatment, and the employee’s role in monitoring other contributions.</li>
-    <li><strong>Document corrections.</strong> Plan for over-limit amounts, failed certifications, and incorrect tax treatment.</li>
+    <li><strong>Engage benefits counsel and payroll tax advisers.</strong> Document which rules are statutory, currently effective, DOL guidance, or proposed.</li>
+    <li><strong>Design around the DOL conditions.</strong> Keep participation voluntary and prevent investment steering, employer-plan branding, extra withdrawal restrictions, or compensation.</li>
+    <li><strong>Draft the proposed-rule plan package.</strong> Cover eligibility, contribution formulas, plan year, certifications, notices, reporting, trustee communications, and corrections, subject to final-rule changes.</li>
+    <li><strong>Verify an activated receiving account.</strong> Do not send contributions to an unclaimed auto account or rely only on an employee certification that an account is valid.</li>
+    <li><strong>Configure payroll taxes and reporting.</strong> Address FICA, FUTA, RRTA where applicable, income-tax withholding, Code TA, and state/local treatment.</li>
+    <li><strong>Control limits and allocation.</strong> Apply the per-employee Section 128 ceiling, monitor plan-level contributions, and explain that other contributors share the account’s general annual limit.</li>
+    <li><strong>Test nondiscrimination and corrections.</strong> Treat the detailed mechanics as proposed until finalized and preserve records supporting each determination.</li>
   </ol>
-  <h2>Payroll and limit risks</h2>
-  <p>The $2,500 limit applies at the employee level across employer contribution programs. Spouses employed separately may each have their own employee-level limit, while a single employee cannot multiply the limit by the number of dependents. Proposed rules include further allocation examples.</p>
   <h2>What not to promise employees</h2>
   <ul>
-    <li>Do not describe the account as guaranteed or government-insured investment performance.</li>
-    <li>Do not imply every child receives the $1,000 pilot contribution.</li>
+    <li>Do not describe the program as an ERISA plan or promise that every design is outside ERISA.</li>
+    <li>Do not imply an auto account can immediately receive employer money.</li>
     <li>Do not describe proposed employer regulations as final.</li>
-    <li>Do not give individualized tax or investment recommendations in enrollment materials.</li>
+    <li>Do not describe contributions as exempt from all payroll taxes.</li>
+    <li>Do not promise investment performance, government insurance, or universal $1,000 pilot eligibility.</li>
   </ul>
-  <p>Also review the <a href="/contributions/trump-account-contribution-limits/">contribution limit guide</a> and the official DOL and IRS materials before implementation.</p>
+  <p>Also review the <a href="/contributions/trump-account-contribution-limits/">contribution limit guide</a>, <a href="https://www.dol.gov/agencies/ebsa/employers-and-advisers/guidance/technical-releases/26-02">DOL Technical Release 2026-02</a>, and <a href="https://www.irs.gov/newsroom/irs-and-payroll-professionals-partners-in-every-paycheck-youtube-video-text-script">IRS payroll guidance</a>.</p>
 </ArticleLayout>

@@ -7,29 +7,29 @@ import VerifiedBadge from '../../../components/VerifiedBadge.astro';
 const schema = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
-  name: 'Trump Account Eligibility Checker',
+  name: 'Trump Account Status and Eligibility Checker',
   applicationCategory: 'FinanceApplication',
   operatingSystem: 'Any web browser',
   isAccessibleForFree: true,
-  description: 'Checks potential eligibility for an initial Trump Account and the one-time $1,000 pilot contribution separately.'
+  description: 'Routes families through auto-account status, claiming, activation, contribution readiness, and the separate $1,000 pilot election.'
 };
 ---
-<BaseLayout title="Trump Account Eligibility Checker" description="Check possible eligibility for an initial Trump Account and the $1,000 pilot contribution separately, with reasons and current IRS sources." verifiedAt="2026-10-08">
+<BaseLayout title="Trump Account Status and Eligibility Checker" description="Check the next step for an auto account, claim, activation, private contributions, and the separate $1,000 pilot election." verifiedAt="2026-10-08">
   <script type="application/ld+json" set:html={JSON.stringify(schema)} />
   <div class="shell"><Breadcrumbs items={[{label:'Home',href:'/'},{label:'Tools',href:'/tools/child-savings-account-comparison/'},{label:'Eligibility checker'}]} /></div>
   <header class="page-hero shell">
     <div class="eyebrow">Trump Account tool</div>
-    <h1>Trump Account eligibility checker</h1>
-    <p class="lede">Get two answers: whether a child may qualify for an initial account and whether they may also qualify for the federal $1,000 pilot contribution.</p>
+    <h1>Trump Account status and eligibility checker</h1>
+    <p class="lede">Find the next step after Treasury auto enrollment—without entering names, SSNs, account numbers, or tax IDs.</p>
     <VerifiedBadge />
   </header>
   <div class="shell"><EligibilityChecker /></div>
   <section class="section tint">
     <div class="article-body shell">
-      <h2>How this checker interprets the IRS rules</h2>
-      <p>The account result tests year-end age, SSN, prior account election, and the relationship of the person filing. The pilot result then adds the 2025–2028 birth window, U.S. citizenship, qualifying-child expectation, and prior pilot election status.</p>
-      <p>“Potentially eligible” is not approval. The IRS makes the determination, and complex custody, dependency, immigration, or SSN facts may require professional help.</p>
-      <SourceLinks ids={['IRS-TRUMP-ACCOUNTS','IRS-FORM-4547-INSTRUCTIONS']} />
+      <h2>What changed on September 30, 2026</h2>
+      <p>Temporary regulations introduced broad Treasury auto enrollment. The checker therefore tests baseline age and employment-valid SSN requirements, then routes the user through status checking, auto-account claiming, receiving-account activation, or the rare manual-election exception.</p>
+      <p>The separate pilot result evaluates the 2025–2028 birth window, U.S. citizenship, qualifying-child expectation, and whether a pilot election is not made, pending, processed, or unknown. The IRS makes all determinations.</p>
+      <SourceLinks ids={['TREASURY-TD-10056','IRS-FORM-4547-INSTRUCTIONS']} />
     </div>
   </section>
 </BaseLayout>

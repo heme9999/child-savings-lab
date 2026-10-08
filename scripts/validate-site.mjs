@@ -54,6 +54,7 @@ for (const file of htmlFiles) {
   if (!title) failures.push(`${name}: missing title`);
   if (!description || description.length < 70) failures.push(`${name}: missing or short meta description`);
   if (!canonical?.startsWith('http')) failures.push(`${name}: missing absolute canonical`);
+  if (!html.includes('<meta name="robots" content="noindex,nofollow"')) failures.push(`${name}: public test page must be noindex`);
   if (!html.includes('application/ld+json')) failures.push(`${name}: missing JSON-LD`);
   if (!html.includes('og:title') || !html.includes('og:description')) failures.push(`${name}: missing Open Graph metadata`);
   if (h1Matches.length !== 1) failures.push(`${name}: expected one H1, found ${h1Matches.length}`);
@@ -78,10 +79,13 @@ for (const file of htmlFiles) {
 
 const eligibilityHtml = readFileSync(routeFile('/tools/trump-account-eligibility-checker/'), 'utf8');
 const growthHtml = readFileSync(routeFile('/tools/trump-account-growth-calculator/'), 'utf8');
-if (!eligibilityHtml.includes('Check eligibility') || !eligibilityHtml.includes('Last verified')) failures.push('Eligibility tool lacks indexable content or verification date');
+if (!eligibilityHtml.includes('Show next steps') || !eligibilityHtml.includes('Last verified')) failures.push('Status tool lacks rendered content or verification date');
 if (!growthHtml.includes('Update projection') || !growthHtml.includes('Returns are not guaranteed')) failures.push('Growth tool lacks indexable content or limitation language');
 if (!existsSync(join(root, 'robots.txt'))) failures.push('Missing robots.txt');
 if (!existsSync(join(root, 'sitemap-index.xml'))) failures.push('Missing sitemap-index.xml');
+if (!existsSync(join(root, '_headers'))) failures.push('Missing Cloudflare noindex headers');
+if (!readFileSync(join(root, 'robots.txt'), 'utf8').includes('Disallow: /')) failures.push('Public test robots.txt must block crawling');
+if (!readFileSync(join(root, '_headers'), 'utf8').includes('X-Robots-Tag: noindex, nofollow')) failures.push('Public test headers must send X-Robots-Tag');
 
 if (failures.length) {
   console.error(`Site validation failed with ${failures.length} issue(s):\n- ${failures.join('\n- ')}`);

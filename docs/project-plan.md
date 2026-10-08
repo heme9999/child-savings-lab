@@ -10,7 +10,7 @@ Primary users are U.S. parents, expectant parents, grandparents, and guardians. 
 
 1. Lead with utility: eligibility, growth, and account-comparison tools.
 2. Build authority through first-party government sources and visible rule dates.
-3. Earn links with useful tools and a Form 4547 workflow, not thin-volume publishing.
+3. Earn links with useful account-status, claiming, activation, pilot-election, and growth tools—not thin-volume publishing.
 4. Add a carefully disclosed affiliate layer only after specific programs are verified.
 5. Expand to B2B employer checklists and leads after professional review.
 6. Consider advanced reports, embeds, white-label tools, and a rule-update API only after usage validates demand.
@@ -29,7 +29,7 @@ Primary users are U.S. parents, expectant parents, grandparents, and guardians. 
 - Home: brand-level child savings entry point.
 - Trump Accounts: core guide and first topical cluster.
 - Tools: eligibility, growth, and cross-account comparison.
-- Forms: Form 4547 guide.
+- Forms: post-auto-enrollment Form 4547 and pilot-election guide.
 - Compare: Trump Account vs. 529.
 - Contributions: current limits and examples.
 - Employers: implementation education with proposed-rule labeling.

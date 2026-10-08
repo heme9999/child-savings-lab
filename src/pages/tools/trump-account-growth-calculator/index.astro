@@ -27,9 +27,9 @@ const schema = {
   <section class="section tint">
     <div class="article-body shell">
       <h2>Calculation method</h2>
-      <p>The model applies a monthly equivalent of the selected annual return, subtracts one-twelfth of the annual fee rate each month, deposits monthly family contributions at month-end, and deposits annual family and employer contributions at year-end. Contributions stop after the growth period; returns may continue to the selected target age.</p>
-      <p>The “fee impact” compares the same cash flows at the selected return with and without the fee. Taxes, inflation, investment tracking error, market sequence, and withdrawals are not modeled.</p>
-      <SourceLinks ids={['IRS-FORM-4547-INSTRUCTIONS','IRS-REV-PROC-2026-25']} />
+      <p>The model calculates the statutory growth-period end from the birth date: December 31 of the calendar year in which the child turns 17. It applies a monthly equivalent of the selected annual return, subtracts monthly equivalents of the fund-expense and account-fee assumptions, deposits monthly family contributions at month-end, and deposits annual family and employer contributions at December 31.</p>
+      <p>The “fee impact” compares the same cash flows with and without both fee assumptions. The 0.10% ceiling applies to the eligible investment fund; separate trustee or intermediary fees require their own analysis. Partial months, taxes, inflation, tracking error, market sequence, actual deposit timing, and withdrawals are not modeled.</p>
+      <SourceLinks ids={['TREASURY-TD-10056','IRS-PROPOSED-INVESTMENTS-2026','IRS-REV-PROC-2026-25']} />
     </div>
   </section>
 </BaseLayout>

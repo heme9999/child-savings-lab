@@ -1,4 +1,4 @@
-export type SourceStatus = 'official guidance' | 'form instructions' | 'proposed rule' | 'technical release' | 'official overview';
+export type SourceStatus = 'temporary regulations' | 'official guidance' | 'form instructions' | 'proposed rule' | 'technical release' | 'official overview';
 
 export interface SourceRecord {
   id: string;
@@ -13,6 +13,17 @@ export interface SourceRecord {
 }
 
 export const sources: SourceRecord[] = [
+  {
+    id: 'TREASURY-TD-10056',
+    title: 'TD 10056: Trump Accounts',
+    publisher: 'U.S. Treasury and Internal Revenue Service',
+    url: 'https://www.federalregister.gov/documents/2026/09/30/2026-20026/trump-accounts',
+    publishedAt: '2026-09-30',
+    verifiedAt: '2026-10-08',
+    effectiveFrom: '2026-09-30',
+    status: 'temporary regulations',
+    note: 'Controlling temporary rules for automatic enrollment, auto accounts, claiming, activation, and qualified general contributions.'
+  },
   {
     id: 'IRS-TRUMP-ACCOUNTS',
     title: 'Trump Accounts',
@@ -78,6 +89,17 @@ export const sources: SourceRecord[] = [
     effectiveFrom: '2026-08-11',
     status: 'proposed rule',
     note: 'Proposed—not final—employer program rules. Employer pages label this status explicitly.'
+  },
+  {
+    id: 'IRS-PROPOSED-INVESTMENTS-2026',
+    title: 'Proposed Regulations: Eligible Investments for Trump Accounts',
+    publisher: 'U.S. Treasury and Internal Revenue Service',
+    url: 'https://www.irs.gov/irb/2026-38_irb',
+    publishedAt: '2026-09-14',
+    verifiedAt: '2026-10-08',
+    effectiveFrom: '2026-08-21',
+    status: 'proposed rule',
+    note: 'Explains the statutory 0.10% fund-expense ceiling and distinguishes investment-fund expenses from trustee or intermediary fees.'
   },
   {
     id: 'IRS-529-QA',

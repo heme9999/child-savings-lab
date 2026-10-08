@@ -1,15 +1,25 @@
 ---
 import ArticleLayout from '../../layouts/ArticleLayout.astro';
 ---
-<ArticleLayout title="Privacy policy" description="What Child Savings Lab does and does not collect, including the local-only handling of calculator inputs." effective="MVP privacy practices as of October 8, 2026">
+<ArticleLayout title="Privacy policy" description="The current test site’s local calculator processing, hosting data, adult audience, disclosures, and remaining production-launch requirements." effective="Public test practices as of October 8, 2026">
+  <div class="callout"><strong>Pre-production status:</strong> the operating legal entity, mailing address, monitored privacy email, retention schedule, and state-law request process have not been finalized. This test site is marked noindex and should not be treated as a production service.</div>
+  <h2>Audience</h2>
+  <p>Child Savings Lab is an adult-directed educational service for parents, guardians, employers, and other adults researching family-finance topics. It is not designed for children under 13, does not offer child accounts, and does not knowingly request personal information directly from children.</p>
   <h2>Calculator data</h2>
-  <p>Eligibility and growth calculator inputs are processed in your browser. They are not transmitted to or stored by Child Savings Lab. We do not request real Social Security numbers, names, tax IDs, account numbers, child names, or home addresses.</p>
-  <h2>Analytics</h2>
-  <p>This MVP does not include third-party analytics, advertising pixels, session replay, or behavioral profiling. If privacy-friendly analytics are added, calculator field values will be excluded from collection.</p>
-  <h2>Email</h2>
-  <p>No newsletter form is active in this MVP. A future update service, if introduced, will collect only the minimum information required—typically an email address—and will not request child, tax, or account information.</p>
-  <h2>Hosting logs and links</h2>
-  <p>The hosting provider may process ordinary security and request logs. Links to official or third-party sites are governed by those sites’ privacy practices.</p>
-  <h2>Questions</h2>
-  <p>Use the <a href="/contact/">contact page</a> for privacy questions. This policy should receive legal review before a public production launch.</p>
+  <p>Eligibility and growth calculator inputs are processed by JavaScript in the visitor’s browser. The application code does not transmit or store those field values. The tools do not ask for a real name, full Social Security number, tax ID, account number, child name, home address, email address, or phone number.</p>
+  <h2>Hosting and security data</h2>
+  <p>Cloudflare delivers the site and may process end-user data such as IP address, request URL, timestamp, user agent, network and security signals, and diagnostic information. Cloudflare may use infrastructure in multiple locations. Its handling is governed by its services terms and <a href="https://www.cloudflare.com/policies/privacy/">privacy policy</a>.</p>
+  <p>The application does not currently expose hosting logs to visitors or combine calculator answers with request logs. Exact Cloudflare log availability and retention must be documented by the operator before production launch.</p>
+  <h2>Analytics, cookies, advertising, and sale</h2>
+  <p>The application code does not include third-party analytics, advertising pixels, session replay, behavioral advertising, or a newsletter form. It does not intentionally sell personal information or share it for cross-context behavioral advertising. Cloudflare may use necessary security or network technologies independently under its service documentation.</p>
+  <h2>How information may be used or disclosed</h2>
+  <p>Hosting and security data may be used to deliver the site, maintain availability, detect abuse, diagnose failures, and comply with law. It may be processed by Cloudflare and disclosed when legally required. Links to government or other third-party sites are governed by those sites’ privacy practices.</p>
+  <h2>Children’s privacy</h2>
+  <p>If the operator learns that personal information was collected directly from a child under 13, it should be deleted or handled under applicable COPPA requirements. Features that collect contact details, persistent identifiers for analytics or advertising, user accounts, or child-submitted content require a new COPPA assessment before release. See the <a href="https://www.ftc.gov/business-guidance/resources/complying-coppa-frequently-asked-questions">FTC COPPA FAQ</a>.</p>
+  <h2>State privacy rights</h2>
+  <p>Whether a state privacy law such as the California Consumer Privacy Act applies depends on the final operator, revenue, processing volume, business model, and other facts. Before production, the operator must document applicability and, where required, publish methods for requests to know, delete, correct, opt out, limit certain uses, and exercise rights without discrimination.</p>
+  <h2>Retention and security</h2>
+  <p>Calculator field values are not retained by the application. The production policy must state the retention periods or criteria for hosting logs, correspondence, analytics, and security records. No website can guarantee absolute security.</p>
+  <h2>Changes and contact</h2>
+  <p>Material changes should be dated and described. Before production launch, this section must identify the responsible legal entity and provide a monitored privacy contact and mailing address. Until then, do not send personal, child, tax, or account information to this project.</p>
 </ArticleLayout>

@@ -16,7 +16,7 @@ The market is more developed than the initial brief suggested. Several independe
 
 A generic growth calculator is no longer sufficient differentiation. The MVP therefore emphasizes:
 
-- separate account and $1,000 pilot eligibility outcomes;
+- separate auto-account status, claim, activation, and $1,000 pilot-election outcomes;
 - rule versioning and verification dates;
 - visible source-status labels, especially for proposed employer regulations;
 - fee impact and principal-versus-growth separation;
@@ -25,7 +25,7 @@ A generic growth calculator is no longer sufficient differentiation. The MVP the
 
 ## Source notes
 
-- IRS Form 4547 and its instructions remain the controlling practical source for election eligibility and filing.
+- TD 10056, effective September 30, 2026, is the controlling source for auto enrollment, claiming, and activation. Form 4547 remains relevant to the separate pilot election and rare manual-account exceptions.
 - IRS instructions confirm the $5,000 aggregate annual limit and $2,500 Section 128 employer limit for the current period.
 - Detailed August 2026 employer regulations remain proposed as of the review date.
 - Cloudflare’s current Astro guidance confirms static Astro output can be uploaded directly without the server adapter.

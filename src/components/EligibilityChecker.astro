@@ -2,112 +2,121 @@
 import { checkEligibility } from '../lib/eligibility/checkEligibility';
 
 const initial = checkEligibility({
-  applicationYear: 2026,
+  checkYear: 2026,
   birthDate: '2026-01-15',
-  hasValidSsn: true,
+  hasEmploymentValidSsn: true,
   isUsCitizen: true,
-  priorAccountElection: false,
-  priorPilotElection: false,
-  qualifyingChildExpected: true,
-  relationship: 'parent'
+  accountStatus: 'unknown',
+  claimAuthority: 'guardian-or-legal-custodian',
+  pilotElectionStatus: 'not-made',
+  qualifyingChildExpected: true
 });
 ---
 <div class="tool-layout" data-eligibility-checker>
   <section class="tool-panel" aria-labelledby="eligibility-form-title">
     <div class="eyebrow">Private by design</div>
-    <h2 id="eligibility-form-title">Check two kinds of eligibility</h2>
-    <p>This tool evaluates an initial account election separately from the one-time $1,000 pilot contribution.</p>
+    <h2 id="eligibility-form-title">Find the correct account path</h2>
+    <p>Since Treasury auto enrollment began, most families should check account status before considering a new Form 4547 account election.</p>
     <div class="privacy-note"><span aria-hidden="true">◉</span><span>No names, Social Security numbers, addresses, or tax IDs are requested. Inputs stay in this browser and are not saved.</span></div>
     <form id="eligibility-form" novalidate>
       <div class="form-grid">
         <div class="field">
-          <label for="application-year">Election year</label>
-          <input id="application-year" name="applicationYear" type="number" min="2026" max="2100" value="2026" required aria-describedby="application-year-help" />
-          <small id="application-year-help">The year Form 4547 will be submitted.</small>
+          <label for="check-year">Review year</label>
+          <input id="check-year" name="checkYear" type="number" min="2026" max="2100" value="2026" required />
         </div>
         <div class="field">
           <label for="birth-date">Child’s date of birth</label>
           <input id="birth-date" name="birthDate" type="date" value="2026-01-15" required />
         </div>
+        <fieldset class="field full">
+          <legend>Was the child’s SSN valid for employment and issued before the relevant election?</legend>
+          <div class="radio-row">
+            <label class="radio-option"><input type="radio" name="hasEmploymentValidSsn" value="true" checked /> Yes</label>
+            <label class="radio-option"><input type="radio" name="hasEmploymentValidSsn" value="false" /> No / unsure</label>
+          </div>
+        </fieldset>
         <div class="field full">
-          <label for="relationship">Your relationship to the child</label>
-          <select id="relationship" name="relationship" required>
-            <option value="parent" selected>Parent</option>
-            <option value="legal-guardian">Legal guardian</option>
-            <option value="adult-sibling">Adult sibling</option>
-            <option value="grandparent">Grandparent</option>
-            <option value="other">Other</option>
+          <label for="account-status">What is the official account status?</label>
+          <select id="account-status" name="accountStatus" required>
+            <option value="unknown" selected>Unknown — I have not checked</option>
+            <option value="auto-account">Treasury auto account exists but has not been claimed</option>
+            <option value="claim-started">Auto-account claim started; receiving account not activated</option>
+            <option value="manual-election-only">Form 4547 election made; account not activated</option>
+            <option value="active-account">Claimed or other receiving account is activated</option>
+            <option value="no-account-confirmed">IRS confirms no account or prior election</option>
           </select>
         </div>
-        <fieldset class="field full">
-          <legend>Does the child have a valid SSN issued before the election?</legend>
-          <div class="radio-row">
-            <label class="radio-option"><input type="radio" name="hasValidSsn" value="true" checked /> Yes</label>
-            <label class="radio-option"><input type="radio" name="hasValidSsn" value="false" /> No</label>
-          </div>
-        </fieldset>
-        <fieldset class="field full">
-          <legend>Has an initial Trump Account election already been filed for this child?</legend>
-          <div class="radio-row">
-            <label class="radio-option"><input type="radio" name="priorAccountElection" value="false" checked /> No</label>
-            <label class="radio-option"><input type="radio" name="priorAccountElection" value="true" /> Yes</label>
-          </div>
-        </fieldset>
+        <div class="field full">
+          <label for="claim-authority">Who would claim an auto account?</label>
+          <select id="claim-authority" name="claimAuthority" required>
+            <option value="guardian-or-legal-custodian" selected>Guardian or legal custodian with property-management authority</option>
+            <option value="beneficiary-with-legal-capacity">Beneficiary with legal capacity under state law</option>
+            <option value="not-sure">Not sure / relationship alone has not been legally confirmed</option>
+          </select>
+          <small>A parent or relative is not automatically authorized unless applicable law gives the required authority.</small>
+        </div>
         <fieldset class="field full">
           <legend>Is the child a U.S. citizen?</legend>
           <div class="radio-row">
             <label class="radio-option"><input type="radio" name="isUsCitizen" value="true" checked /> Yes</label>
-            <label class="radio-option"><input type="radio" name="isUsCitizen" value="false" /> No</label>
+            <label class="radio-option"><input type="radio" name="isUsCitizen" value="false" /> No / unsure</label>
           </div>
         </fieldset>
         <fieldset class="field full">
-          <legend>Do you expect the child to be your qualifying child for the election year?</legend>
+          <legend>Do you expect the child to be your qualifying child for the pilot-election year?</legend>
           <div class="radio-row">
             <label class="radio-option"><input type="radio" name="qualifyingChildExpected" value="true" checked /> Yes</label>
             <label class="radio-option"><input type="radio" name="qualifyingChildExpected" value="false" /> No / unsure</label>
           </div>
         </fieldset>
-        <fieldset class="field full">
-          <legend>Has a pilot contribution election already been submitted or processed?</legend>
-          <div class="radio-row">
-            <label class="radio-option"><input type="radio" name="priorPilotElection" value="false" checked /> No</label>
-            <label class="radio-option"><input type="radio" name="priorPilotElection" value="true" /> Yes</label>
-          </div>
-        </fieldset>
+        <div class="field full">
+          <label for="pilot-status">Status of the separate $1,000 pilot election</label>
+          <select id="pilot-status" name="pilotElectionStatus" required>
+            <option value="not-made" selected>Not made</option>
+            <option value="submitted-pending">Submitted, but not confirmed as processed</option>
+            <option value="processed">Processed</option>
+            <option value="unknown">Unknown</option>
+          </select>
+        </div>
       </div>
       <div class="form-actions">
-        <button class="button" type="submit">Check eligibility</button>
+        <button class="button" type="submit">Show next steps</button>
         <button class="button secondary" type="reset">Reset</button>
       </div>
     </form>
   </section>
   <section class="result-panel" aria-labelledby="eligibility-results-title" aria-live="polite" aria-atomic="true">
     <div class="eyebrow" style="color:#9ed5bf">Educational result</div>
-    <h2 id="eligibility-results-title">Your potential result</h2>
+    <h2 id="eligibility-results-title">Your account path</h2>
     <div id="account-result">
-      <h3>Initial account</h3>
-      <p><span class="status yes">Potentially eligible</span></p>
+      <h3>Account status</h3>
+      <p><span class="status no">{initial.accountPathTitle}</span></p>
+    </div>
+    <div id="funding-result">
+      <h3>Family or employer contributions</h3>
+      <p><span class="status no">Wait until the receiving account is claimed and activated</span></p>
     </div>
     <div id="pilot-result">
-      <h3>$1,000 pilot contribution</h3>
-      <p><span class="status yes">Potentially eligible</span></p>
+      <h3>$1,000 pilot election</h3>
+      <p><span class="status yes">{initial.pilotStatusTitle}</span></p>
     </div>
     <div id="eligibility-detail">
       <h3>Next steps</h3>
       <ul>{initial.requiredActions.map((action) => <li>{action}</li>)}</ul>
     </div>
-    <p><strong>Form:</strong> IRS Form 4547</p>
-    <p><strong>Rules checked:</strong> October 8, 2026</p>
+    <p><strong>Form 4547:</strong> {initial.formGuidance}</p>
+    <p><strong>Rules checked:</strong> October 8, 2026, including TD 10056.</p>
     <p><a href="https://www.irs.gov/trumpaccounts">Continue at the official IRS Trump Accounts page →</a></p>
   </section>
 </div>
 
 <script>
   import { checkEligibility } from '../lib/eligibility/checkEligibility';
-  import type { EligibilityInput, Relationship } from '../lib/eligibility/types';
+  import type { AccountStatus, ClaimAuthority, EligibilityInput, PilotElectionStatus } from '../lib/eligibility/types';
 
   const form = document.querySelector<HTMLFormElement>('#eligibility-form');
   const account = document.querySelector<HTMLElement>('#account-result');
+  const funding = document.querySelector<HTMLElement>('#funding-result');
   const pilot = document.querySelector<HTMLElement>('#pilot-result');
   const detail = document.querySelector<HTMLElement>('#eligibility-detail');
 
@@ -116,24 +125,24 @@ const initial = checkEligibility({
   }
 
   function render(): void {
-    if (!form || !account || !pilot || !detail) return;
+    if (!form || !account || !funding || !pilot || !detail) return;
     const data = new FormData(form);
     const input: EligibilityInput = {
-      applicationYear: Number(data.get('applicationYear')),
+      checkYear: Number(data.get('checkYear')),
       birthDate: String(data.get('birthDate') || ''),
-      hasValidSsn: boolValue(data, 'hasValidSsn'),
+      hasEmploymentValidSsn: boolValue(data, 'hasEmploymentValidSsn'),
       isUsCitizen: boolValue(data, 'isUsCitizen'),
-      priorAccountElection: boolValue(data, 'priorAccountElection'),
-      priorPilotElection: boolValue(data, 'priorPilotElection'),
-      qualifyingChildExpected: boolValue(data, 'qualifyingChildExpected'),
-      relationship: String(data.get('relationship')) as Relationship
+      accountStatus: String(data.get('accountStatus')) as AccountStatus,
+      claimAuthority: String(data.get('claimAuthority')) as ClaimAuthority,
+      pilotElectionStatus: String(data.get('pilotElectionStatus')) as PilotElectionStatus,
+      qualifyingChildExpected: boolValue(data, 'qualifyingChildExpected')
     };
     const result = checkEligibility(input);
-    const status = (yes: boolean) => `<span class="status ${yes ? 'yes' : 'no'}">${yes ? 'Potentially eligible' : 'Not eligible based on these answers'}</span>`;
     const list = (items: string[]) => items.length ? `<ul>${items.map((item) => `<li>${item}</li>`).join('')}</ul>` : '';
-    account.innerHTML = `<h3>Initial account</h3><p>${status(result.canOpenAccount)}</p>${list(result.accountReasons)}`;
-    pilot.innerHTML = `<h3>$1,000 pilot contribution</h3><p>${status(result.pilotContributionEligible)}</p>${list(result.pilotReasons)}`;
-    detail.innerHTML = `<h3>Next steps</h3>${list(result.requiredActions)}`;
+    account.innerHTML = `<h3>Account status</h3><p><span class="status ${result.accountPath === 'active' ? 'yes' : 'no'}">${result.accountPathTitle}</span></p>${list(result.accountReasons)}`;
+    funding.innerHTML = `<h3>Family or employer contributions</h3><p><span class="status ${result.canReceiveFamilyOrEmployerContributions ? 'yes' : 'no'}">${result.canReceiveFamilyOrEmployerContributions ? 'Receiving account appears activated; verify trustee instructions' : 'Wait until a receiving account is claimed and activated'}</span></p>`;
+    pilot.innerHTML = `<h3>$1,000 pilot election</h3><p><span class="status ${result.pilotStatus === 'potentially-eligible-to-elect' || result.pilotStatus === 'already-processed' ? 'yes' : 'no'}">${result.pilotStatusTitle}</span></p>${list(result.pilotReasons)}`;
+    detail.innerHTML = `<h3>Next steps</h3>${list(result.requiredActions)}<p><strong>Form 4547:</strong> ${result.formGuidance}</p>`;
   }
 
   form?.addEventListener('submit', (event) => { event.preventDefault(); render(); });
