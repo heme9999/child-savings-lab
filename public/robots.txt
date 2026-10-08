@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://child-savings-lab.pages.dev/sitemap-index.xml
+Sitemap: https://child-savings-lab-mvp.pages.dev/sitemap-index.xml
