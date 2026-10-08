@@ -78,6 +78,10 @@ for (const file of htmlFiles) {
   }
 }
 
+const homeHtml = readFileSync(routeFile('/'), 'utf8');
+const homeHead = homeHtml.match(/<head>(.*?)<\/head>/is)?.[1] ?? '';
+const googleVerification = [...homeHead.matchAll(/<meta name="google-site-verification" content="([^"]+)"/g)];
+if (googleVerification.length !== 1 || !googleVerification[0]?.[1]?.trim()) failures.push('Homepage must retain the Google Search Console ownership tag in its head');
 const eligibilityHtml = readFileSync(routeFile('/tools/trump-account-eligibility-checker/'), 'utf8');
 const growthHtml = readFileSync(routeFile('/tools/trump-account-growth-calculator/'), 'utf8');
 if (!eligibilityHtml.includes('Show next steps') || !eligibilityHtml.includes('Last verified')) failures.push('Status tool lacks rendered content or verification date');

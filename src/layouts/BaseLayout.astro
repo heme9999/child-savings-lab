@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import { siteContact } from '../data/site';
+import { siteContact, siteVerification } from '../data/site';
 
 interface Props {
   title: string;
@@ -31,6 +31,7 @@ const jsonLd = {
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
     <meta name="theme-color" content="#123a3a" />
+    {Astro.url.pathname === '/' && <meta name="google-site-verification" content={siteVerification.google} />}
     {noindex && <meta name="robots" content="noindex,nofollow" />}
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
