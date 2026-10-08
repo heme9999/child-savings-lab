@@ -1,0 +1,90 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  type?: 'website' | 'article';
+  verifiedAt?: string;
+  noindex?: boolean;
+}
+
+const { title, description, type = 'website', verifiedAt, noindex = false } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const fullTitle = title === 'Child Savings Lab' ? title : `${title} | Child Savings Lab`;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': type === 'article' ? 'Article' : 'WebSite',
+  name: title,
+  headline: title,
+  description,
+  url: canonical.toString(),
+  publisher: { '@type': 'Organization', name: 'Child Savings Lab', url: Astro.site?.toString() },
+  ...(verifiedAt ? { dateModified: verifiedAt } : {})
+};
+---
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#123a3a" />
+    {noindex && <meta name="robots" content="noindex,nofollow" />}
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content="Child Savings Lab" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <title>{fullTitle}</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <header class="site-header">
+      <div class="shell header-inner">
+        <a class="brand" href="/" aria-label="Child Savings Lab home">
+          <span class="brand-mark" aria-hidden="true">CS</span>
+          <span>Child Savings Lab</span>
+        </a>
+        <nav aria-label="Primary navigation">
+          <a href="/trump-accounts/">Trump Accounts</a>
+          <a href="/tools/trump-account-eligibility-checker/">Eligibility</a>
+          <a href="/tools/trump-account-growth-calculator/">Growth</a>
+          <a href="/tools/child-savings-account-comparison/">Compare</a>
+          <a href="/sources/">Sources</a>
+        </nav>
+      </div>
+    </header>
+    <main id="main-content">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div class="shell footer-grid">
+        <div>
+          <a class="brand footer-brand" href="/"><span class="brand-mark" aria-hidden="true">CS</span><span>Child Savings Lab</span></a>
+          <p>Independent tools for understanding children’s savings accounts. Not a government website, tax adviser, or investment adviser.</p>
+        </div>
+        <div>
+          <h2>Trust</h2>
+          <a href="/methodology/">Methodology</a>
+          <a href="/editorial-policy/">Editorial policy</a>
+          <a href="/affiliate-disclosure/">Affiliate disclosure</a>
+          <a href="/privacy/">Privacy</a>
+        </div>
+        <div>
+          <h2>Company</h2>
+          <a href="/about/">About</a>
+          <a href="/contact/">Contact</a>
+          <a href="/terms/">Terms</a>
+        </div>
+      </div>
+      <div class="shell footer-bottom">Last site-wide source review: October 8, 2026 · Educational information only.</div>
+    </footer>
+  </body>
+</html>

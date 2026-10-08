@@ -1,0 +1,15 @@
+---
+import { sourceById } from '../data/sources';
+import type { SourceRecord } from '../data/sources';
+interface Props { ids: string[]; compact?: boolean; }
+const { ids, compact = false } = Astro.props;
+const records = ids.map((id) => sourceById[id]).filter((source): source is SourceRecord => Boolean(source));
+---
+<aside class:list={['source-box', { compact }]} aria-label="Sources">
+  <div class="source-kicker">Primary sources</div>
+  <ul>
+    {records.map((source) => (
+      <li><a href={source.url} rel="external">{source.publisher}: {source.title}</a> <span class="source-status">{source.status}</span></li>
+    ))}
+  </ul>
+</aside>

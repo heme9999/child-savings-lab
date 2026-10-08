@@ -1,0 +1,81 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import VerifiedBadge from '../components/VerifiedBadge.astro';
+---
+<BaseLayout title="Child Savings Lab" description="Independent calculators and source-linked guides for Trump Accounts, 529 plans, custodial accounts, and the wider children’s savings market.">
+  <section class="hero">
+    <div class="shell hero-grid">
+      <div>
+        <div class="eyebrow">Family finance, made checkable</div>
+        <h1>Build a clearer plan for a child’s financial future.</h1>
+        <p class="lede">Independent calculators and plain-English guides for Trump Accounts, 529 plans, custodial accounts, and the choices that come next.</p>
+        <div class="hero-actions">
+          <a class="button" href="/tools/trump-account-eligibility-checker/">Check Trump Account eligibility</a>
+          <a class="button secondary" href="/tools/child-savings-account-comparison/">Compare account types</a>
+        </div>
+        <VerifiedBadge />
+      </div>
+      <aside class="hero-note" aria-label="Important distinction">
+        <strong>2 questions,<br />not 1</strong>
+        <p>A child may be eligible for an account without qualifying for the one-time $1,000 pilot contribution. Our checker evaluates each separately.</p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section tint">
+    <div class="shell">
+      <div class="section-heading">
+        <div class="eyebrow">Start with a decision</div>
+        <h2>Useful tools before another general explainer</h2>
+        <p>Each tool turns current rules into a specific next step while keeping personal information on your device.</p>
+      </div>
+      <div class="card-grid">
+        <article class="card">
+          <div class="number">01</div>
+          <h3>Eligibility checker</h3>
+          <p>Separate initial account eligibility from the federal pilot contribution, with reasons and official filing links.</p>
+          <a class="stretched" href="/tools/trump-account-eligibility-checker/">Check eligibility →</a>
+        </article>
+        <article class="card">
+          <div class="number">02</div>
+          <h3>Growth calculator</h3>
+          <p>Model family and employer contributions, fees, multiple returns, and the shift after the growth period.</p>
+          <a class="stretched" href="/tools/trump-account-growth-calculator/">Model a balance →</a>
+        </article>
+        <article class="card">
+          <div class="number">03</div>
+          <h3>Account comparison</h3>
+          <p>Compare Trump Accounts, 529 plans, UGMA/UTMA, Custodial Roth IRAs, and ABLE accounts by purpose.</p>
+          <a class="stretched" href="/tools/child-savings-account-comparison/">Compare options →</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="shell hero-grid">
+      <div>
+        <div class="eyebrow">First topic cluster</div>
+        <h2>Trump Accounts, inside a broader child-savings platform</h2>
+        <p class="lede">The policy name is a starting point, not the brand. Child Savings Lab is designed to expand across education savings, custodial investing, disability savings, retirement pathways, and employer benefits.</p>
+      </div>
+      <ul class="link-list">
+        <li><a href="/trump-accounts/">Trump Accounts core guide</a></li>
+        <li><a href="/forms/form-4547-guide/">Form 4547 step-by-step</a></li>
+        <li><a href="/compare/trump-account-vs-529/">Trump Account vs. 529</a></li>
+        <li><a href="/contributions/trump-account-contribution-limits/">Contribution limits</a></li>
+        <li><a href="/employers/trump-account-benefit-guide/">Employer benefit guide</a></li>
+        <li><a href="/sources/">Source library</a></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section tint">
+    <div class="narrow">
+      <div class="eyebrow">Editorial promise</div>
+      <h2>Rules have dates. Sources have status.</h2>
+      <p>Important claims link to the IRS, Treasury, Department of Labor, or other primary government material. Proposed rules are labeled as proposed. We do not invent professional reviewers, rank providers by commission, or collect sensitive child and tax information.</p>
+      <a class="button secondary" href="/methodology/">Read the methodology</a>
+    </div>
+  </section>
+</BaseLayout>

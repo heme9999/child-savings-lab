@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import VerifiedBadge from '../../components/VerifiedBadge.astro';
+import { sources } from '../../data/sources';
+---
+<BaseLayout title="Primary source library" description="The official IRS, Treasury, Department of Labor, and other government sources used by Child Savings Lab, with status and verification dates." verifiedAt="2026-10-08">
+  <div class="shell"><Breadcrumbs items={[{label:'Home',href:'/'},{label:'Sources'}]} /></div>
+  <header class="page-hero shell">
+    <div class="eyebrow">Evidence register</div>
+    <h1>Primary source library</h1>
+    <p class="lede">Every material rule used by our first Trump Accounts tools maps to a source record with publication, status, effective, and verification dates.</p>
+    <VerifiedBadge />
+  </header>
+  <section class="section shell" style="padding-top:0">
+    <div class="card-grid">
+      {sources.map((source) => (
+        <article class="card">
+          <div class="eyebrow">{source.status}</div>
+          <h2 style="font-size:1.4rem">{source.title}</h2>
+          <p><strong>{source.publisher}</strong></p>
+          <p>{source.note}</p>
+          <p><small>Published: {source.publishedAt} · Effective: {source.effectiveFrom} · Verified: {source.verifiedAt}</small></p>
+          <a href={source.url} rel="external">Open official source →</a>
+        </article>
+      ))}
+    </div>
+    <div class="callout"><strong>Status matters:</strong> “proposed rule” is not treated as final law. Pages relying on proposed details display that limitation.</div>
+  </section>
+</BaseLayout>

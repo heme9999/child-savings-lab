@@ -1,0 +1,27 @@
+{
+  "name": "child-savings-lab",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "validate:site": "node scripts/validate-site.mjs",
+    "validate:a11y": "html-validate \"dist/**/*.html\"",
+    "verify": "npm run check && npm run test && npm run build && npm run validate:site && npm run validate:a11y"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "3.7.4",
+    "astro": "7.3.7"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "html-validate": "11.16.2",
+    "typescript": "6.0.3",
+    "vitest": "5.0.3"
+  }
+}

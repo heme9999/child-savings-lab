@@ -1,0 +1,148 @@
+---
+import { projectGrowth, projectScenarios } from '../lib/calculators/growth';
+const exampleInput = {
+  initialAmount: 0,
+  includePilot: true,
+  familyContribution: 100,
+  familyFrequency: 'monthly' as const,
+  annualEmployerContribution: 0,
+  annualReturnRate: 6,
+  annualFeeRate: 0.15,
+  currentAge: 0,
+  targetAge: 18
+};
+const example = projectGrowth(exampleInput);
+const examples = projectScenarios(exampleInput);
+const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value);
+---
+<div class="tool-layout" data-growth-calculator>
+  <section class="tool-panel" aria-labelledby="growth-form-title">
+    <div class="eyebrow">Assumption builder</div>
+    <h2 id="growth-form-title">Model a contribution plan</h2>
+    <p>Contributions are modeled through age 18. If the target age is later, the balance continues to grow with no new child-period contributions.</p>
+    <form id="growth-form" novalidate>
+      <div class="form-grid">
+        <div class="field">
+          <label for="initial-amount">Existing starting amount</label>
+          <input id="initial-amount" name="initialAmount" type="number" min="0" step="50" value="0" inputmode="decimal" />
+        </div>
+        <fieldset class="field">
+          <legend>Include the $1,000 pilot amount?</legend>
+          <div class="radio-row">
+            <label class="radio-option"><input type="radio" name="includePilot" value="true" checked /> Yes</label>
+            <label class="radio-option"><input type="radio" name="includePilot" value="false" /> No</label>
+          </div>
+        </fieldset>
+        <div class="field">
+          <label for="family-contribution">Family contribution</label>
+          <input id="family-contribution" name="familyContribution" type="number" min="0" step="10" value="100" inputmode="decimal" />
+        </div>
+        <div class="field">
+          <label for="family-frequency">Contribution frequency</label>
+          <select id="family-frequency" name="familyFrequency">
+            <option value="monthly" selected>Every month</option>
+            <option value="annual">Once a year</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="employer-contribution">Annual employer contribution</label>
+          <input id="employer-contribution" name="annualEmployerContribution" type="number" min="0" max="2500" step="50" value="0" inputmode="decimal" aria-describedby="employer-help" />
+          <small id="employer-help">Current Section 128 limit: $2,500 per employee.</small>
+        </div>
+        <div class="field">
+          <label for="return-rate">Assumed annual return</label>
+          <input id="return-rate" name="annualReturnRate" type="number" min="-99" max="20" step="0.25" value="6" inputmode="decimal" />
+        </div>
+        <div class="field">
+          <label for="fee-rate">Annual fee rate</label>
+          <input id="fee-rate" name="annualFeeRate" type="number" min="0" max="5" step="0.05" value="0.15" inputmode="decimal" />
+        </div>
+        <div class="field">
+          <label for="current-age">Child’s current age</label>
+          <input id="current-age" name="currentAge" type="number" min="0" max="17" step="1" value="0" inputmode="numeric" />
+        </div>
+        <div class="field">
+          <label for="target-age">Target age</label>
+          <input id="target-age" name="targetAge" type="number" min="1" max="65" step="1" value="18" inputmode="numeric" />
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="button" type="submit">Update projection</button>
+        <button class="button secondary" type="button" id="print-report">Print report</button>
+      </div>
+    </form>
+    <div class="privacy-note"><span aria-hidden="true">◉</span><span>This projection runs locally in your browser. It is an illustration, not a forecast, tax estimate, or investment recommendation.</span></div>
+  </section>
+  <section class="result-panel" aria-labelledby="growth-results-title" aria-live="polite" aria-atomic="true">
+    <div class="eyebrow" style="color:#9ed5bf">Illustrative projection</div>
+    <h2 id="growth-results-title">At age <span id="result-age">18</span></h2>
+    <div id="growth-errors"></div>
+    <div id="growth-output">
+      <div class="metric-grid">
+        <div class="metric"><span>Hypothetical balance</span><strong id="ending-balance">{usd(example.endingBalance)}</strong></div>
+        <div class="metric"><span>Total contributed</span><strong id="total-contributed">{usd(example.totalContributed)}</strong></div>
+        <div class="metric"><span>Hypothetical growth</span><strong id="investment-growth">{usd(example.investmentGrowth)}</strong></div>
+        <div class="metric"><span>Estimated fee impact</span><strong id="fee-impact">{usd(example.feeImpact)}</strong></div>
+      </div>
+      <h3>Return scenarios</h3>
+      <table class="scenario-table">
+        <thead><tr><th scope="col">Annual return</th><th scope="col">Balance</th></tr></thead>
+        <tbody id="scenario-rows">{examples.map(({ rate, projection }) => <tr><td>{rate.toFixed(1)}%</td><td>{usd(projection.endingBalance)}</td></tr>)}</tbody>
+      </table>
+      <p id="contribution-note">Contributions modeled for {example.contributionYears} years. Returns are not guaranteed. Taxes and withdrawals are not modeled, so this is not spendable after-tax cash.</p>
+    </div>
+  </section>
+</div>
+
+<script>
+  import { projectGrowth, projectScenarios, validateGrowthInput } from '../lib/calculators/growth';
+  import type { ContributionFrequency, GrowthInput } from '../lib/calculators/growth';
+
+  const form = document.querySelector<HTMLFormElement>('#growth-form');
+  const errors = document.querySelector<HTMLElement>('#growth-errors');
+  const output = document.querySelector<HTMLElement>('#growth-output');
+  const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  const setText = (selector: string, value: string) => { const el = document.querySelector<HTMLElement>(selector); if (el) el.textContent = value; };
+
+  function inputFromForm(): GrowthInput | null {
+    if (!form) return null;
+    const data = new FormData(form);
+    return {
+      initialAmount: Number(data.get('initialAmount')),
+      includePilot: data.get('includePilot') === 'true',
+      familyContribution: Number(data.get('familyContribution')),
+      familyFrequency: String(data.get('familyFrequency')) as ContributionFrequency,
+      annualEmployerContribution: Number(data.get('annualEmployerContribution')),
+      annualReturnRate: Number(data.get('annualReturnRate')),
+      annualFeeRate: Number(data.get('annualFeeRate')),
+      currentAge: Number(data.get('currentAge')),
+      targetAge: Number(data.get('targetAge'))
+    };
+  }
+
+  function render(): void {
+    const input = inputFromForm();
+    if (!input || !errors || !output) return;
+    const messages = validateGrowthInput(input);
+    if (messages.length) {
+      errors.innerHTML = `<div role="alert"><h3>Check these inputs</h3><ul class="error-list">${messages.map((message) => `<li>${message}</li>`).join('')}</ul></div>`;
+      output.hidden = true;
+      return;
+    }
+    errors.innerHTML = '';
+    output.hidden = false;
+    const result = projectGrowth(input);
+    const scenarios = projectScenarios(input);
+    setText('#result-age', String(input.targetAge));
+    setText('#ending-balance', usd.format(result.endingBalance));
+    setText('#total-contributed', usd.format(result.totalContributed));
+    setText('#investment-growth', usd.format(result.investmentGrowth));
+    setText('#fee-impact', usd.format(result.feeImpact));
+    setText('#contribution-note', `Contributions modeled for ${result.contributionYears} years. Returns are not guaranteed. Taxes and withdrawals are not modeled, so this is not spendable after-tax cash.`);
+    const rows = document.querySelector<HTMLElement>('#scenario-rows');
+    if (rows) rows.innerHTML = scenarios.map(({ rate, projection }) => `<tr><td>${rate.toFixed(1)}%</td><td>${usd.format(projection.endingBalance)}</td></tr>`).join('');
+  }
+
+  form?.addEventListener('submit', (event) => { event.preventDefault(); render(); });
+  document.querySelector('#print-report')?.addEventListener('click', () => { render(); window.print(); });
+</script>

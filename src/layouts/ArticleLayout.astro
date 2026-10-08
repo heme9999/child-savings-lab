@@ -1,0 +1,41 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import VerifiedBadge from '../components/VerifiedBadge.astro';
+import SourceLinks from '../components/SourceLinks.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  eyebrow?: string;
+  sourceIds?: string[];
+  verifiedAt?: string;
+  effective?: string;
+}
+
+const {
+  title,
+  description,
+  eyebrow = 'Independent family finance guide',
+  sourceIds = [],
+  verifiedAt = 'October 8, 2026',
+  effective = '2026 rules'
+} = Astro.props;
+---
+<BaseLayout title={title} description={description} type="article" verifiedAt="2026-10-08">
+  <div class="shell">
+    <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: title }]} />
+  </div>
+  <article class="article">
+    <header class="page-hero shell">
+      <div class="eyebrow">{eyebrow}</div>
+      <h1>{title}</h1>
+      <p class="lede">{description}</p>
+      <VerifiedBadge date={verifiedAt} effective={effective} />
+    </header>
+    <div class="article-body shell">
+      <slot />
+      {sourceIds.length > 0 && <SourceLinks ids={sourceIds} />}
+    </div>
+  </article>
+</BaseLayout>

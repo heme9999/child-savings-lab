@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import GrowthCalculator from '../../../components/GrowthCalculator.astro';
+import SourceLinks from '../../../components/SourceLinks.astro';
+import VerifiedBadge from '../../../components/VerifiedBadge.astro';
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Trump Account Growth Calculator',
+  applicationCategory: 'FinanceApplication',
+  operatingSystem: 'Any web browser',
+  isAccessibleForFree: true,
+  description: 'Illustrates Trump Account contributions, hypothetical returns, fee impact, and balances across multiple scenarios.'
+};
+---
+<BaseLayout title="Trump Account Growth Calculator" description="Model family and employer contributions, the $1,000 pilot amount, fees, and multiple hypothetical return scenarios." verifiedAt="2026-10-08">
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  <div class="shell"><Breadcrumbs items={[{label:'Home',href:'/'},{label:'Tools',href:'/tools/child-savings-account-comparison/'},{label:'Growth calculator'}]} /></div>
+  <header class="page-hero shell">
+    <div class="eyebrow">Trump Account tool</div>
+    <h1>Trump Account growth calculator</h1>
+    <p class="lede">See how contributions, assumed returns, and fees could interact over time—without mistaking an illustration for a forecast.</p>
+    <VerifiedBadge />
+  </header>
+  <div class="shell"><GrowthCalculator /></div>
+  <section class="section tint">
+    <div class="article-body shell">
+      <h2>Calculation method</h2>
+      <p>The model applies a monthly equivalent of the selected annual return, subtracts one-twelfth of the annual fee rate each month, deposits monthly family contributions at month-end, and deposits annual family and employer contributions at year-end. Contributions stop after the growth period; returns may continue to the selected target age.</p>
+      <p>The “fee impact” compares the same cash flows at the selected return with and without the fee. Taxes, inflation, investment tracking error, market sequence, and withdrawals are not modeled.</p>
+      <SourceLinks ids={['IRS-FORM-4547-INSTRUCTIONS','IRS-REV-PROC-2026-25']} />
+    </div>
+  </section>
+</BaseLayout>

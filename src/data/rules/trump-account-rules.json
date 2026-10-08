@@ -1,0 +1,61 @@
+{
+  "version": "2026-10-08",
+  "rules": [
+    {
+      "ruleId": "account-age-at-election-year-end",
+      "effectiveFrom": "2026-01-01",
+      "effectiveTo": null,
+      "value": { "maximumAgeExclusive": 18, "measuredAt": "election-year-end" },
+      "sourceId": "IRS-FORM-4547-INSTRUCTIONS",
+      "verifiedAt": "2026-10-08"
+    },
+    {
+      "ruleId": "account-valid-ssn",
+      "effectiveFrom": "2026-01-01",
+      "effectiveTo": null,
+      "value": { "required": true, "issuedBeforeElection": true, "validForEmployment": true },
+      "sourceId": "IRS-FORM-4547-INSTRUCTIONS",
+      "verifiedAt": "2026-10-08"
+    },
+    {
+      "ruleId": "pilot-birth-window",
+      "effectiveFrom": "2026-01-01",
+      "effectiveTo": null,
+      "value": { "birthDateStart": "2025-01-01", "birthDateEnd": "2028-12-31" },
+      "sourceId": "IRS-FORM-4547-INSTRUCTIONS",
+      "verifiedAt": "2026-10-08"
+    },
+    {
+      "ruleId": "pilot-citizenship",
+      "effectiveFrom": "2026-01-01",
+      "effectiveTo": null,
+      "value": { "usCitizenRequired": true },
+      "sourceId": "IRS-FORM-4547-INSTRUCTIONS",
+      "verifiedAt": "2026-10-08"
+    },
+    {
+      "ruleId": "pilot-amount",
+      "effectiveFrom": "2026-07-04",
+      "effectiveTo": null,
+      "value": { "amountUsd": 1000, "oneTime": true },
+      "sourceId": "IRS-FORM-4547-INSTRUCTIONS",
+      "verifiedAt": "2026-10-08"
+    },
+    {
+      "ruleId": "annual-contribution-limit",
+      "effectiveFrom": "2026-07-04",
+      "effectiveTo": "2027-12-31",
+      "value": { "amountUsd": 5000, "includesEmployer": true },
+      "sourceId": "IRS-FORM-4547-INSTRUCTIONS",
+      "verifiedAt": "2026-10-08"
+    },
+    {
+      "ruleId": "employer-contribution-limit",
+      "effectiveFrom": "2026-07-04",
+      "effectiveTo": "2027-12-31",
+      "value": { "amountUsd": 2500, "perEmployee": true },
+      "sourceId": "IRS-FORM-4547-INSTRUCTIONS",
+      "verifiedAt": "2026-10-08"
+    }
+  ]
+}
