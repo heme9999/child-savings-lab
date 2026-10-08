@@ -15,6 +15,8 @@ export function checkEligibility(input: EligibilityInput): EligibilityResult {
   const accountReasons: string[] = [];
   const pilotReasons: string[] = [];
   const requiredActions: string[] = [];
+  let birthDateInPilotWindow = false;
+  let bornByElectionYearEnd = false;
 
   if (!Number.isInteger(input.applicationYear) || input.applicationYear < 2026 || input.applicationYear > 2100) {
     accountReasons.push('Choose an election year from 2026 through 2100.');
@@ -25,17 +27,30 @@ export function checkEligibility(input: EligibilityInput): EligibilityResult {
   } else if (Number.isInteger(input.applicationYear)) {
     const birthDate = new Date(`${input.birthDate}T00:00:00Z`);
     const yearEnd = new Date(`${input.applicationYear}-12-31T23:59:59Z`);
-    let age = yearEnd.getUTCFullYear() - birthDate.getUTCFullYear();
-    const hadBirthday =
-      yearEnd.getUTCMonth() > birthDate.getUTCMonth() ||
-      (yearEnd.getUTCMonth() === birthDate.getUTCMonth() && yearEnd.getUTCDate() >= birthDate.getUTCDate());
-    if (!hadBirthday) age -= 1;
-    if (age >= 18) accountReasons.push('The child must be under age 18 at the end of the election year.');
+    bornByElectionYearEnd = birthDate <= yearEnd;
+    birthDateInPilotWindow = input.birthDate >= PILOT_START && input.birthDate <= PILOT_END;
+    if (!bornByElectionYearEnd) {
+      accountReasons.push('The child must be born by the end of the election year.');
+    } else {
+      let age = yearEnd.getUTCFullYear() - birthDate.getUTCFullYear();
+      const hadBirthday =
+        yearEnd.getUTCMonth() > birthDate.getUTCMonth() ||
+        (yearEnd.getUTCMonth() === birthDate.getUTCMonth() && yearEnd.getUTCDate() >= birthDate.getUTCDate());
+      if (!hadBirthday) age -= 1;
+      if (age >= 18) accountReasons.push('The child must be under age 18 at the end of the election year.');
+    }
   }
 
   if (!input.hasValidSsn) accountReasons.push('A valid Social Security number issued before the election is required.');
   if (input.priorAccountElection) accountReasons.push('An initial Trump Account election has already been filed for this child.');
-  if (!authorizedRelationships.has(input.relationship)) {
+  const qualifyingChildPilotPath =
+    birthDateInPilotWindow &&
+    bornByElectionYearEnd &&
+    input.hasValidSsn &&
+    input.isUsCitizen &&
+    !input.priorPilotElection &&
+    input.qualifyingChildExpected;
+  if (!authorizedRelationships.has(input.relationship) && !qualifyingChildPilotPath) {
     accountReasons.push('This relationship is not listed by the IRS as an authorized individual for an account-only election.');
   }
 
@@ -49,7 +64,7 @@ export function checkEligibility(input: EligibilityInput): EligibilityResult {
   const canOpenAccount = accountReasons.length === 0;
 
   if (!canOpenAccount) pilotReasons.push('The child must first meet the requirements for an initial account election.');
-  if (isValidIsoDate(input.birthDate) && (input.birthDate < PILOT_START || input.birthDate > PILOT_END)) {
+  if (isValidIsoDate(input.birthDate) && !birthDateInPilotWindow) {
     pilotReasons.push('The birth date is outside the January 1, 2025 through December 31, 2028 pilot window.');
   }
   if (!input.isUsCitizen) pilotReasons.push('The $1,000 pilot contribution requires U.S. citizenship.');

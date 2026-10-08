@@ -29,7 +29,7 @@ Monthly compounding uses the monthly equivalent of the annual return minus one-t
 The October 8, 2026 verification run passed:
 
 - Astro type check: 34 files, zero errors or warnings.
-- Unit tests: 26 tests across eligibility and growth logic.
+- Unit tests: 28 tests across eligibility and growth logic.
 - Production build: 17 static routes.
 - Site validation: all required routes, titles, descriptions, canonicals, JSON-LD, Open Graph fields, internal links, tool copy, robots.txt, and sitemap checks passed.
 - Static accessibility validation: passed across generated HTML.
@@ -50,3 +50,8 @@ Obtain U.S. counsel review of terms, privacy, disclaimers, brand clearance, and 
 ## 10. Phase two
 
 Add 529/UGMA/UTMA/Custodial Roth/ABLE deep comparisons, grandparent contribution guidance, a contribution-limit tool, dated update notes, privacy-friendly analytics, Search Console, and an opt-in rule-update email after privacy and legal review.
+
+## Test deployment
+
+- GitHub source: `https://github.com/heme9999/child-savings-lab` (private)
+- Cloudflare Pages: `https://child-savings-lab-mvp.pages.dev/`

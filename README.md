@@ -2,6 +2,8 @@
 
 Independent, source-linked tools for U.S. families comparing children’s savings accounts. Trump Accounts are the first SEO and product cluster; the brand and architecture extend to 529 plans, UGMA/UTMA, Custodial Roth IRAs, ABLE accounts, and employer benefits.
 
+Test deployment: <https://child-savings-lab-mvp.pages.dev/>
+
 ## Commands
 
 ```bash

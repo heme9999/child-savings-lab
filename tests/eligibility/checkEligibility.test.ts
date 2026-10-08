@@ -68,6 +68,12 @@ describe('checkEligibility', () => {
     expect(checkEligibility({ ...valid, birthDate: '2029-01-01', applicationYear: 2029 }).pilotContributionEligible).toBe(false);
   });
 
+  it('rejects a birth date after the election year', () => {
+    const result = checkEligibility({ ...valid, birthDate: '2028-01-01', applicationYear: 2026 });
+    expect(result.canOpenAccount).toBe(false);
+    expect(result.accountReasons.join(' ')).toContain('born by the end');
+  });
+
   it('reports missing or invalid inputs', () => {
     const result = checkEligibility({ ...valid, birthDate: '', applicationYear: 0 });
     expect(result.canOpenAccount).toBe(false);
@@ -80,7 +86,11 @@ describe('checkEligibility', () => {
     expect(result.requiredActions.join(' ')).toContain('legal guardian, parent, or adult sibling');
   });
 
-  it('rejects an unlisted relationship for an account-only election', () => {
-    expect(checkEligibility({ ...valid, relationship: 'other' }).canOpenAccount).toBe(false);
+  it('allows the qualifying-child path when both account and pilot elections can be made', () => {
+    expect(checkEligibility({ ...valid, relationship: 'other' }).canOpenAccount).toBe(true);
+  });
+
+  it('rejects an unlisted relationship when only an account election is available', () => {
+    expect(checkEligibility({ ...valid, relationship: 'other', birthDate: '2015-06-01' }).canOpenAccount).toBe(false);
   });
 });
