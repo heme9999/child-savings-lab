@@ -54,7 +54,8 @@ for (const file of htmlFiles) {
   if (!title) failures.push(`${name}: missing title`);
   if (!description || description.length < 70) failures.push(`${name}: missing or short meta description`);
   if (!canonical?.startsWith('http')) failures.push(`${name}: missing absolute canonical`);
-  if (!html.includes('<meta name="robots" content="noindex,nofollow"')) failures.push(`${name}: public test page must be noindex`);
+  if (/<meta[^>]+name="robots"[^>]+content="[^"]*noindex/i.test(html)) failures.push(`${name}: public launch page must allow indexing`);
+  if (html.includes('Public test environment:') || html.includes('Pre-production status:') || html.includes('Draft test terms:')) failures.push(`${name}: obsolete pre-launch notice`);
   if (!html.includes('application/ld+json')) failures.push(`${name}: missing JSON-LD`);
   if (!html.includes('og:title') || !html.includes('og:description')) failures.push(`${name}: missing Open Graph metadata`);
   if (h1Matches.length !== 1) failures.push(`${name}: expected one H1, found ${h1Matches.length}`);
@@ -83,9 +84,21 @@ if (!eligibilityHtml.includes('Show next steps') || !eligibilityHtml.includes('L
 if (!growthHtml.includes('Update projection') || !growthHtml.includes('Returns are not guaranteed')) failures.push('Growth tool lacks indexable content or limitation language');
 if (!existsSync(join(root, 'robots.txt'))) failures.push('Missing robots.txt');
 if (!existsSync(join(root, 'sitemap-index.xml'))) failures.push('Missing sitemap-index.xml');
-if (!existsSync(join(root, '_headers'))) failures.push('Missing Cloudflare noindex headers');
-if (!readFileSync(join(root, 'robots.txt'), 'utf8').includes('Disallow: /')) failures.push('Public test robots.txt must block crawling');
-if (!readFileSync(join(root, '_headers'), 'utf8').includes('X-Robots-Tag: noindex, nofollow')) failures.push('Public test headers must send X-Robots-Tag');
+if (!existsSync(join(root, '_headers'))) failures.push('Missing Cloudflare headers');
+const robots = readFileSync(join(root, 'robots.txt'), 'utf8');
+if (/^Disallow:\s*\//m.test(robots)) failures.push('Public launch robots.txt must allow crawling');
+if (!robots.includes('Sitemap: https://child-savings-lab-mvp.pages.dev/sitemap-index.xml')) failures.push('robots.txt must advertise the public sitemap');
+const headers = readFileSync(join(root, '_headers'), 'utf8');
+const globalHeaders = headers.split(/\n\s*\n/)[0];
+if (/X-Robots-Tag:.*noindex/i.test(globalHeaders)) failures.push('Global headers must allow production indexing');
+if (!headers.includes('https://:preview.child-savings-lab-mvp.pages.dev/*\n  X-Robots-Tag: noindex, nofollow')) failures.push('Preview URLs must remain noindex');
+if (!globalHeaders.includes("form-action 'none'")) failures.push('Calculator network form submissions must be blocked');
+for (const [name, html] of [['eligibility', eligibilityHtml], ['growth', growthHtml]]) {
+  if (!/<button[^>]+type="submit"[^>]+disabled/.test(html) || !html.includes('<noscript>')) failures.push(`${name}: local calculator must remain safe without JavaScript`);
+}
+for (const route of ['/contact/', '/privacy/', '/terms/', '/about/']) {
+  if (!readFileSync(routeFile(route), 'utf8').includes('mailto:mayday0064@gmail.com')) failures.push(`${route}: missing publisher contact`);
+}
 
 if (failures.length) {
   console.error(`Site validation failed with ${failures.length} issue(s):\n- ${failures.join('\n- ')}`);

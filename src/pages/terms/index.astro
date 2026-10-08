@@ -1,8 +1,10 @@
 ---
 import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import { siteContact } from '../../data/site';
 ---
-<ArticleLayout title="Terms of use" description="The educational scope, limitations, acceptable use, intellectual-property rules, and pre-production status of Child Savings Lab." effective="Public test terms as of October 8, 2026">
-  <div class="callout"><strong>Draft test terms:</strong> the final operating entity, governing law, venue, dispute procedure, physical address, and legal contact have not been selected. These terms require U.S. counsel review before production launch.</div>
+<ArticleLayout title="Terms of use" description="The educational scope, calculator limitations, acceptable use, intellectual-property rules, and contact details for the independently operated Child Savings Lab." effective="Effective October 8, 2026">
+  <h2>Publisher and audience</h2>
+  <p>Child Savings Lab is published and maintained by an individual independent operator for adults researching children’s savings and family-finance topics. Questions about these terms may be sent to <a href={siteContact.emailHref}>{siteContact.email}</a>.</p>
   <h2>Independent educational service</h2>
   <p>Child Savings Lab is an independent informational project. It is not a government website, financial institution, account trustee, broker, investment adviser, tax-return preparer, accounting firm, law firm, payroll provider, benefits administrator, or ERISA fiduciary.</p>
   <h2>No individualized advice or professional relationship</h2>
@@ -19,8 +21,10 @@ import ArticleLayout from '../../layouts/ArticleLayout.astro';
   <p>Unless otherwise identified, original site text, presentation, code, and branding are protected by applicable intellectual-property laws. Government publications and third-party materials remain subject to their own terms. No permission is granted to use government names or third-party marks as an endorsement.</p>
   <h2>Third-party links</h2>
   <p>Links to government agencies and other sites are provided for convenience and sourcing. Child Savings Lab does not control their content, availability, security, or privacy practices, and a link does not imply endorsement or partnership.</p>
-  <h2>Disclaimers and limitation of liability</h2>
-  <p>To the maximum extent permitted by applicable law, the test site is provided “as is” and “as available,” without warranties of accuracy, completeness, fitness for a particular purpose, noninfringement, or uninterrupted availability. The final production terms must receive counsel review before stating an operator-specific limitation of liability.</p>
+  <h2>Availability and applicable rights</h2>
+  <p>To the extent permitted by applicable law, the site is provided “as is” and “as available,” without warranties of accuracy, completeness, fitness for a particular purpose, noninfringement, or uninterrupted availability. Nothing in these terms limits rights or remedies that applicable law does not allow to be waived.</p>
+  <h2>Privacy</h2>
+  <p>The <a href="/privacy/">privacy policy</a> explains browser-only calculator processing, hosting information, and email correspondence. The site does not provide user accounts, paid advice, or a document-submission service.</p>
   <h2>Changes and contact</h2>
-  <p>Material changes should be dated. Before production launch, this page must identify the operating entity, monitored legal contact, governing law, venue, and any dispute terms. Do not send a child’s name, SSN, birth date, address, tax information, or account number to this project.</p>
+  <p>We will date material updates to these terms. Contact the independent publisher at <a href={siteContact.emailHref}>{siteContact.email}</a> for questions or concerns. Do not send a child’s name, SSN, birth date, address, tax information, or account number.</p>
 </ArticleLayout>

@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { siteContact } from '../data/site';
 
 interface Props {
   title: string;
@@ -9,8 +10,7 @@ interface Props {
   noindex?: boolean;
 }
 
-const productionReady = import.meta.env.PUBLIC_PRODUCTION_READY === 'true';
-const { title, description, type = 'website', verifiedAt, noindex = !productionReady } = Astro.props;
+const { title, description, type = 'website', verifiedAt, noindex = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const fullTitle = title === 'Child Savings Lab' ? title : `${title} | Child Savings Lab`;
 const jsonLd = {
@@ -62,11 +62,6 @@ const jsonLd = {
         </nav>
       </div>
     </header>
-    {!productionReady && (
-      <div class="site-notice" role="status">
-        <div class="shell"><strong>Public test environment:</strong> content is being updated for September 30, 2026 temporary regulations and is not approved for production use or search indexing.</div>
-      </div>
-    )}
     <main id="main-content">
       <slot />
     </main>
@@ -74,7 +69,7 @@ const jsonLd = {
       <div class="shell footer-grid">
         <div>
           <a class="brand footer-brand" href="/"><span class="brand-mark" aria-hidden="true">CS</span><span>Child Savings Lab</span></a>
-          <p>Independent tools for understanding children’s savings accounts. Not a government website, tax adviser, or investment adviser.</p>
+          <p>An individually operated educational publication for adults researching children’s savings. Not a government website, tax adviser, or investment adviser.</p>
         </div>
         <div>
           <h2>Trust</h2>
@@ -84,10 +79,11 @@ const jsonLd = {
           <a href="/privacy/">Privacy</a>
         </div>
         <div>
-          <h2>Company</h2>
+          <h2>About this site</h2>
           <a href="/about/">About</a>
           <a href="/contact/">Contact</a>
           <a href="/terms/">Terms</a>
+          <a href={siteContact.emailHref}>{siteContact.email}</a>
         </div>
       </div>
       <div class="shell footer-bottom">Last site-wide source review: October 8, 2026, including TD 10056 · Educational information only.</div>

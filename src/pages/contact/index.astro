@@ -1,15 +1,19 @@
 ---
 import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import { siteContact } from '../../data/site';
 ---
 <ArticleLayout title="Contact" description="How to report a factual issue, source update, calculation concern, accessibility problem, or general question about Child Savings Lab.">
-  <h2>Report an issue</h2>
-  <p>This test version does not yet publish a monitored contact address or collect messages through a web form. Before public launch, the project should add a domain-based editorial email and a privacy-reviewed contact process.</p>
-  <h2>Useful details for a future report</h2>
+  <h2>Contact the independent publisher</h2>
+  <p>Child Savings Lab is individually operated. For source corrections, calculator questions, accessibility concerns, privacy requests, or general feedback, email <a href={siteContact.emailHref}>{siteContact.email}</a>.</p>
+  <p>This inbox is for questions about the publication and its tools. We do not offer individual tax, legal, investment, payroll, or benefits advice by email. Please do not send financial documents or account credentials.</p>
+  <h2>Useful details for a report</h2>
   <ul>
     <li>The page URL and the statement or output in question.</li>
     <li>A link to the authoritative source supporting the correction.</li>
     <li>The date you observed the issue.</li>
     <li>For accessibility issues, the device, browser, and assistive technology involved—without personal financial information.</li>
   </ul>
+  <h2>Privacy requests</h2>
+  <p>Use the subject line “Privacy request” and describe the information or correspondence involved. See the <a href="/privacy/">privacy policy</a> for how email and hosting information are handled. Requesting help does not require a child’s personal information.</p>
   <div class="callout">Never send a child’s name, SSN, date of birth, address, tax information, or account number when reporting an issue.</div>
 </ArticleLayout>

@@ -80,10 +80,11 @@ const initial = checkEligibility({
         </div>
       </div>
       <div class="form-actions">
-        <button class="button" type="submit">Show next steps</button>
+        <button class="button" type="submit" disabled>Show next steps</button>
         <button class="button secondary" type="reset">Reset</button>
       </div>
     </form>
+    <noscript><p class="privacy-note">Enable JavaScript to calculate locally. The displayed result is a worked example; your inputs are not submitted.</p></noscript>
   </section>
   <section class="result-panel" aria-labelledby="eligibility-results-title" aria-live="polite" aria-atomic="true">
     <div class="eyebrow" style="color:#9ed5bf">Educational result</div>
@@ -147,4 +148,5 @@ const initial = checkEligibility({
 
   form?.addEventListener('submit', (event) => { event.preventDefault(); render(); });
   form?.addEventListener('reset', () => window.setTimeout(render));
+  form?.querySelector<HTMLButtonElement>('button[type="submit"]')?.removeAttribute('disabled');
 </script>

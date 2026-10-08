@@ -1,4 +1,4 @@
-# MVP completion report
+# Public launch report — October 8, 2026
 
 ## 1. Positioning and audience
 
@@ -6,11 +6,11 @@ Child Savings Lab is a neutral, expandable child-savings tools brand. Trump Acco
 
 ## 2. Information architecture
 
-Seventeen public test routes cover the home page, three tools, the Trump Accounts guide, Form 4547, 529 comparison, contribution limits, employer guidance, and trust/legal pages. The test deployment is intentionally blocked from search indexing until licensed review and operator details are complete.
+Seventeen public routes cover the home page, three tools, the Trump Accounts guide, Form 4547, 529 comparison, contribution limits, employer guidance, and trust/legal pages. The owner authorized launch as an individually operated educational publication and supplied `mayday0064@gmail.com` for editorial, accessibility, legal, and privacy correspondence. The production URL allows indexing; version and branch preview URLs remain noindex.
 
 ## 3. Technical architecture
 
-Astro static rendering, TypeScript pure functions, central source and rule records, framework-free interactive islands, Vitest unit tests, and Cloudflare-compatible output.
+Astro static rendering, TypeScript pure functions, central source and rule records, framework-free interactive islands, Vitest unit tests, and Cloudflare-compatible output. Calculator submit buttons start disabled and are enabled only after a local submit handler is attached. A `form-action 'none'` content security policy prevents network form submissions, including when JavaScript fails. No backend receives calculator values.
 
 ## 4. Monetization path
 
@@ -28,31 +28,37 @@ Monthly compounding uses the monthly equivalent of the annual return minus month
 
 The post-audit October 8, 2026 verification run passed:
 
-- Astro type check: 34 files, zero errors or warnings.
+- Astro type check: 35 files, zero errors or warnings.
 - Unit tests: 24 tests across account-path, pilot-status, date-window, growth-period, contribution-limit, and fee logic.
 - Production build: 17 static routes.
-- Site validation: all required routes, titles, descriptions, canonicals, JSON-LD, Open Graph fields, internal links, tool copy, noindex metadata, Cloudflare X-Robots-Tag headers, robots.txt, and sitemap checks passed.
+- Site validation: all required routes, titles, descriptions, canonicals, JSON-LD, Open Graph fields, internal links, tool copy, indexable production pages, noindex preview headers, calculator submission safeguards, published contact links, robots.txt, and sitemap checks passed.
 - Static accessibility validation: passed across generated HTML.
-- Manual browser QA: homepage, both calculators, mobile layout, desktop two-column layout, and calculator error states checked.
+- Earlier audit browser QA covered the homepage, both calculators, mobile layout, desktop two-column layout, and calculator error states. This launch additionally checks the published contact page, calculator submit behavior, and live production/preview indexing headers.
 
 ## 8. Known limitations
 
-- No licensed U.S. tax, legal, privacy, trademark, payroll, investment, or ERISA sign-off yet.
-- The final operating legal entity, monitored legal/privacy contacts, governing law, venue, and production retention schedule are not yet supplied.
+- No licensed U.S. tax, legal, privacy, trademark, payroll, investment, or ERISA sign-off. The editorial policy states this explicitly. The owner’s publication decision does not imply professional approval.
+- The basic brand search found no exact Child Savings Lab mark, but identified the related Class 036 registration SLFCU SAVINGS LABORATORY. This is documented for future clearance; the publisher uses the full name and makes no trademark-clearance claim.
+- The publication is individually operated. No incorporated business, professional credentials, physical address, jurisdiction-specific liability limitation, or arbitration provision has been invented. Operator-location business registration and tax obligations require separate handling if applicable.
+- Privacy practices cover local calculator processing, Cloudflare hosting, Gmail correspondence, retention criteria, and requests through the supplied email. Infrastructure retention follows provider policies; no false fixed retention period is promised.
 - The account comparison is federal and high-level; state tax rules are not modeled.
 - No provider directory, newsletter backend, analytics, account system, or personalization.
 - Proposed employer and eligible-investment regulations may change.
 - Projection output is nominal and pre-tax.
 
-## 9. Pre-production reviews
+## 9. Publishing scope and future review
 
-Obtain U.S. counsel review of terms, privacy, disclaimers, brand clearance, and employer content; obtain qualified tax review of TD 10056, Form 4547, gift-tax, payroll-tax, and distribution treatment; identify the operator and monitored contacts; perform manual assistive-technology testing; and explicitly change the noindex controls only after approval.
+The current release provides free, general education for adults. It does not prepare or submit tax forms, open or access financial accounts, transfer money, recommend securities for individual portfolios, administer employer plans, or give individualized advice by email. Licensed review is a risk-management recommendation rather than a universal sign-off requirement for publishing this educational site. Reassess requirements before introducing paid personalized advice, account integrations, employer administration, advertising trackers, or data collection from children.
+
+Basic brand searches are documented in `docs/research/brand-check-2026-10-08.md`. They do not constitute legal trademark clearance. No registered-trademark symbol is used.
+
+The contact, privacy, terms, about, footer, and editorial-policy pages now reflect an independent individual publisher. Stale test/draft notices and the former mandatory-counsel launch gate have been removed. The public robots.txt advertises the canonical sitemap.
 
 ## 10. Phase two
 
 Add 529/UGMA/UTMA/Custodial Roth/ABLE deep comparisons, grandparent contribution guidance, a contribution-limit tool, dated update notes, privacy-friendly analytics, Search Console, and an opt-in rule-update email after privacy and legal review.
 
-## Test deployment
+## Public deployment
 
 - GitHub source: `https://github.com/heme9999/child-savings-lab` (private)
 - Cloudflare Pages: `https://child-savings-lab-mvp.pages.dev/`

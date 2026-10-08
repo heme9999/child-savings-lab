@@ -80,10 +80,11 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
         </div>
       </div>
       <div class="form-actions">
-        <button class="button" type="submit">Update projection</button>
+        <button class="button" type="submit" disabled>Update projection</button>
         <button class="button secondary" type="button" id="print-report">Print report</button>
       </div>
     </form>
+    <noscript><p class="privacy-note">Enable JavaScript to calculate locally. The displayed projection is a worked example; your inputs are not submitted.</p></noscript>
     <div class="privacy-note"><span aria-hidden="true">◉</span><span>This projection runs locally in your browser. It is an illustration, not a forecast, tax estimate, investment recommendation, or confirmation that an account can accept contributions.</span></div>
   </section>
   <section class="result-panel" aria-labelledby="growth-results-title" aria-live="polite" aria-atomic="true">
@@ -159,5 +160,6 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
   }
 
   form?.addEventListener('submit', (event) => { event.preventDefault(); render(); });
+  form?.querySelector<HTMLButtonElement>('button[type="submit"]')?.removeAttribute('disabled');
   document.querySelector<HTMLButtonElement>('#print-report')?.addEventListener('click', () => window.print());
 </script>
