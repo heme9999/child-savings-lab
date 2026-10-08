@@ -104,8 +104,8 @@ const initial = checkEligibility({
     <div id="eligibility-detail">
       <h3>Next steps</h3>
       <ul>{initial.requiredActions.map((action) => <li>{action}</li>)}</ul>
+      <p><strong>Form 4547:</strong> {initial.formGuidance}</p>
     </div>
-    <p><strong>Form 4547:</strong> {initial.formGuidance}</p>
     <p><strong>Rules checked:</strong> October 8, 2026, including TD 10056.</p>
     <p><a href="https://www.irs.gov/trumpaccounts">Continue at the official IRS Trump Accounts page →</a></p>
   </section>

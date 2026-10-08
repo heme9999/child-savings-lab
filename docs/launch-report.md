@@ -33,7 +33,7 @@ The post-audit October 8, 2026 verification run passed:
 - Production build: 17 static routes.
 - Site validation: all required routes, titles, descriptions, canonicals, JSON-LD, Open Graph fields, internal links, tool copy, indexable production pages, noindex preview headers, calculator submission safeguards, published contact links, robots.txt, and sitemap checks passed.
 - Static accessibility validation: passed across generated HTML.
-- Earlier audit browser QA covered the homepage, both calculators, mobile layout, desktop two-column layout, and calculator error states. This launch additionally checks the published contact page, calculator submit behavior, and live production/preview indexing headers.
+- Earlier audit browser QA covered the homepage, both calculators, mobile layout, desktop two-column layout, and calculator error states. Launch browser QA verified the refreshed homepage, activated-account next steps, local growth recalculation, the 0.10% fee error state, and unchanged URLs after calculation. A stale duplicate Form 4547 explanation was consolidated into the same result area so status changes replace it correctly.
 
 ## 8. Known limitations
 
