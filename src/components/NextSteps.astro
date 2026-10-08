@@ -1,0 +1,17 @@
+---
+interface Props {
+  heading: string;
+  links: { title: string; description: string; href: string }[];
+}
+const { heading, links } = Astro.props;
+---
+<section class="next-steps" aria-labelledby="next-steps-heading">
+  <div class="eyebrow">Keep exploring</div>
+  <h2 id="next-steps-heading">{heading}</h2>
+  <div class="next-steps-grid">
+    {links.map((link) => <a class="next-step-link" href={link.href}>
+      <span><strong>{link.title}</strong><span>{link.description}</span></span>
+      <span class="next-step-arrow" aria-hidden="true">→</span>
+    </a>)}
+  </div>
+</section>

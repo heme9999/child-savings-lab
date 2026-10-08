@@ -28,8 +28,8 @@ Monthly compounding uses the monthly equivalent of the annual return minus month
 
 The post-audit October 8, 2026 verification run passed:
 
-- Astro type check: 35 files, zero errors or warnings.
-- Unit tests: 24 tests across account-path, pilot-status, date-window, growth-period, contribution-limit, and fee logic.
+- Astro type check: 40 files, zero errors or warnings.
+- Unit tests: 27 tests across account-path, pilot-status, date-window, growth-period, contribution-limit, fee logic, and the shared homepage illustration.
 - Production build: 17 static routes.
 - Site validation: all required routes, titles, descriptions, canonicals, JSON-LD, Open Graph fields, internal links, tool copy, indexable production pages, noindex preview headers, calculator submission safeguards, published contact links, robots.txt, and sitemap checks passed.
 - Static accessibility validation: passed across generated HTML.
@@ -62,3 +62,11 @@ Add 529/UGMA/UTMA/Custodial Roth/ABLE deep comparisons, grandparent contribution
 
 - GitHub source: `https://github.com/heme9999/child-savings-lab` (private)
 - Cloudflare Pages: `https://child-savings-lab-mvp.pages.dev/`
+
+## Homepage design update — October 8, 2026
+
+The homepage now leads with a neutral family-savings message, an interactive savings illustration, three parent-question tool cards, a five-account purpose map, and a Trump Accounts guide cluster. Warm SVG illustrations, differentiated card colors, and varied section layouts replace the former text-only hero and internal brand-strategy copy. The three tool pages now offer contextual next-step links.
+
+The homepage illustration shares `projectGrowth` with the full calculator. Its $50/$100/$200 monthly presets and 0%/4%/6% assumed returns disclose the fixed birth date, projection dates, 0.10% fund expenses, and exclusions. No pilot amount is assumed. Principal, modeled change, hypothetical status, and possible investment losses are shown explicitly. Controls remain disabled until the local script is attached; no new data collection, external fonts, trackers, or sign-up flow was introduced.
+
+Browser QA exercised all nine preset/return combinations, keyboard activation, expanded assumptions, the start-section anchor, and the homepage → calculator → account comparison → detailed guide journey. Desktop and 320/375-pixel mobile layouts were checked for horizontal overflow. These design changes have not yet been evaluated with real-user engagement or conversion data.

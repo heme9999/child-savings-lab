@@ -4,6 +4,7 @@ import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 import EligibilityChecker from '../../../components/EligibilityChecker.astro';
 import SourceLinks from '../../../components/SourceLinks.astro';
 import VerifiedBadge from '../../../components/VerifiedBadge.astro';
+import NextSteps from '../../../components/NextSteps.astro';
 const schema = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
@@ -23,7 +24,13 @@ const schema = {
     <p class="lede">Find the next step after Treasury auto enrollment—without entering names, SSNs, account numbers, or tax IDs.</p>
     <VerifiedBadge />
   </header>
-  <div class="shell"><EligibilityChecker /></div>
+  <div class="shell">
+    <EligibilityChecker />
+    <NextSteps heading="What would you like to understand next?" links={[
+      { title: 'Explore a savings scenario', description: 'See how contributions, fees, and assumed returns interact.', href: '/tools/trump-account-growth-calculator/' },
+      { title: 'Understand Form 4547', description: 'Learn when a separate pilot or manual election matters.', href: '/forms/form-4547-guide/' }
+    ]} />
+  </div>
   <section class="section tint">
     <div class="article-body shell">
       <h2>What changed on September 30, 2026</h2>

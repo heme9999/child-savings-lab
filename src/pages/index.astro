@@ -1,81 +1,105 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import VerifiedBadge from '../components/VerifiedBadge.astro';
+import SavingsPreview from '../components/SavingsPreview.astro';
+import GoalIllustration from '../components/GoalIllustration.astro';
+import '../styles/home.css';
 ---
-<BaseLayout title="Child Savings Lab" description="Independent calculators and source-linked guides for Trump Accounts, 529 plans, custodial accounts, and the wider children’s savings market.">
-  <section class="hero">
-    <div class="shell hero-grid">
-      <div>
-        <div class="eyebrow">Family finance, made checkable</div>
-        <h1>Build a clearer plan for a child’s financial future.</h1>
-        <p class="lede">Independent calculators and plain-English guides for Trump Accounts, 529 plans, custodial accounts, and the choices that come next.</p>
-        <div class="hero-actions">
-          <a class="button" href="/tools/trump-account-eligibility-checker/">Check account status and next steps</a>
-          <a class="button secondary" href="/tools/child-savings-account-comparison/">Compare account types</a>
+<BaseLayout title="Child Savings Lab" description="Free, independent tools and source-linked guides to explore Trump Accounts, 529 plans, and other ways to save for a child. Start with your question.">
+  <div class="home-page">
+    <section class="home-hero">
+      <div class="shell home-hero-grid">
+        <div class="home-hero-copy">
+          <div class="eyebrow"><span class="little-sun" aria-hidden="true">✳</span> Big futures. Small beginnings.</div>
+          <h1>Their tomorrow.<br />Your <em>first step.</em></h1>
+          <p class="lede">You don’t need all the answers to start. Explore clear guides and free tools for saving for a child—from Trump Accounts to 529 plans and beyond.</p>
+          <div class="hero-actions">
+            <a class="button" href="#start">Find my starting point <span aria-hidden="true">↓</span></a>
+            <a class="home-text-link" href="/tools/child-savings-account-comparison/">Explore account types <span aria-hidden="true">→</span></a>
+          </div>
+          <p class="home-hero-reassurance"><span aria-hidden="true">✓</span> No sign-up. No child identifiers. Just a place to start.</p>
+          <div class="home-hero-footnote"><span class="home-footnote-line" aria-hidden="true"></span> Independent education for adults.<br />Not a government site or personalized financial advice.</div>
         </div>
-        <VerifiedBadge />
+        <SavingsPreview />
       </div>
-      <aside class="hero-note" aria-label="Important distinction">
-        <strong>Status first,<br />then action</strong>
-        <p>Treasury now uses broad auto enrollment. Check whether an account exists, whether it must be claimed and activated, and whether a separate $1,000 pilot election applies.</p>
-      </aside>
-    </div>
-  </section>
+    </section>
 
-  <section class="section tint">
-    <div class="shell">
-      <div class="section-heading">
-        <div class="eyebrow">Start with a decision</div>
-        <h2>Useful tools before another general explainer</h2>
-        <p>Each tool turns current rules into a specific next step while keeping personal information on your device.</p>
+    <section class="home-start" id="start" aria-labelledby="start-heading">
+      <div class="shell">
+        <div class="home-section-heading">
+          <div><div class="eyebrow">Start with your question</div><h2 id="start-heading">What’s on your mind?</h2></div>
+          <p>Choose one thing to understand today.<br />You can explore the rest as you go.</p>
+        </div>
+        <div class="question-grid">
+          <a class="question-card status-card" href="/tools/trump-account-eligibility-checker/">
+            <div class="question-card-top"><span class="question-label">Check the next step</span><GoalIllustration kind="status" /></div>
+            <h3>Could my child qualify for the $1,000 pilot?</h3>
+            <p>Check account status, activation, and the separate pilot election. Having an account is not the same as receiving the pilot amount.</p>
+            <span class="question-cta">Try the status checker <span aria-hidden="true">↗</span></span>
+          </a>
+          <a class="question-card growth-card" href="/tools/trump-account-growth-calculator/">
+            <div class="question-card-top"><span class="question-label">See the possibilities</span><GoalIllustration kind="growth" /></div>
+            <h3>What could $100 a month look like?</h3>
+            <p>Explore a Trump Account scenario with family contributions, fees, and different hypothetical returns. No promises—just transparent math.</p>
+            <span class="question-cta">Open the growth calculator <span aria-hidden="true">↗</span></span>
+          </a>
+          <a class="question-card compare-card" href="/tools/child-savings-account-comparison/">
+            <div class="question-card-top"><span class="question-label">Understand the choices</span><GoalIllustration kind="compare" /></div>
+            <h3>Which account fits which goal?</h3>
+            <p>Compare education savings, custodial accounts, retirement pathways, and disability savings by purpose—not by a sponsored ranking.</p>
+            <span class="question-cta">Compare five account types <span aria-hidden="true">↗</span></span>
+          </a>
+        </div>
       </div>
-      <div class="card-grid">
-        <article class="card">
-          <div class="number">01</div>
-          <h3>Status and eligibility checker</h3>
-          <p>Route through auto-account status, claim authority, activation, contribution readiness, and the separate pilot election.</p>
-          <a class="stretched" href="/tools/trump-account-eligibility-checker/">Show next steps →</a>
-        </article>
-        <article class="card">
-          <div class="number">02</div>
-          <h3>Growth calculator</h3>
-          <p>Model family and employer contributions, fees, multiple returns, and the shift after the growth period.</p>
-          <a class="stretched" href="/tools/trump-account-growth-calculator/">Model a balance →</a>
-        </article>
-        <article class="card">
-          <div class="number">03</div>
-          <h3>Account comparison</h3>
-          <p>Compare Trump Accounts, 529 plans, UGMA/UTMA, Custodial Roth IRAs, and ABLE accounts by purpose.</p>
-          <a class="stretched" href="/tools/child-savings-account-comparison/">Compare options →</a>
-        </article>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="section">
-    <div class="shell hero-grid">
-      <div>
-        <div class="eyebrow">First topic cluster</div>
-        <h2>Trump Accounts, inside a broader child-savings platform</h2>
-        <p class="lede">The policy name is a starting point, not the brand. Child Savings Lab is designed to expand across education savings, custodial investing, disability savings, retirement pathways, and employer benefits.</p>
+    <section class="home-goals" aria-labelledby="goals-heading">
+      <div class="shell goals-grid">
+        <div>
+          <div class="eyebrow">A goal before an account</div>
+          <h2 id="goals-heading">There’s more than one way<br />to save for their future.</h2>
+          <p>College. A longer-term head start. Support for disability-related needs. Different goals bring different rules, ownership, and trade-offs.</p>
+          <a class="home-text-link" href="/tools/child-savings-account-comparison/">See the purpose-first comparison <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="goal-map" role="list" aria-label="Account types to learn about">
+          <div role="listitem"><span class="goal-map-symbol" aria-hidden="true">01</span><span><strong>Education</strong><small>Learn about 529 plans</small></span></div>
+          <div role="listitem"><span class="goal-map-symbol" aria-hidden="true">02</span><span><strong>Long-term child investing</strong><small>Understand Trump Account restrictions</small></span></div>
+          <div role="listitem"><span class="goal-map-symbol" aria-hidden="true">03</span><span><strong>A flexible gift to a child</strong><small>Learn UGMA/UTMA ownership trade-offs</small></span></div>
+          <div role="listitem"><span class="goal-map-symbol" aria-hidden="true">04</span><span><strong>Retirement with earned income</strong><small>Understand Custodial Roth IRAs</small></span></div>
+          <div role="listitem"><span class="goal-map-symbol" aria-hidden="true">05</span><span><strong>Disability-related expenses</strong><small>Explore ABLE eligibility and qualified uses</small></span></div>
+        </div>
       </div>
-      <ul class="link-list">
-        <li><a href="/trump-accounts/">Trump Accounts core guide</a></li>
-        <li><a href="/forms/form-4547-guide/">Form 4547 after auto enrollment</a></li>
-        <li><a href="/compare/trump-account-vs-529/">Trump Account vs. 529</a></li>
-        <li><a href="/contributions/trump-account-contribution-limits/">Contribution limits</a></li>
-        <li><a href="/employers/trump-account-benefit-guide/">Employer benefit guide</a></li>
-        <li><a href="/sources/">Source library</a></li>
-      </ul>
-    </div>
-  </section>
+    </section>
 
-  <section class="section tint">
-    <div class="narrow">
-      <div class="eyebrow">Editorial promise</div>
-      <h2>Rules have dates. Sources have status.</h2>
-      <p>Important claims link to the IRS, Treasury, Department of Labor, or other primary government material. Proposed rules are labeled as proposed. We do not invent professional reviewers, rank providers by commission, or collect sensitive child and tax information.</p>
-      <a class="button secondary" href="/methodology/">Read the methodology</a>
-    </div>
-  </section>
+    <section class="home-topic" aria-labelledby="topic-heading">
+      <div class="shell topic-panel">
+        <div class="topic-intro">
+          <span class="topic-tag">In focus: Trump Accounts</span>
+          <h2 id="topic-heading">Heard the headlines?<br />Here’s what to check next.</h2>
+          <p>Start with account status. Then understand claiming, activation, and the separate $1,000 pilot election—before planning contributions.</p>
+          <a class="button" href="/trump-accounts/">Read the plain-English guide <span aria-hidden="true">→</span></a>
+          <p class="topic-source-date">Rules reviewed October 8, 2026 · Sources linked in each guide</p>
+        </div>
+        <div class="topic-guides">
+          <a href="/forms/form-4547-guide/"><span class="guide-number" aria-hidden="true">01</span><span><strong>Do I still need Form 4547?</strong><small>What auto enrollment changes—and what it doesn’t.</small></span><span aria-hidden="true">↗</span></a>
+          <a href="/compare/trump-account-vs-529/"><span class="guide-number" aria-hidden="true">02</span><span><strong>Trump Account or 529?</strong><small>Compare purpose, control, and withdrawal rules.</small></span><span aria-hidden="true">↗</span></a>
+          <a href="/contributions/trump-account-contribution-limits/"><span class="guide-number" aria-hidden="true">03</span><span><strong>How much can a family contribute?</strong><small>See which contributions share the annual limit.</small></span><span aria-hidden="true">↗</span></a>
+          <a href="/employers/trump-account-benefit-guide/"><span class="guide-number" aria-hidden="true">04</span><span><strong>Could an employer contribute?</strong><small>Questions for HR, payroll, and benefits teams.</small></span><span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="home-trust" aria-labelledby="trust-heading">
+      <div class="shell">
+        <div class="home-section-heading">
+          <div><div class="eyebrow">Clarity you can check</div><h2 id="trust-heading">Less guesswork. More understanding.</h2></div>
+          <a class="home-text-link" href="/methodology/">How we work <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="trust-grid">
+          <div><span class="trust-icon" aria-hidden="true">↗</span><h3>Follow the source</h3><p>Important rules link to primary government sources. Proposed rules are labeled as proposed.</p><a href="/sources/">Browse the source library →</a></div>
+          <div><span class="trust-icon" aria-hidden="true">◎</span><h3>Keep your details yours</h3><p>Calculator entries stay in your browser. No sign-up, ad trackers, or requests for child identifiers.</p><a href="/privacy/">Read the privacy policy →</a></div>
+          <div><span class="trust-icon" aria-hidden="true">≋</span><h3>Know what this is</h3><p>Independent education, not individualized legal, tax, or investment advice. No claimed professional sign-off.</p><a href="/about/">Meet the publication →</a></div>
+        </div>
+      </div>
+    </section>
+  </div>
 </BaseLayout>

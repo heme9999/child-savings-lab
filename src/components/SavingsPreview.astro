@@ -1,0 +1,79 @@
+---
+import { savingsPreview } from '../lib/calculators/preview';
+const example = savingsPreview();
+const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value);
+---
+<aside class="savings-preview" aria-labelledby="preview-heading">
+  <div class="preview-topline"><span class="preview-dot" aria-hidden="true"></span> A little saving. A longer view.</div>
+  <div class="preview-body">
+    <div class="preview-heading-row">
+      <h2 id="preview-heading">Try a monthly amount</h2>
+      <svg class="preview-sprout" viewBox="0 0 64 72" aria-hidden="true"><circle cx="36" cy="25" r="24" fill="#f5d88c"/><path d="M30 60V29M30 43C10 44 8 26 8 26c19-2 23 8 22 17ZM30 33C29 15 48 12 48 12c5 15-6 21-18 21Z" fill="#91b69c" stroke="#173f37" stroke-width="2.5" stroke-linejoin="round"/><path d="M17 61h27l-4 8H21Z" fill="#dba586" stroke="#173f37" stroke-width="2.5"/></svg>
+    </div>
+    <div class="preview-presets" role="group" aria-label="Monthly family contribution">
+      <button type="button" data-monthly="50" aria-pressed="false" disabled>$50<span> / month</span></button>
+      <button type="button" data-monthly="100" aria-pressed="true" disabled>$100<span> / month</span></button>
+      <button type="button" data-monthly="200" aria-pressed="false" disabled>$200<span> / month</span></button>
+    </div>
+    <div class="preview-result" role="status" aria-live="polite" aria-atomic="true">
+      <span>Illustrative Trump Account balance at age 18</span>
+      <strong id="preview-balance">{usd(example.endingBalance)}</strong>
+      <p><span id="preview-contributed">{usd(example.totalContributed)}</span> contributed · <span id="preview-growth">{usd(example.investmentGrowth)}</span> modeled change</p>
+    </div>
+    <figure class="preview-chart">
+      <svg viewBox="0 0 360 160" preserveAspectRatio="none" role="img" aria-labelledby="preview-chart-title" aria-describedby="preview-chart-description">
+        <title id="preview-chart-title">Illustrative savings over time</title>
+        <desc id="preview-chart-description">The solid line shows the modeled balance; the dashed line shows contributions. This is a hypothetical illustration, not market history or a forecast.</desc>
+        <path d="M8 16H352M8 80H352M8 144H352" stroke="#d9e1d8" stroke-width="1"/>
+        <path id="preview-area" d={example.areaPath} fill="#e2ebd9"/>
+        <path id="preview-contribution-path" d={example.contributionPath} fill="none" stroke="#7b7863" stroke-width="2" stroke-dasharray="5 5"/>
+        <path id="preview-balance-path" d={example.balancePath} fill="none" stroke="#245848" stroke-width="3.5" stroke-linecap="round"/>
+      </svg>
+      <div class="preview-axis" aria-hidden="true"><span>Oct 2026</span><span>Age 18</span></div>
+      <figcaption><span><i class="balance-key" aria-hidden="true"></i> Modeled balance</span><span><i class="contribution-key" aria-hidden="true"></i> Contributions</span></figcaption>
+    </figure>
+    <div class="preview-rate-row">
+      <label for="preview-rate">Assumed annual return</label>
+      <select id="preview-rate" disabled><option value="0">0%</option><option value="4">4%</option><option value="6" selected>6%</option></select>
+    </div>
+    <details class="preview-assumptions">
+      <summary>What’s behind this example?</summary>
+      <p>Hypothetical activated Trump Account for a child born January 15, 2026. Starts October 8, 2026 with $0. Monthly deposits end December 31, 2043; the balance is shown at age 18 on January 15, 2044. Assumes 0.10% annual fund expenses, no account fees, and no pilot or employer contribution. Constant returns and month-end deposits; excludes taxes, inflation and withdrawals.</p>
+      <a href="/tools/trump-account-growth-calculator/">See the full method and change more assumptions →</a>
+    </details>
+    <p class="preview-disclaimer">Illustration, not a forecast. Returns are not guaranteed; investments can lose value.</p>
+    <noscript><p class="preview-disclaimer">JavaScript is off. This example shows $100/month with a 6% assumed annual return.</p></noscript>
+  </div>
+  <a class="preview-full-link" href="/tools/trump-account-growth-calculator/">Make your own scenario <span aria-hidden="true">↗</span></a>
+</aside>
+<script>
+  import { savingsPreview } from '../lib/calculators/preview';
+  const root = document.querySelector<HTMLElement>('.savings-preview');
+  if (root) {
+    const buttons = root.querySelectorAll<HTMLButtonElement>('[data-monthly]');
+    const rate = root.querySelector<HTMLSelectElement>('#preview-rate');
+    let monthly = 100;
+    const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value);
+    const render = () => {
+      const result = savingsPreview(monthly, Number(rate?.value ?? 6));
+      const text = (id: string, value: number) => {
+        const element = root.querySelector(`#${id}`);
+        if (element) element.textContent = usd(value);
+      };
+      text('preview-balance', result.endingBalance);
+      text('preview-contributed', result.totalContributed);
+      text('preview-growth', result.investmentGrowth);
+      root.querySelector('#preview-area')?.setAttribute('d', result.areaPath);
+      root.querySelector('#preview-balance-path')?.setAttribute('d', result.balancePath);
+      root.querySelector('#preview-contribution-path')?.setAttribute('d', result.contributionPath);
+      const description = root.querySelector('#preview-chart-description');
+      if (description) description.textContent = `Hypothetical scenario: ${usd(monthly)} per month, ${rate?.value}% assumed annual return, 0.10% annual fund expenses. At age 18: ${usd(result.endingBalance)} modeled balance and ${usd(result.totalContributed)} contributed. Not a forecast.`;
+      buttons.forEach((button) => button.setAttribute('aria-pressed', String(Number(button.dataset.monthly) === monthly)));
+    };
+    buttons.forEach((button) => {
+      button.disabled = false;
+      button.addEventListener('click', () => { monthly = Number(button.dataset.monthly); render(); });
+    });
+    if (rate) { rate.disabled = false; rate.addEventListener('change', render); }
+  }
+</script>

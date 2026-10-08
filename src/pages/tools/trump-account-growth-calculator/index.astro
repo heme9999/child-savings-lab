@@ -4,6 +4,7 @@ import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 import GrowthCalculator from '../../../components/GrowthCalculator.astro';
 import SourceLinks from '../../../components/SourceLinks.astro';
 import VerifiedBadge from '../../../components/VerifiedBadge.astro';
+import NextSteps from '../../../components/NextSteps.astro';
 const schema = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
@@ -23,7 +24,13 @@ const schema = {
     <p class="lede">See how contributions, assumed returns, and fees could interact over time—without mistaking an illustration for a forecast.</p>
     <VerifiedBadge />
   </header>
-  <div class="shell"><GrowthCalculator /></div>
+  <div class="shell">
+    <GrowthCalculator />
+    <NextSteps heading="A balance is one part of the picture." links={[
+      { title: 'Compare the account rules', description: 'Explore purpose, ownership, and withdrawal differences.', href: '/tools/child-savings-account-comparison/' },
+      { title: 'Check contribution limits', description: 'Understand how family and employer amounts fit together.', href: '/contributions/trump-account-contribution-limits/' }
+    ]} />
+  </div>
   <section class="section tint">
     <div class="article-body shell">
       <h2>Calculation method</h2>
