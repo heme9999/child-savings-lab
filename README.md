@@ -14,6 +14,25 @@ npm run dev
 npm run verify
 ```
 
+## Deploy and check HTTP behavior
+
+After committing and pushing the verified source to GitHub, deploy with:
+
+```bash
+npm run deploy:cloudflare
+```
+
+This rebuilds and verifies the site, deploys to Cloudflare Pages, then runs `npm run validate:deployment` against production. The deployment checks request every public page, the sitemap index and its child XML files, robots.txt, and three intentionally missing paths with both GET and HEAD. They reject homepage fallback, HTTP 200 error pages, mismatched page metadata, stale sitemap files, missing copyright/ownership tags, and unexpected production noindex headers. A failed check exits nonzero; it does not automatically roll back the deployment.
+
+To check an existing deployment after a successful local build:
+
+```bash
+npm run validate:deployment
+npm run validate:deployment -- https://YOUR-DEPLOYMENT.child-savings-lab-mvp.pages.dev/
+```
+
+The top-level `dist/404.html` disables Cloudflare Pages’ default SPA fallback. It stays out of the sitemap and carries noindex. Sitemap validation requires both directions to match: every listed URL must have a generated, indexable HTML file with the same canonical, and every indexable generated page must appear in the sitemap. The intentionally unpublished 529-versus-custodial guide path must remain 404 until a real guide is added; update that negative test when publishing it.
+
 ## Privacy and scope
 
 Calculator inputs stay in the browser. The site does not ask for or store names, SSNs, tax IDs, account numbers, or addresses. Content is educational and is not individualized tax, legal, benefits, payroll, or investment advice.

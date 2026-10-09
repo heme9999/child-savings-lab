@@ -70,3 +70,15 @@ The homepage now leads with a neutral family-savings message, an interactive sav
 The homepage illustration shares `projectGrowth` with the full calculator. Its $50/$100/$200 monthly presets and 0%/4%/6% assumed returns disclose the fixed birth date, projection dates, 0.10% fund expenses, and exclusions. No pilot amount is assumed. Principal, modeled change, hypothetical status, and possible investment losses are shown explicitly. Controls remain disabled until the local script is attached; no new data collection, external fonts, trackers, or sign-up flow was introduced.
 
 Browser QA exercised all nine preset/return combinations, keyboard activation, expanded assumptions, the start-section anchor, and the homepage → calculator → account comparison → detailed guide journey. Desktop and 320/375-pixel mobile layouts were checked for horizontal overflow. These design changes have not yet been evaluated with real-user engagement or conversion data.
+
+## HTTP routing hardening — October 9, 2026
+
+Added `src/pages/404.astro`, which builds to top-level `dist/404.html` and disables Cloudflare Pages’ default homepage fallback. The branded error page provides home, tools, and contact links, has a distinct title and canonical, carries noindex, and is excluded from the sitemap. The unpublished `/compare/529-plans-vs-custodial-accounts/` path is not a public guide and must return 404; no new comparison content was invented.
+
+Build validation now compares sitemap entries against generated HTML and canonical URLs in both directions. Missing child XML files, phantom pages, omitted indexable pages, duplicate URLs, off-site URLs, and error/noindex pages in the sitemap fail verification. Unit tests cover these cases as well as an error-looking page incorrectly served with HTTP 200.
+
+`npm run validate:deployment` tests all 17 public pages, three missing paths, the sitemap index, its child XML, and robots.txt using both GET and HEAD. It checks actual HTTP status codes, page identity, production indexability, the copyright footer, and the retained Search Console ownership tag. `npm run deploy:cloudflare` runs full verification before deployment and HTTP regression checks afterward. Failure exits nonzero without automatically rolling back a deployment.
+
+Local verification passed: 48 tests, zero Astro diagnostics, 17 public routes plus one error page, sitemap/file consistency, internal links, and static HTML accessibility checks. Running the new regression script against the pre-fix production site correctly failed on all three missing paths returning HTTP 200 and homepage content.
+
+The homepage title is now “Child Savings Guides & Free Calculators | Child Savings Lab”; the shared footer includes the UTC build-year copyright. The October 8 source-review date remains unchanged because this is a technical update, not a new policy review. The supplied Gmail contact, financial assumptions, calculation logic, and existing content remain unchanged.

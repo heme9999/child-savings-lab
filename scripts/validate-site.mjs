@@ -1,5 +1,6 @@
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
+import { pageMetadata, readBuildManifest, validateSitemapConsistency } from './lib/site-manifest.mjs';
 
 const root = resolve('dist');
 const requiredRoutes = [
@@ -23,15 +24,17 @@ const requiredRoutes = [
 ];
 
 const failures = [];
-const htmlFiles = [];
-function walk(directory) {
-  for (const entry of readdirSync(directory, { withFileTypes: true })) {
-    const path = join(directory, entry.name);
-    if (entry.isDirectory()) walk(path);
-    else if (entry.name.endsWith('.html')) htmlFiles.push(path);
-  }
+const manifest = readBuildManifest(root);
+const htmlFiles = manifest.pages.map((page) => page.path);
+failures.push(...validateSitemapConsistency(manifest).failures);
+
+const notFound = manifest.pages.find((page) => page.file === '404.html');
+if (!notFound) failures.push('Missing top-level 404.html: Cloudflare Pages would enable homepage fallback');
+else {
+  if (!notFound.noindex) failures.push('404.html must be noindex');
+  if (!notFound.html.includes('404 · Page not found')) failures.push('404.html must clearly explain that the page was not found');
+  if (notFound.canonical === 'https://child-savings-lab-mvp.pages.dev/') failures.push('404.html must not use the homepage canonical');
 }
-walk(root);
 
 function routeFile(route) {
   return route === '/' ? join(root, 'index.html') : join(root, route, 'index.html');
@@ -46,6 +49,7 @@ const h1s = new Map();
 for (const file of htmlFiles) {
   const html = readFileSync(file, 'utf8');
   const name = relative(root, file);
+  const isNotFound = name === '404.html';
   const title = html.match(/<title>([^<]+)<\/title>/i)?.[1]?.trim();
   const description = html.match(/<meta name="description" content="([^"]+)"/i)?.[1]?.trim();
   const canonical = html.match(/<link rel="canonical" href="([^"]+)"/i)?.[1];
@@ -54,10 +58,11 @@ for (const file of htmlFiles) {
   if (!title) failures.push(`${name}: missing title`);
   if (!description || description.length < 70) failures.push(`${name}: missing or short meta description`);
   if (!canonical?.startsWith('http')) failures.push(`${name}: missing absolute canonical`);
-  if (/<meta[^>]+name="robots"[^>]+content="[^"]*noindex/i.test(html)) failures.push(`${name}: public launch page must allow indexing`);
+  if (!isNotFound && /<meta[^>]+name="robots"[^>]+content="[^"]*noindex/i.test(html)) failures.push(`${name}: public launch page must allow indexing`);
   if (html.includes('Public test environment:') || html.includes('Pre-production status:') || html.includes('Draft test terms:')) failures.push(`${name}: obsolete pre-launch notice`);
   if (!html.includes('application/ld+json')) failures.push(`${name}: missing JSON-LD`);
   if (!html.includes('og:title') || !html.includes('og:description')) failures.push(`${name}: missing Open Graph metadata`);
+  if (!html.includes(`© ${new Date().getUTCFullYear()} Child Savings Lab.`)) failures.push(`${name}: missing current copyright year`);
   if (h1Matches.length !== 1) failures.push(`${name}: expected one H1, found ${h1Matches.length}`);
   if (title) {
     if (titles.has(title)) failures.push(`${name}: duplicate title with ${titles.get(title)}`);
@@ -79,6 +84,7 @@ for (const file of htmlFiles) {
 }
 
 const homeHtml = readFileSync(routeFile('/'), 'utf8');
+if (pageMetadata(homeHtml).title !== 'Child Savings Guides & Free Calculators | Child Savings Lab') failures.push('Homepage must retain its descriptive child-savings title');
 const homeHead = homeHtml.match(/<head>(.*?)<\/head>/is)?.[1] ?? '';
 const googleVerification = [...homeHead.matchAll(/<meta name="google-site-verification" content="([^"]+)"/g)];
 if (googleVerification.length !== 1 || !googleVerification[0]?.[1]?.trim()) failures.push('Homepage must retain the Google Search Console ownership tag in its head');
@@ -108,4 +114,4 @@ if (failures.length) {
   console.error(`Site validation failed with ${failures.length} issue(s):\n- ${failures.join('\n- ')}`);
   process.exit(1);
 }
-console.log(`Site validation passed: ${htmlFiles.length} HTML pages, ${requiredRoutes.length} required routes, no broken internal links.`);
+console.log(`Site validation passed: ${requiredRoutes.length} public routes and top-level 404.html, consistent sitemap and generated files, no broken internal links.`);
