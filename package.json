@@ -12,7 +12,7 @@
     "test:watch": "vitest",
     "validate:site": "node scripts/validate-site.mjs",
     "validate:deployment": "node scripts/validate-deployment.mjs",
-    "deploy:cloudflare": "npm run verify && npx --yes wrangler pages deploy dist --project-name child-savings-lab-mvp --branch main && npm run validate:deployment",
+    "deploy:cloudflare": "npm run verify && npx --yes wrangler pages deploy dist --project-name child-savings-lab-mvp --branch main && npm run validate:deployment -- --wait-for-deployment",
     "validate:a11y": "html-validate \"dist/**/*.html\"",
     "verify": "npm run check && npm run test && npm run build && npm run validate:site && npm run validate:a11y"
   },

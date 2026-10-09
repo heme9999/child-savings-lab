@@ -22,7 +22,7 @@ After committing and pushing the verified source to GitHub, deploy with:
 npm run deploy:cloudflare
 ```
 
-This rebuilds and verifies the site, deploys to Cloudflare Pages, then runs `npm run validate:deployment` against production. The deployment checks request every public page, the sitemap index and its child XML files, robots.txt, and three intentionally missing paths with both GET and HEAD. They reject homepage fallback, HTTP 200 error pages, mismatched page metadata, stale sitemap files, missing copyright/ownership tags, and unexpected production noindex headers. A failed check exits nonzero; it does not automatically roll back the deployment.
+This rebuilds and verifies the site, deploys to Cloudflare Pages, then runs `npm run validate:deployment -- --wait-for-deployment` against production. It retries the complete suite at most four times, with 10-second gaps, to allow a just-published deployment to propagate. All checks must pass together; failure is never waived. The deployment checks request every public page, the sitemap index and its child XML files, robots.txt, and three intentionally missing paths with both GET and HEAD. They reject homepage fallback, HTTP 200 error pages, mismatched page metadata, stale sitemap files, missing copyright/ownership tags, and unexpected production noindex headers. A failed check exits nonzero; it does not automatically roll back the deployment.
 
 To check an existing deployment after a successful local build:
 
