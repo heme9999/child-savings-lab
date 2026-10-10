@@ -14,6 +14,18 @@ export const previewAssumptions: GrowthInput = {
   targetAge: 18
 };
 
+export function previewPresetHash(monthly: number, rate: number): string {
+  if (![50, 100, 200].includes(monthly) || ![0, 4, 6].includes(rate)) return '';
+  return `#preset=${monthly}-${rate}`;
+}
+
+// Only public, fictional homepage presets are accepted. No dates, balances,
+// free-form amounts, query parameters, storage, or network requests are used.
+export function inputFromPreviewHash(hash: string): GrowthInput | null {
+  const match = /^#preset=(50|100|200)-(0|4|6)$/.exec(hash);
+  return match ? { ...previewAssumptions, familyContribution: Number(match[1]), annualReturnRate: Number(match[2]) } : null;
+}
+
 // The homepage illustration uses exactly the same rules as the full calculator.
 export function savingsPreview(monthlyContribution = 100, annualReturnRate = 6) {
   const input = { ...previewAssumptions, familyContribution: monthlyContribution, annualReturnRate };

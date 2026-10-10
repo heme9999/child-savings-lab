@@ -1,52 +1,31 @@
 ---
-import { projectGrowth, projectScenarios } from '../lib/calculators/growth';
-const exampleInput = {
-  initialAmount: 0,
-  includePilot: true,
-  familyContribution: 100,
-  familyFrequency: 'monthly' as const,
-  annualEmployerContribution: 0,
-  annualReturnRate: 6,
-  fundExpenseRate: 0.1,
-  accountFeeRate: 0,
-  birthDate: '2026-01-15',
-  projectionStartDate: '2026-10-08',
-  targetAge: 18
-};
+import { FIRST_CONTRIBUTION_DATE, projectGrowth, projectScenarios } from '../lib/calculators/growth';
+import { previewAssumptions } from '../lib/calculators/preview';
+import { growthAssumptions } from '../lib/calculators/form';
+const exampleInput = previewAssumptions;
 const example = projectGrowth(exampleInput);
 const examples = projectScenarios(exampleInput);
 const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value);
 ---
 <div class="tool-layout" data-growth-calculator>
   <section class="tool-panel" aria-labelledby="growth-form-title">
-    <div class="eyebrow">Calendar-aware assumptions</div>
+    <div class="eyebrow">Start with the essentials</div>
     <h2 id="growth-form-title">Model a contribution plan</h2>
-    <p>Child-period contributions stop on December 31 of the calendar year in which the child turns 17. The model uses the birth date and projection start date instead of rounding from a whole-number age.</p>
-    <div class="callout"><strong>Account-state check:</strong> family and employer contributions should be modeled only after the receiving Trump Account has been claimed, established, and activated. An unclaimed auto account cannot accept them.</div>
+    <p>Use hypothetical values. Model family or employer deposits only after a receiving account is claimed and activated.</p>
     <form id="growth-form" novalidate>
       <div class="form-grid">
         <div class="field">
           <label for="birth-date">Child’s date of birth</label>
-          <input id="birth-date" name="birthDate" type="date" value="2026-01-15" required />
+          <input id="birth-date" name="birthDate" type="date" value={exampleInput.birthDate} required />
         </div>
         <div class="field">
           <label for="projection-start-date">Projection start date</label>
-          <input id="projection-start-date" name="projectionStartDate" type="date" value="2026-10-08" required />
+          <input id="projection-start-date" name="projectionStartDate" type="date" min={FIRST_CONTRIBUTION_DATE} value={exampleInput.projectionStartDate} aria-describedby="start-date-help" required />
+          <small id="start-date-help">July 4, 2026 or later, and not before the account can accept deposits.</small>
         </div>
         <div class="field">
-          <label for="initial-amount">Existing starting amount</label>
-          <input id="initial-amount" name="initialAmount" type="number" min="0" step="50" value="0" inputmode="decimal" />
-        </div>
-        <fieldset class="field">
-          <legend>Include the $1,000 pilot amount?</legend>
-          <div class="radio-row">
-            <label class="radio-option"><input type="radio" name="includePilot" value="true" checked /> Yes</label>
-            <label class="radio-option"><input type="radio" name="includePilot" value="false" /> No</label>
-          </div>
-        </fieldset>
-        <div class="field">
-          <label for="family-contribution">Family contribution</label>
-          <input id="family-contribution" name="familyContribution" type="number" min="0" step="10" value="100" inputmode="decimal" />
+          <label for="family-contribution">Family contribution (USD)</label>
+          <input id="family-contribution" name="familyContribution" type="number" min="0" step="any" value="100" inputmode="decimal" required />
         </div>
         <div class="field">
           <label for="family-frequency">Contribution frequency</label>
@@ -56,40 +35,59 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
           </select>
         </div>
         <div class="field">
-          <label for="employer-contribution">Annual employer contribution</label>
-          <input id="employer-contribution" name="annualEmployerContribution" type="number" min="0" max="2500" step="50" value="0" inputmode="decimal" aria-describedby="employer-help" />
-          <small id="employer-help">Current Section 128 limit: $2,500 per employee; modeled at December 31.</small>
-        </div>
-        <div class="field">
-          <label for="return-rate">Assumed annual return</label>
-          <input id="return-rate" name="annualReturnRate" type="number" min="-99" max="20" step="0.25" value="6" inputmode="decimal" />
-        </div>
-        <div class="field">
-          <label for="fund-expense-rate">Eligible fund expense rate</label>
-          <input id="fund-expense-rate" name="fundExpenseRate" type="number" min="0" max="0.1" step="0.01" value="0.10" inputmode="decimal" aria-describedby="fund-fee-help" />
-          <small id="fund-fee-help">Statutory maximum for the investment fund during the growth period: 0.10%.</small>
-        </div>
-        <div class="field">
-          <label for="account-fee-rate">Separate account/trustee fee assumption</label>
-          <input id="account-fee-rate" name="accountFeeRate" type="number" min="0" max="5" step="0.05" value="0" inputmode="decimal" aria-describedby="account-fee-help" />
-          <small id="account-fee-help">Optional modeling assumption; confirm actual trustee fees and treatment.</small>
+          <label for="return-rate">Assumed annual return (%)</label>
+          <input id="return-rate" name="annualReturnRate" type="number" min="-99.99" max="20" step="any" value="6" inputmode="decimal" required />
         </div>
         <div class="field">
           <label for="target-age">Target age</label>
-          <input id="target-age" name="targetAge" type="number" min="1" max="65" step="1" value="18" inputmode="numeric" />
+          <input id="target-age" name="targetAge" type="number" min="1" max="65" step="1" value="18" inputmode="numeric" required />
         </div>
+        <fieldset class="field full">
+          <legend>Include the $1,000 pilot amount?</legend>
+          <div class="radio-row">
+            <label class="radio-option"><input type="radio" name="includePilot" value="true" /> Yes</label>
+            <label class="radio-option"><input type="radio" name="includePilot" value="false" checked /> No</label>
+          </div>
+          <small>This is a starting-balance assumption, not a check of eligibility or payment timing. <a href="/tools/trump-account-eligibility-checker/">Check the separate pilot requirements.</a></small>
+        </fieldset>
       </div>
+      <details class="advanced-assumptions" id="advanced-assumptions">
+        <summary>Advanced assumptions: starting balance, employer deposits &amp; fees</summary>
+        <p>Enter 0 if an amount or fee does not apply. Blank fields are not treated as zero.</p>
+        <div class="form-grid">
+          <div class="field">
+            <label for="initial-amount">Existing starting amount (USD)</label>
+            <input id="initial-amount" name="initialAmount" type="number" min="0" step="any" value="0" inputmode="decimal" required />
+          </div>
+          <div class="field">
+            <label for="employer-contribution">Annual employer contribution (USD)</label>
+            <input id="employer-contribution" name="annualEmployerContribution" type="number" min="0" max="2500" step="any" value="0" inputmode="decimal" aria-describedby="employer-help" required />
+            <small id="employer-help">Current Section 128 limit: $2,500 per employee, not per child; modeled at December 31.</small>
+          </div>
+          <div class="field">
+            <label for="fund-expense-rate">Eligible fund expense rate (%)</label>
+            <input id="fund-expense-rate" name="fundExpenseRate" type="number" min="0" max="0.1" step="any" value="0.10" inputmode="decimal" aria-describedby="fund-fee-help" required />
+            <small id="fund-fee-help">Maximum annual fund expense rate during the growth period: 0.10%.</small>
+          </div>
+          <div class="field">
+            <label for="account-fee-rate">Separate account/trustee fee (%)</label>
+            <input id="account-fee-rate" name="accountFeeRate" type="number" min="0" max="5" step="any" value="0" inputmode="decimal" aria-describedby="account-fee-help" required />
+            <small id="account-fee-help">Annual modeling assumption; confirm actual trustee fees and treatment.</small>
+          </div>
+        </div>
+      </details>
       <div class="form-actions">
         <button class="button" type="submit" disabled>Update projection</button>
-        <button class="button secondary" type="button" id="print-report">Print report</button>
+        <button class="button secondary" type="button" id="print-report" disabled>Print report</button>
       </div>
     </form>
     <noscript><p class="privacy-note">Enable JavaScript to calculate locally. The displayed projection is a worked example; your inputs are not submitted.</p></noscript>
-    <div class="privacy-note"><span aria-hidden="true">◉</span><span>This projection runs locally in your browser. It is an illustration, not a forecast, tax estimate, investment recommendation, or confirmation that an account can accept contributions.</span></div>
+    <p class="privacy-note">Runs locally without saving or sending your answers. An illustration—not a forecast, tax estimate, investment recommendation, or account-status confirmation.</p>
   </section>
   <section class="result-panel" aria-labelledby="growth-results-title" aria-live="polite" aria-atomic="true">
     <div class="eyebrow" style="color:#9ed5bf">Illustrative projection</div>
-    <h2 id="growth-results-title">At age <span id="result-age">18</span></h2>
+    <h2 id="growth-results-title" tabindex="-1">At age <span id="result-age">18</span></h2>
+    <p id="growth-state">Worked example: $100/month, 6% assumed return, no pilot amount. Update to calculate your answers.</p>
     <div id="growth-errors"></div>
     <div id="growth-output">
       <div class="metric-grid">
@@ -99,67 +97,118 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
         <div class="metric"><span>Estimated fee impact</span><strong id="fee-impact">{usd(example.feeImpact)}</strong></div>
       </div>
       <h3>Return scenarios</h3>
+      <p class="result-help">Selected return ±2 percentage points where within the supported range (greater than -100% through 20%). Out-of-range scenarios are omitted.</p>
       <table class="scenario-table">
         <thead><tr><th scope="col">Annual return</th><th scope="col">Balance</th></tr></thead>
-        <tbody id="scenario-rows">{examples.map(({ rate, projection }) => <tr><td>{rate.toFixed(1)}%</td><td>{usd(projection.endingBalance)}</td></tr>)}</tbody>
+        <tbody id="scenario-rows">{examples.map(({ rate, projection }) => <tr><td>{rate}%</td><td>{usd(projection.endingBalance)}</td></tr>)}</tbody>
       </table>
-      <p id="contribution-note">Contributions modeled for {example.contributionMonths} month-ends, through {example.contributionEndDate}. Returns are not guaranteed. Taxes and withdrawals are not modeled.</p>
+      <p id="contribution-note">Contributions modeled for {example.contributionMonths} month-ends, through {example.contributionEndDate}. Projection target: {example.targetDate}. Returns are not guaranteed. Taxes and withdrawals are not modeled.</p>
+      <details class="projection-assumptions print-hide">
+        <summary>Review all scenario assumptions</summary>
+        <dl class="assumptions-list" data-assumptions>{growthAssumptions(exampleInput).map(([label, value]) => <div><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
+      </details>
+      <div class="print-only">
+        <h3>Parameters used for this report</h3>
+        <dl class="assumptions-list" data-assumptions>{growthAssumptions(exampleInput).map(([label, value]) => <div><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
+        <p id="report-generated"></p>
+        <p>Independent education from Child Savings Lab. Not a forecast, eligibility determination, or personalized legal, tax, or investment advice. Source review: October 8, 2026.</p>
+      </div>
     </div>
   </section>
 </div>
 
 <script>
   import { projectGrowth, projectScenarios, validateGrowthInput } from '../lib/calculators/growth';
-  import type { ContributionFrequency, GrowthInput } from '../lib/calculators/growth';
+  import { growthInputFromForm, growthAssumptions } from '../lib/calculators/form';
+  import { inputFromPreviewHash } from '../lib/calculators/preview';
 
   const form = document.querySelector<HTMLFormElement>('#growth-form');
   const errors = document.querySelector<HTMLElement>('#growth-errors');
   const output = document.querySelector<HTMLElement>('#growth-output');
+  const state = document.querySelector<HTMLElement>('#growth-state');
+  const heading = document.querySelector<HTMLElement>('#growth-results-title');
+  const print = document.querySelector<HTMLButtonElement>('#print-report');
   const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
   const setText = (selector: string, value: string) => { const el = document.querySelector<HTMLElement>(selector); if (el) el.textContent = value; };
+  let dirty = false;
 
-  function inputFromForm(): GrowthInput | null {
-    if (!form) return null;
-    const data = new FormData(form);
-    return {
-      initialAmount: Number(data.get('initialAmount')),
-      includePilot: data.get('includePilot') === 'true',
-      familyContribution: Number(data.get('familyContribution')),
-      familyFrequency: String(data.get('familyFrequency')) as ContributionFrequency,
-      annualEmployerContribution: Number(data.get('annualEmployerContribution')),
-      annualReturnRate: Number(data.get('annualReturnRate')),
-      fundExpenseRate: Number(data.get('fundExpenseRate')),
-      accountFeeRate: Number(data.get('accountFeeRate')),
-      birthDate: String(data.get('birthDate') || ''),
-      projectionStartDate: String(data.get('projectionStartDate') || ''),
-      targetAge: Number(data.get('targetAge'))
-    };
+  function showErrors(messages: string[], focus: boolean): void {
+    if (!errors || !output) return;
+    errors.replaceChildren();
+    const alert = document.createElement('div');
+    alert.setAttribute('role', 'alert');
+    const title = document.createElement('h3'); title.textContent = 'Check these inputs';
+    const list = document.createElement('ul'); list.className = 'error-list';
+    messages.forEach((message) => { const li = document.createElement('li'); li.textContent = message; list.append(li); });
+    alert.append(title, list); errors.append(alert);
+    output.hidden = true;
+    if (print) print.disabled = true;
+    if (state) state.textContent = 'No projection is shown until these inputs are corrected.';
+    if (focus) heading?.focus();
   }
 
-  function render(): void {
-    const input = inputFromForm();
-    if (!input || !errors || !output) return;
+  function render(focus = true, fromHomepage = false): void {
+    if (!form || !errors || !output) return;
+    const input = growthInputFromForm(new FormData(form));
     const messages = validateGrowthInput(input);
-    if (messages.length) {
-      errors.innerHTML = `<div role="alert"><h3>Check these inputs</h3><ul class="error-list">${messages.map((message) => `<li>${message}</li>`).join('')}</ul></div>`;
-      output.hidden = true;
-      return;
+    if (messages.length) { showErrors(messages, focus); return; }
+    try {
+      // Finish both calculations before exposing a result; never leave stale metrics after an exception.
+      const result = projectGrowth(input);
+      const scenarios = projectScenarios(input);
+      setText('#result-age', String(input.targetAge));
+      setText('#ending-balance', usd.format(result.endingBalance));
+      setText('#total-contributed', usd.format(result.totalContributed));
+      setText('#investment-growth', usd.format(result.investmentGrowth));
+      setText('#fee-impact', usd.format(result.feeImpact));
+      setText('#contribution-note', `Contributions modeled for ${result.contributionMonths} month-ends, through ${result.contributionEndDate}. Projection target: ${result.targetDate}. Returns are not guaranteed. Taxes and withdrawals are not modeled.`);
+      const rows = document.querySelector<HTMLElement>('#scenario-rows');
+      if (rows) {
+        rows.replaceChildren();
+        scenarios.forEach(({ rate, projection }) => {
+          const row = document.createElement('tr');
+          [String(rate) + '%', usd.format(projection.endingBalance)].forEach((value) => { const cell = document.createElement('td'); cell.textContent = value; row.append(cell); });
+          rows.append(row);
+        });
+      }
+      document.querySelectorAll<HTMLElement>('[data-assumptions]').forEach((list) => {
+        list.replaceChildren();
+        growthAssumptions(input).forEach(([label, value]) => {
+          const group = document.createElement('div');
+          const dt = document.createElement('dt'); dt.textContent = label;
+          const dd = document.createElement('dd'); dd.textContent = value;
+          group.append(dt, dd); list.append(group);
+        });
+      });
+      setText('#report-generated', `Calculated locally at ${new Date().toISOString()}. No answers were submitted.`);
+      errors.replaceChildren(); output.hidden = false; dirty = false;
+      if (print) print.disabled = false;
+      if (state) state.textContent = fromHomepage ? 'Continued from the homepage example. Amount, return, and no-pilot assumption have been preserved.' : 'Calculated using the assumptions below. This is not a forecast.';
+      if (focus) heading?.focus();
+    } catch (error) {
+      showErrors([error instanceof Error ? error.message : 'The projection could not be calculated. Please check your inputs and try again.'], focus);
     }
-    errors.innerHTML = '';
-    output.hidden = false;
-    const result = projectGrowth(input);
-    const scenarios = projectScenarios(input);
-    setText('#result-age', String(input.targetAge));
-    setText('#ending-balance', usd.format(result.endingBalance));
-    setText('#total-contributed', usd.format(result.totalContributed));
-    setText('#investment-growth', usd.format(result.investmentGrowth));
-    setText('#fee-impact', usd.format(result.feeImpact));
-    setText('#contribution-note', `Contributions modeled for ${result.contributionMonths} month-ends, through ${result.contributionEndDate}. Projection target: ${result.targetDate}. Returns are not guaranteed. Taxes and withdrawals are not modeled.`);
-    const rows = document.querySelector<HTMLElement>('#scenario-rows');
-    if (rows) rows.innerHTML = scenarios.map(({ rate, projection }) => `<tr><td>${rate.toFixed(1)}%</td><td>${usd.format(projection.endingBalance)}</td></tr>`).join('');
   }
 
+  form?.addEventListener('input', () => {
+    dirty = true;
+    if (output) output.hidden = true;
+    errors?.replaceChildren();
+    if (print) print.disabled = true;
+    if (state) state.textContent = 'Inputs changed. Select Update projection to calculate; the previous result is hidden.';
+  });
   form?.addEventListener('submit', (event) => { event.preventDefault(); render(); });
   form?.querySelector<HTMLButtonElement>('button[type="submit"]')?.removeAttribute('disabled');
-  document.querySelector<HTMLButtonElement>('#print-report')?.addEventListener('click', () => window.print());
+  print?.removeAttribute('disabled');
+  print?.addEventListener('click', () => window.print());
+  window.addEventListener('beforeprint', () => {
+    if (dirty) render(false);
+    setText('#report-generated', `Prepared locally at ${new Date().toISOString()}. No answers were submitted.`);
+  });
+  const preset = inputFromPreviewHash(window.location.hash);
+  if (preset && form) {
+    const contribution = form.querySelector<HTMLInputElement>('#family-contribution');
+    const rate = form.querySelector<HTMLInputElement>('#return-rate');
+    if (contribution && rate) { contribution.value = String(preset.familyContribution); rate.value = String(preset.annualReturnRate); render(false, true); }
+  }
 </script>

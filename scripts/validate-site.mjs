@@ -6,6 +6,7 @@ const root = resolve('dist');
 const requiredRoutes = [
   '/',
   '/trump-accounts/',
+  '/guides/529-plans/',
   '/tools/trump-account-eligibility-checker/',
   '/tools/trump-account-growth-calculator/',
   '/tools/child-savings-account-comparison/',
@@ -61,6 +62,12 @@ for (const file of htmlFiles) {
   if (!isNotFound && /<meta[^>]+name="robots"[^>]+content="[^"]*noindex/i.test(html)) failures.push(`${name}: public launch page must allow indexing`);
   if (html.includes('Public test environment:') || html.includes('Pre-production status:') || html.includes('Draft test terms:')) failures.push(`${name}: obsolete pre-launch notice`);
   if (!html.includes('application/ld+json')) failures.push(`${name}: missing JSON-LD`);
+  const reviewTags = [...html.matchAll(/<time\b[^>]*data-review-date[^>]*>/gi)];
+  for (const tag of reviewTags) {
+    const date = tag[0].match(/datetime="([^"]+)"/)?.[1];
+    const schemas = [...html.matchAll(/<script[^>]*type="application\/ld\+json"[^>]*>(.*?)<\/script>/gis)].map((match) => JSON.parse(match[1]));
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date ?? '') || !schemas.some((schema) => schema.dateModified === date)) failures.push(`${name}: visible review date and structured modification date must share one ISO value`);
+  }
   if (!html.includes('og:title') || !html.includes('og:description')) failures.push(`${name}: missing Open Graph metadata`);
   if (!html.includes(`© ${new Date().getUTCFullYear()} Child Savings Lab.`)) failures.push(`${name}: missing current copyright year`);
   if (h1Matches.length !== 1) failures.push(`${name}: expected one H1, found ${h1Matches.length}`);
@@ -80,6 +87,14 @@ for (const file of htmlFiles) {
     if (!path || /\.[a-z0-9]+$/i.test(path)) continue;
     const target = path === '/' ? join(root, 'index.html') : join(root, path, 'index.html');
     if (!existsSync(target)) failures.push(`${name}: broken internal link ${href}`);
+    else if (href.includes('#')) {
+      const fragment = href.split('#')[1];
+      const preset = path === '/tools/trump-account-growth-calculator/' && /^preset=(50|100|200)-(0|4|6)$/.test(fragment);
+      if (fragment && !preset && !readFileSync(target, 'utf8').includes(`id="${fragment}"`)) failures.push(`${name}: broken internal fragment ${href}`);
+    }
+  }
+  for (const match of html.matchAll(/href="#([^"]+)"/g)) {
+    if (!html.includes(`id="${match[1]}"`)) failures.push(`${name}: broken page-contents anchor #${match[1]}`);
   }
 }
 
@@ -92,6 +107,9 @@ const eligibilityHtml = readFileSync(routeFile('/tools/trump-account-eligibility
 const growthHtml = readFileSync(routeFile('/tools/trump-account-growth-calculator/'), 'utf8');
 if (!eligibilityHtml.includes('Show next steps') || !eligibilityHtml.includes('Last verified')) failures.push('Status tool lacks rendered content or verification date');
 if (!growthHtml.includes('Update projection') || !growthHtml.includes('Returns are not guaranteed')) failures.push('Growth tool lacks indexable content or limitation language');
+if (!growthHtml.includes('Parameters used for this report') || !growthHtml.includes('data-assumptions')) failures.push('Growth print report must include its input assumptions');
+if (!growthHtml.includes('min="2026-07-04"')) failures.push('Growth form must retain the statutory earliest contribution date');
+if (!eligibilityHtml.includes('id="eligibility-output" hidden') || !eligibilityHtml.includes('No eligibility assessment yet')) failures.push('Eligibility checker must not show a positive default determination');
 if (!existsSync(join(root, 'robots.txt'))) failures.push('Missing robots.txt');
 if (!existsSync(join(root, 'sitemap-index.xml'))) failures.push('Missing sitemap-index.xml');
 if (!existsSync(join(root, '_headers'))) failures.push('Missing Cloudflare headers');

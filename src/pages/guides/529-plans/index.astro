@@ -1,0 +1,37 @@
+---
+import ArticleLayout from '../../../layouts/ArticleLayout.astro';
+import NextSteps from '../../../components/NextSteps.astro';
+---
+<ArticleLayout title="529 Plans: A Parent’s Starting Guide" description="Learn what a 529 plan does, who controls it, how qualified education use affects taxes, and which costs and state rules to check before choosing a plan." verifiedAt="2026-10-10" effective="Educational overview reviewed October 10, 2026; state and plan terms vary" sourceIds={['SEC-529-INTRO','SEC-529-QUESTIONS','IRS-529-QA']} summary={[
+  'A 529 is an education-focused account, not a guaranteed investment return.',
+  'Compare your state’s incentives, total fees, and investment choices together.',
+  'Qualified use matters. Check the rules for your tax year before withdrawing.'
+]} contents={[
+  { id: 'purpose', label: 'What a 529 is for' }, { id: 'ownership', label: 'Ownership and control' },
+  { id: 'taxes', label: 'Tax treatment and qualified use' }, { id: 'compare-plans', label: 'A plan-comparison checklist' },
+  { id: 'change-of-plans', label: 'If the education plan changes' }
+]}>
+  <h2 id="purpose">What a 529 is for</h2>
+  <p>A 529 plan helps save for education. Education savings plans invest money in a menu of options; prepaid tuition plans purchase future tuition units or credits under specific program terms. Their risks and restrictions differ. Investment-based plans can lose value, and a state-sponsored label is not a universal guarantee. See the <a href="https://www.investor.gov/introduction-investing/general-resources/news-alerts/alerts-bulletins/investor-bulletins/introduction-529-plans-investor-bulletin">SEC’s January 2026 introduction</a>.</p>
+  <h2 id="ownership">Ownership and control</h2>
+  <p>The account holder and the student beneficiary have different roles. The owner generally controls an ordinary 529 account; a custodial 529 funded with the child’s property can have different restrictions. Read the plan’s rules on successor owners, changing beneficiaries, and withdrawals rather than assuming the child receives unrestricted control at 18.</p>
+  <h2 id="taxes">Tax treatment and qualified use</h2>
+  <p>Contributions are not deductible for federal income-tax purposes. Earnings used for qualified education expenses are generally federally tax-free. State deductions, credits, and withdrawal treatment vary. A nonqualified withdrawal may trigger income tax and an additional federal tax on its earnings portion, subject to exceptions. Start with the <a href="https://www.irs.gov/newsroom/529-plans-questions-and-answers">IRS overview</a>, then verify current-year rules.</p>
+  <div class="callout"><strong>Check the year, not just the headline.</strong> Older official pages can still display historical K–12 limits. The dated 2026 SEC bulletin discusses expanded education uses. This guide does not calculate a withdrawal limit or determine whether a particular expense qualifies.</div>
+  <h2 id="compare-plans">A plan-comparison checklist</h2>
+  <p>Use the <a href="https://www.investor.gov/introduction-investing/general-resources/news-alerts/alerts-bulletins/investor-bulletins-10">SEC’s questions to consider</a> and each plan’s offering documents. Write down:</p>
+  <ul>
+    <li>Your intended education use and the date you expect to need the money.</li>
+    <li>State incentives, residency conditions, and any recapture rules.</li>
+    <li>Account charges, investment expenses, and any broker compensation.</li>
+    <li>Investment choices, loss risk, and how age-based options change over time.</li>
+    <li>Ownership, minimum deposits, and withdrawal documentation requirements.</li>
+  </ul>
+  <h2 id="change-of-plans">If the education plan changes</h2>
+  <p>A different beneficiary, later education, or a qualifying rollover may be worth investigating. A 529-to-Roth IRA rollover is restricted, not an unrestricted cash-out: account-age, contribution, beneficiary, and other conditions require review. Before moving money, ask the plan and a tax professional about federal and state consequences, financial aid, and records to keep.</p>
+  <p>This is independent education, not a plan ranking, enrollment service, or personalized tax or investment advice. No provider pays for placement in this guide.</p>
+  <NextSteps heading="Keep the goal in view." links={[
+    { title: 'Compare five account types', description: 'Include custodial accounts, Roth IRAs, and ABLE programs.', href: '/tools/child-savings-account-comparison/' },
+    { title: 'Trump Account vs. 529', description: 'See how education and long-term investing purposes differ.', href: '/compare/trump-account-vs-529/' }
+  ]} />
+</ArticleLayout>

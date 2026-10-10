@@ -3,13 +3,13 @@ import { checkEligibility } from '../lib/eligibility/checkEligibility';
 
 const initial = checkEligibility({
   checkYear: 2026,
-  birthDate: '2026-01-15',
-  hasEmploymentValidSsn: true,
-  isUsCitizen: true,
+  birthDate: '',
+  hasEmploymentValidSsn: null,
+  isUsCitizen: null,
   accountStatus: 'unknown',
   claimAuthority: 'guardian-or-legal-custodian',
   pilotElectionStatus: 'not-made',
-  qualifyingChildExpected: true
+  qualifyingChildExpected: null
 });
 ---
 <div class="tool-layout" data-eligibility-checker>
@@ -26,13 +26,14 @@ const initial = checkEligibility({
         </div>
         <div class="field">
           <label for="birth-date">Child’s date of birth</label>
-          <input id="birth-date" name="birthDate" type="date" value="2026-01-15" required />
+          <input id="birth-date" name="birthDate" type="date" required />
         </div>
         <fieldset class="field full">
           <legend>Was the child’s SSN valid for employment and issued before the relevant election?</legend>
           <div class="radio-row">
-            <label class="radio-option"><input type="radio" name="hasEmploymentValidSsn" value="true" checked /> Yes</label>
-            <label class="radio-option"><input type="radio" name="hasEmploymentValidSsn" value="false" /> No / unsure</label>
+            <label class="radio-option"><input type="radio" name="hasEmploymentValidSsn" value="true" /> Yes</label>
+            <label class="radio-option"><input type="radio" name="hasEmploymentValidSsn" value="false" /> No</label>
+            <label class="radio-option"><input type="radio" name="hasEmploymentValidSsn" value="unknown" checked /> Not sure yet</label>
           </div>
         </fieldset>
         <div class="field full">
@@ -49,33 +50,35 @@ const initial = checkEligibility({
         <div class="field full">
           <label for="claim-authority">Who would claim an auto account?</label>
           <select id="claim-authority" name="claimAuthority" required>
-            <option value="guardian-or-legal-custodian" selected>Guardian or legal custodian with property-management authority</option>
+            <option value="guardian-or-legal-custodian">Guardian or legal custodian with property-management authority</option>
             <option value="beneficiary-with-legal-capacity">Beneficiary with legal capacity under state law</option>
-            <option value="not-sure">Not sure / relationship alone has not been legally confirmed</option>
+            <option value="not-sure" selected>Not sure / relationship alone has not been legally confirmed</option>
           </select>
           <small>A parent or relative is not automatically authorized unless applicable law gives the required authority.</small>
         </div>
         <fieldset class="field full">
           <legend>Is the child a U.S. citizen?</legend>
           <div class="radio-row">
-            <label class="radio-option"><input type="radio" name="isUsCitizen" value="true" checked /> Yes</label>
-            <label class="radio-option"><input type="radio" name="isUsCitizen" value="false" /> No / unsure</label>
+            <label class="radio-option"><input type="radio" name="isUsCitizen" value="true" /> Yes</label>
+            <label class="radio-option"><input type="radio" name="isUsCitizen" value="false" /> No</label>
+            <label class="radio-option"><input type="radio" name="isUsCitizen" value="unknown" checked /> Not sure yet</label>
           </div>
         </fieldset>
         <fieldset class="field full">
           <legend>Do you expect the child to be your qualifying child for the pilot-election year?</legend>
           <div class="radio-row">
-            <label class="radio-option"><input type="radio" name="qualifyingChildExpected" value="true" checked /> Yes</label>
-            <label class="radio-option"><input type="radio" name="qualifyingChildExpected" value="false" /> No / unsure</label>
+            <label class="radio-option"><input type="radio" name="qualifyingChildExpected" value="true" /> Yes</label>
+            <label class="radio-option"><input type="radio" name="qualifyingChildExpected" value="false" /> No</label>
+            <label class="radio-option"><input type="radio" name="qualifyingChildExpected" value="unknown" checked /> Not sure yet</label>
           </div>
         </fieldset>
         <div class="field full">
           <label for="pilot-status">Status of the separate $1,000 pilot election</label>
           <select id="pilot-status" name="pilotElectionStatus" required>
-            <option value="not-made" selected>Not made</option>
+            <option value="not-made">Not made</option>
             <option value="submitted-pending">Submitted, but not confirmed as processed</option>
             <option value="processed">Processed</option>
-            <option value="unknown">Unknown</option>
+            <option value="unknown" selected>Unknown</option>
           </select>
         </div>
       </div>
@@ -84,11 +87,14 @@ const initial = checkEligibility({
         <button class="button secondary" type="reset">Reset</button>
       </div>
     </form>
-    <noscript><p class="privacy-note">Enable JavaScript to calculate locally. The displayed result is a worked example; your inputs are not submitted.</p></noscript>
+    <noscript><p class="privacy-note">Enable JavaScript to run this checker locally. No eligibility assessment is made until you complete the required information; your inputs are not submitted.</p></noscript>
   </section>
   <section class="result-panel" aria-labelledby="eligibility-results-title" aria-live="polite" aria-atomic="true">
     <div class="eyebrow" style="color:#9ed5bf">Educational result</div>
-    <h2 id="eligibility-results-title">Your account path</h2>
+    <h2 id="eligibility-results-title" tabindex="-1">Your next steps</h2>
+    <p id="eligibility-state">No eligibility assessment yet. Complete the questions, then select Show next steps. Hypothetical answers are welcome.</p>
+    <div id="eligibility-errors"></div>
+    <div id="eligibility-output" hidden>
     <div id="account-result">
       <h3>Account status</h3>
       <p><span class="status no">{initial.accountPathTitle}</span></p>
@@ -106,6 +112,7 @@ const initial = checkEligibility({
       <ul>{initial.requiredActions.map((action) => <li>{action}</li>)}</ul>
       <p><strong>Form 4547:</strong> {initial.formGuidance}</p>
     </div>
+    </div>
     <p><strong>Rules checked:</strong> October 8, 2026, including TD 10056.</p>
     <p><a href="https://www.irs.gov/trumpaccounts">Continue at the official IRS Trump Accounts page →</a></p>
   </section>
@@ -113,6 +120,7 @@ const initial = checkEligibility({
 
 <script>
   import { checkEligibility } from '../lib/eligibility/checkEligibility';
+  import { formNumber } from '../lib/calculators/form';
   import type { AccountStatus, ClaimAuthority, EligibilityInput, PilotElectionStatus } from '../lib/eligibility/types';
 
   const form = document.querySelector<HTMLFormElement>('#eligibility-form');
@@ -120,16 +128,21 @@ const initial = checkEligibility({
   const funding = document.querySelector<HTMLElement>('#funding-result');
   const pilot = document.querySelector<HTMLElement>('#pilot-result');
   const detail = document.querySelector<HTMLElement>('#eligibility-detail');
+  const errors = document.querySelector<HTMLElement>('#eligibility-errors');
+  const output = document.querySelector<HTMLElement>('#eligibility-output');
+  const state = document.querySelector<HTMLElement>('#eligibility-state');
+  const heading = document.querySelector<HTMLElement>('#eligibility-results-title');
 
-  function boolValue(data: FormData, name: string): boolean {
-    return data.get(name) === 'true';
+  function boolValue(data: FormData, name: string): boolean | null {
+    const value = data.get(name);
+    return value === 'true' ? true : value === 'false' ? false : null;
   }
 
   function render(): void {
-    if (!form || !account || !funding || !pilot || !detail) return;
+    if (!form || !account || !funding || !pilot || !detail || !errors || !output || !state) return;
     const data = new FormData(form);
     const input: EligibilityInput = {
-      checkYear: Number(data.get('checkYear')),
+      checkYear: formNumber(data.get('checkYear')),
       birthDate: String(data.get('birthDate') || ''),
       hasEmploymentValidSsn: boolValue(data, 'hasEmploymentValidSsn'),
       isUsCitizen: boolValue(data, 'isUsCitizen'),
@@ -139,14 +152,31 @@ const initial = checkEligibility({
       qualifyingChildExpected: boolValue(data, 'qualifyingChildExpected')
     };
     const result = checkEligibility(input);
+    errors.replaceChildren();
+    if (result.validationErrors.length) {
+      output.hidden = true;
+      state.textContent = 'More information is needed. Eligibility has not been assessed.';
+      const list = document.createElement('ul'); list.className = 'error-list'; list.setAttribute('role', 'alert');
+      result.validationErrors.forEach((message) => { const li = document.createElement('li'); li.textContent = message; list.append(li); });
+      errors.append(list); heading?.focus(); return;
+    }
+    output.hidden = false;
+    state.textContent = 'Educational next steps based on your answers—not an IRS determination.';
     const list = (items: string[]) => items.length ? `<ul>${items.map((item) => `<li>${item}</li>`).join('')}</ul>` : '';
     account.innerHTML = `<h3>Account status</h3><p><span class="status ${result.accountPath === 'active' ? 'yes' : 'no'}">${result.accountPathTitle}</span></p>${list(result.accountReasons)}`;
     funding.innerHTML = `<h3>Family or employer contributions</h3><p><span class="status ${result.canReceiveFamilyOrEmployerContributions ? 'yes' : 'no'}">${result.canReceiveFamilyOrEmployerContributions ? 'Receiving account appears activated; verify trustee instructions' : 'Wait until a receiving account is claimed and activated'}</span></p>`;
     pilot.innerHTML = `<h3>$1,000 pilot election</h3><p><span class="status ${result.pilotStatus === 'potentially-eligible-to-elect' || result.pilotStatus === 'already-processed' ? 'yes' : 'no'}">${result.pilotStatusTitle}</span></p>${list(result.pilotReasons)}`;
     detail.innerHTML = `<h3>Next steps</h3>${list(result.requiredActions)}<p><strong>Form 4547:</strong> ${result.formGuidance}</p>`;
+    heading?.focus();
   }
 
   form?.addEventListener('submit', (event) => { event.preventDefault(); render(); });
-  form?.addEventListener('reset', () => window.setTimeout(render));
+  const clearResult = () => {
+    if (output) output.hidden = true;
+    errors?.replaceChildren();
+    if (state) state.textContent = 'No eligibility assessment yet. Complete the questions, then select Show next steps.';
+  };
+  form?.addEventListener('input', clearResult);
+  form?.addEventListener('reset', clearResult);
   form?.querySelector<HTMLButtonElement>('button[type="submit"]')?.removeAttribute('disabled');
 </script>

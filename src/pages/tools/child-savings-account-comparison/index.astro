@@ -1,22 +1,26 @@
 ---
 import ArticleLayout from '../../../layouts/ArticleLayout.astro';
 import NextSteps from '../../../components/NextSteps.astro';
+import ComparisonTable from '../../../components/ComparisonTable.astro';
+const rows = [
+  { label: 'Trump Account', href: '/trump-accounts/', cells: ['Long-term child investing with special pre-18 rules', 'Responsible party before adulthood; child owns the account', 'Restricted investments and withdrawals during the growth period; later generally follows traditional IRA rules'] },
+  { label: '529 plan', href: '/guides/529-plans/', cells: ['Education savings', 'Account owner generally retains control; custodial arrangements differ', 'Federal tax advantages depend on qualified use; state rules and incentives vary'] },
+  { label: 'UGMA/UTMA', href: '#custodial-accounts', cells: ['Flexible irrevocable gift to a minor', 'Custodian until the applicable state transfer age, then the child', 'Gift belongs to the child; state law, taxes, and financial-aid treatment require separate review'] },
+  { label: 'Custodial Roth IRA', href: '#custodial-roth-ira', cells: ['Retirement saving for a child with eligible compensation', 'Custodian while minor; child later', 'Taxable-compensation and annual IRA limits apply; Roth income limits may also matter'] },
+  { label: 'ABLE account', href: '#able-accounts', cells: ['Qualified disability expenses and long-term support', 'Eligible individual or authorized person', 'Eligibility, qualified-use, and public-benefit rules need program-specific review'] }
+];
 ---
-<ArticleLayout title="Compare child savings account types" description="A purpose-first comparison of Trump Accounts, 529 plans, UGMA/UTMA custodial accounts, Custodial Roth IRAs, and ABLE accounts." sourceIds={['TREASURY-TD-10056','IRS-FORM-4547-INSTRUCTIONS','IRS-529-QA']} effective="Federal rules reviewed through October 8, 2026">
+<ArticleLayout title="Compare child savings account types" description="A purpose-first comparison of Trump Accounts, 529 plans, UGMA/UTMA custodial accounts, Custodial Roth IRAs, and ABLE accounts." verifiedAt="2026-10-10" sourceIds={['TREASURY-TD-10056','SEC-529-INTRO','FINRA-CUSTODIAL','IRS-IRA-LIMITS','IRS-ABLE-OVERVIEW']} effective="Comparison reviewed October 10; Trump Account rules reviewed October 8, 2026" contents={[
+  { id: 'account-overview', label: 'Compare purposes and control' },
+  { id: 'start-with-goal', label: 'Start with your goal' },
+  { id: 'custodial-accounts', label: 'UGMA/UTMA ownership' },
+  { id: 'custodial-roth-ira', label: 'Custodial Roth IRA basics' },
+  { id: 'able-accounts', label: 'ABLE account basics' }
+]}>
   <p>No single account is “best” for every child. The useful question is what the money is for, who should control it, and which tax rules fit that goal.</p>
-  <div style="overflow-x:auto">
-    <table>
-      <thead><tr><th scope="col">Account</th><th scope="col">Primary purpose</th><th scope="col">Control</th><th scope="col">Key constraint</th></tr></thead>
-      <tbody>
-        <tr><td><strong>Trump Account</strong></td><td>Long-term child investing with special rules before 18</td><td>Responsible party before adulthood; child owns the account</td><td>Restricted investments and withdrawals during growth period; later generally follows traditional IRA rules</td></tr>
-        <tr><td><strong>529 plan</strong></td><td>Education savings</td><td>Account owner generally retains control</td><td>Federal tax advantages depend on qualified use; state rules and incentives vary</td></tr>
-        <tr><td><strong>UGMA/UTMA</strong></td><td>Flexible irrevocable gift to a minor</td><td>Custodian until state transfer age, then the child</td><td>Gift belongs to the child; state transfer-age, tax, and financial-aid treatment require separate review</td></tr>
-        <tr><td><strong>Custodial Roth IRA</strong></td><td>Retirement saving for a child with earned income</td><td>Custodian while minor; child later</td><td>Child needs eligible compensation; annual IRA limits apply</td></tr>
-        <tr><td><strong>ABLE account</strong></td><td>Qualified disability expenses and long-term support</td><td>Eligible individual or authorized person</td><td>Eligibility and qualified-expense rules apply</td></tr>
-      </tbody>
-    </table>
-  </div>
-  <h2>Start with the goal</h2>
+  <h2 id="account-overview">Account overview</h2>
+  <ComparisonTable caption="Five child savings account types: purpose, control, and constraints" columns={['Account','Primary purpose','Control','Key constraint']} rows={rows} />
+  <h2 id="start-with-goal">Start with the goal</h2>
   <ul>
     <li><strong>Education is the primary goal:</strong> begin by studying 529 rules and your state’s plan incentives.</li>
     <li><strong>The child may receive the $1,000 pilot contribution:</strong> check auto-account and pilot-election status even if another account remains the main savings vehicle.</li>
@@ -25,8 +29,14 @@ import NextSteps from '../../../components/NextSteps.astro';
     <li><strong>Disability-related eligibility applies:</strong> ABLE rules deserve a dedicated comparison before using a general custodial account.</li>
   </ul>
   <div class="callout">This comparison is educational, not a recommendation. State tax treatment, financial-aid treatment, benefits eligibility, and family circumstances can change the result.</div>
+  <h2 id="custodial-accounts">UGMA/UTMA: flexible use, permanent child ownership</h2>
+  <p>A custodial gift belongs to the child, not the donor. A custodian manages it for the child’s benefit until the applicable state transfer age; the beneficiary cannot simply be replaced. Flexible spending is not a promise of tax-free growth or permanent parental control. Verify the governing state law and current tax and financial-aid rules before making an irrevocable gift. <a href="https://syndication.finra.org/content/saving-college-ugma-and-utma-custodial-accounts">FINRA’s custodial-account overview</a> explains the structure; its historical tax figures are not current limits.</p>
+  <h2 id="custodial-roth-ira">Custodial Roth IRA: start with eligible compensation</h2>
+  <p>A child’s regular IRA contribution is limited by eligible taxable compensation and the annual combined IRA limit; Roth income restrictions can also apply. A gift does not itself create compensation. Confirm compensation records, the custodian arrangement, and withdrawal rules rather than treating this as a general-purpose spending account. See the <a href="https://www.irs.gov/retirement-plans/plan-participant-employee/retirement-topics-ira-contribution-limits">IRS contribution rules and examples</a>.</p>
+  <h2 id="able-accounts">ABLE: compare disability-related needs separately</h2>
+  <p>ABLE accounts are tax-advantaged programs for eligible people with disabilities. Qualified disability expenses—not general spending flexibility—drive the tax treatment. Check current eligibility, contribution rules, permitted expenses, and interaction with public benefits with the program and a qualified benefits adviser. The <a href="https://www.irs.gov/government-entities/federal-state-local-governments/able-accounts-tax-benefit-for-people-with-disabilities">IRS ABLE overview</a> describes the purpose; its historical examples should not be used as current-year limits.</p>
   <NextSteps heading="Take a closer look at the trade-offs." links={[
+    { title: '529 plans: a parent’s starting guide', description: 'Understand education savings, ownership, costs, and questions to ask.', href: '/guides/529-plans/' },
     { title: 'Trump Account vs. 529', description: 'Compare the education and long-term investing pathways.', href: '/compare/trump-account-vs-529/' },
-    { title: 'Try a Trump Account scenario', description: 'Model contributions with transparent assumptions.', href: '/tools/trump-account-growth-calculator/' }
   ]} />
 </ArticleLayout>

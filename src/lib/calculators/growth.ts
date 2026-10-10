@@ -1,3 +1,7 @@
+import { isValidIsoDate } from '../dates';
+
+export const FIRST_CONTRIBUTION_DATE = '2026-07-04';
+export const CALCULATION_VERSION = '2026-10-10';
 export type ContributionFrequency = 'monthly' | 'annual';
 
 export interface GrowthInput {
@@ -23,12 +27,6 @@ export interface GrowthProjection {
   contributionMonths: number;
   contributionEndDate: string;
   targetDate: string;
-}
-
-function isValidIsoDate(value: string): boolean {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
-  const date = new Date(`${value}T00:00:00Z`);
-  return !Number.isNaN(date.valueOf()) && date.toISOString().slice(0, 10) === value;
 }
 
 function parseDate(value: string): Date {
@@ -70,21 +68,27 @@ export function growthPeriodEnd(input: Pick<GrowthInput, 'birthDate'>): string |
 
 export function validateGrowthInput(input: GrowthInput): string[] {
   const errors: string[] = [];
-  const numericValues = [
-    input.initialAmount,
-    input.familyContribution,
-    input.annualEmployerContribution,
-    input.annualReturnRate,
-    input.fundExpenseRate,
-    input.accountFeeRate,
-    input.targetAge
+  const numericFields: [string, number][] = [
+    ['Existing starting amount', input.initialAmount],
+    ['Family contribution', input.familyContribution],
+    ['Annual employer contribution', input.annualEmployerContribution],
+    ['Assumed annual return', input.annualReturnRate],
+    ['Eligible fund expense rate', input.fundExpenseRate],
+    ['Separate account/trustee fee', input.accountFeeRate],
+    ['Target age', input.targetAge]
   ];
-  if (numericValues.some((value) => !Number.isFinite(value))) errors.push('All numeric fields must contain valid numbers.');
+  for (const [label, value] of numericFields) {
+    if (!Number.isFinite(value)) errors.push(`${label}: enter a valid number; a blank is not zero.`);
+  }
+  if (!['monthly', 'annual'].includes(input.familyFrequency)) errors.push('Choose a monthly or annual contribution frequency.');
   if (input.initialAmount < 0 || input.familyContribution < 0 || input.annualEmployerContribution < 0) {
     errors.push('Contribution amounts cannot be negative.');
   }
   if (!isValidIsoDate(input.birthDate)) errors.push('Enter a complete, valid birth date.');
   if (!isValidIsoDate(input.projectionStartDate)) errors.push('Enter a complete, valid projection start date.');
+  else if (input.projectionStartDate < FIRST_CONTRIBUTION_DATE) {
+    errors.push('Projection start date must be July 4, 2026 or later; Trump Accounts could not accept contributions before that date.');
+  }
   if (!Number.isInteger(input.targetAge) || input.targetAge < 1 || input.targetAge > 65) {
     errors.push('Target age must be a whole number from 1 through 65.');
   }
@@ -158,6 +162,9 @@ export function projectGrowth(input: GrowthInput): GrowthProjection {
   const combinedFeeRate = input.fundExpenseRate + input.accountFeeRate;
   const net = simulate(input, combinedFeeRate);
   const gross = simulate(input, 0);
+  if (![net.endingBalance, net.totalContributed, gross.endingBalance].every(Number.isFinite)) {
+    throw new Error('The projection is too large to calculate reliably. Reduce the amounts or time horizon.');
+  }
   return {
     ...net,
     feeImpact: Math.max(0, gross.endingBalance - net.endingBalance)
@@ -165,6 +172,9 @@ export function projectGrowth(input: GrowthInput): GrowthProjection {
 }
 
 export function projectScenarios(input: GrowthInput) {
+  const errors = validateGrowthInput(input);
+  if (errors.length) throw new Error(errors.join(' '));
   const rates = [input.annualReturnRate - 2, input.annualReturnRate, input.annualReturnRate + 2];
-  return rates.map((rate) => ({ rate, projection: projectGrowth({ ...input, annualReturnRate: rate }) }));
+  return rates.filter((rate) => rate > -100 && rate <= 20)
+    .map((rate) => ({ rate, projection: projectGrowth({ ...input, annualReturnRate: rate }) }));
 }

@@ -37,6 +37,8 @@ The top-level `dist/404.html` disables Cloudflare Pages’ default SPA fallback.
 
 Calculator inputs stay in the browser. The site does not ask for or store names, SSNs, tax IDs, account numbers, or addresses. Content is educational and is not individualized tax, legal, benefits, payroll, or investment advice.
 
+The homepage passes only allowlisted fictional presets through URL fragments to the full growth calculator. Custom financial inputs and birth dates are not serialized. Edited inputs hide stale results; missing required answers do not produce an eligibility rejection. Printed growth reports include their assumptions and calculation version.
+
 The production URL allows crawling and indexing. Version and branch preview URLs remain noindex through Cloudflare `_headers`. Calculator network form submissions are blocked by CSP, and submit buttons remain disabled until local scripts load. The source has not received licensed-professional sign-off; publication does not imply such review.
 
 ## Documentation

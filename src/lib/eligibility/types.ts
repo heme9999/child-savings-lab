@@ -14,6 +14,7 @@ export type ClaimAuthority =
 export type PilotElectionStatus = 'not-made' | 'submitted-pending' | 'processed' | 'unknown';
 
 export type AccountPath =
+  | 'needs-information'
   | 'not-baseline-eligible'
   | 'check-official-status'
   | 'claim-auto-account'
@@ -22,6 +23,7 @@ export type AccountPath =
   | 'manual-exception-review';
 
 export type PilotStatus =
+  | 'needs-information'
   | 'potentially-eligible-to-elect'
   | 'already-processed'
   | 'pending'
@@ -31,19 +33,20 @@ export type PilotStatus =
 export interface EligibilityInput {
   checkYear: number;
   birthDate: string;
-  hasEmploymentValidSsn: boolean;
-  isUsCitizen: boolean;
+  hasEmploymentValidSsn: boolean | null;
+  isUsCitizen: boolean | null;
   accountStatus: AccountStatus;
   claimAuthority: ClaimAuthority;
   pilotElectionStatus: PilotElectionStatus;
-  qualifyingChildExpected: boolean;
+  qualifyingChildExpected: boolean | null;
 }
 
 export interface EligibilityResult {
-  baselineEligible: boolean;
+  baselineEligible: boolean | null;
   accountPath: AccountPath;
   accountPathTitle: string;
-  canReceiveFamilyOrEmployerContributions: boolean;
+  canReceiveFamilyOrEmployerContributions: boolean | null;
+  validationErrors: string[];
   pilotStatus: PilotStatus;
   pilotStatusTitle: string;
   accountReasons: string[];

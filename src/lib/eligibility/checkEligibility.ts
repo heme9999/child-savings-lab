@@ -1,17 +1,13 @@
 import type { AccountPath, EligibilityInput, EligibilityResult, PilotStatus } from './types';
+import { isValidIsoDate } from '../dates';
 
 const VERIFIED_AT = '2026-10-08';
 const PILOT_START = '2025-01-01';
 const PILOT_END = '2028-12-31';
 
-function isValidIsoDate(value: string): boolean {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
-  const date = new Date(`${value}T00:00:00Z`);
-  return !Number.isNaN(date.valueOf()) && date.toISOString().slice(0, 10) === value;
-}
-
 function pathTitle(path: AccountPath): string {
   const titles: Record<AccountPath, string> = {
+    'needs-information': 'More information is needed; no eligibility determination',
     'not-baseline-eligible': 'Baseline requirements not met',
     'check-official-status': 'Check the official account status first',
     'claim-auto-account': 'Claim the auto account',
@@ -24,6 +20,7 @@ function pathTitle(path: AccountPath): string {
 
 function pilotTitle(status: PilotStatus): string {
   const titles: Record<PilotStatus, string> = {
+    'needs-information': 'Pilot eligibility has not been assessed',
     'potentially-eligible-to-elect': 'Potentially eligible to make the pilot election',
     'already-processed': 'Pilot election already processed',
     pending: 'Pilot election is pending',
@@ -37,24 +34,48 @@ export function checkEligibility(input: EligibilityInput): EligibilityResult {
   const accountReasons: string[] = [];
   const pilotReasons: string[] = [];
   const requiredActions: string[] = [];
+  const validationErrors: string[] = [];
+  const formGuidance = 'Form 4547 remains relevant to the separate pilot election and rare manual-account exceptions; it is no longer the default account-opening path after auto enrollment began.';
   let birthDateInPilotWindow = false;
 
   if (!Number.isInteger(input.checkYear) || input.checkYear < 2026 || input.checkYear > 2100) {
-    accountReasons.push('Choose a review year from 2026 through 2100.');
+    validationErrors.push('Choose a review year from 2026 through 2100.');
   }
 
   if (!isValidIsoDate(input.birthDate)) {
-    accountReasons.push('Enter a complete, valid date of birth.');
+    validationErrors.push('Enter a complete, valid date of birth.');
   } else if (Number.isInteger(input.checkYear)) {
     const birthDate = new Date(`${input.birthDate}T00:00:00Z`);
     const yearEnd = new Date(`${input.checkYear}-12-31T23:59:59Z`);
     birthDateInPilotWindow = input.birthDate >= PILOT_START && input.birthDate <= PILOT_END;
     if (birthDate > yearEnd) {
-      accountReasons.push('The child must be born by the end of the review year.');
+      validationErrors.push('The birth date must be on or before the end of the review year.');
     } else {
       const ageAtYearEnd = yearEnd.getUTCFullYear() - birthDate.getUTCFullYear();
       if (ageAtYearEnd >= 18) accountReasons.push('The individual must be under age 18 at the end of the election year.');
     }
+  }
+
+  for (const [answer, label] of [
+    [input.hasEmploymentValidSsn, 'employment-valid SSN status'],
+    [input.isUsCitizen, 'U.S. citizenship'],
+    [input.qualifyingChildExpected, 'qualifying-child expectation']
+  ] as const) {
+    if (typeof answer !== 'boolean') validationErrors.push(`Confirm ${label}. If unsure, verify it using official instructions before relying on a result.`);
+  }
+  if (!['unknown', 'auto-account', 'claim-started', 'manual-election-only', 'active-account', 'no-account-confirmed'].includes(input.accountStatus)) validationErrors.push('Choose an account status, including Unknown if you have not checked.');
+  if (!['guardian-or-legal-custodian', 'beneficiary-with-legal-capacity', 'not-sure'].includes(input.claimAuthority)) validationErrors.push('Choose a claim-authority answer.');
+  if (!['not-made', 'submitted-pending', 'processed', 'unknown'].includes(input.pilotElectionStatus)) validationErrors.push('Choose a pilot-election status.');
+  if (validationErrors.length) {
+    return {
+      baselineEligible: null,
+      accountPath: 'needs-information', accountPathTitle: pathTitle('needs-information'),
+      canReceiveFamilyOrEmployerContributions: null,
+      pilotStatus: 'needs-information', pilotStatusTitle: pilotTitle('needs-information'),
+      validationErrors, accountReasons: [], pilotReasons: [],
+      requiredActions: ['Complete or confirm the missing answers. This tool has not assessed eligibility.'],
+      formGuidance, sourceIds: ['TREASURY-TD-10056', 'IRS-FORM-4547-INSTRUCTIONS'], rulesVerifiedAt: VERIFIED_AT
+    };
   }
 
   if (!input.hasEmploymentValidSsn) {
@@ -119,6 +140,7 @@ export function checkEligibility(input: EligibilityInput): EligibilityResult {
   requiredActions.push('Verify all results at the official IRS Trump Accounts page; this tool does not access or submit account data.');
 
   return {
+    validationErrors,
     baselineEligible,
     accountPath,
     accountPathTitle: pathTitle(accountPath),
@@ -128,7 +150,7 @@ export function checkEligibility(input: EligibilityInput): EligibilityResult {
     accountReasons,
     pilotReasons,
     requiredActions,
-    formGuidance: 'Form 4547 remains relevant to the separate pilot election and rare manual-account exceptions; it is no longer the default account-opening path after auto enrollment began.',
+    formGuidance,
     sourceIds: ['TREASURY-TD-10056', 'IRS-FORM-4547-INSTRUCTIONS'],
     rulesVerifiedAt: VERIFIED_AT
   };

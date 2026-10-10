@@ -1,4 +1,4 @@
-export type SourceStatus = 'temporary regulations' | 'official guidance' | 'form instructions' | 'proposed rule' | 'technical release' | 'official overview';
+export type SourceStatus = 'temporary regulations' | 'official guidance' | 'form instructions' | 'proposed rule' | 'technical release' | 'official overview' | 'regulator overview';
 
 export interface SourceRecord {
   id: string;
@@ -107,10 +107,45 @@ export const sources: SourceRecord[] = [
     publisher: 'Internal Revenue Service',
     url: 'https://www.irs.gov/newsroom/529-plans-questions-and-answers',
     publishedAt: '2024-01-01',
-    verifiedAt: '2026-10-08',
+    verifiedAt: '2026-10-10',
     effectiveFrom: '2024-01-01',
     status: 'official overview',
-    note: 'Federal tax overview for qualified tuition programs.'
+    note: 'Federal tax overview for qualified tuition programs. Some examples describe older law; historical K–12 dollar limits are not used as current 2026 limits.'
+  },
+  {
+    id: 'SEC-529-INTRO', title: 'An Introduction to 529 Plans — Investor Bulletin',
+    publisher: 'U.S. Securities and Exchange Commission, Investor.gov',
+    url: 'https://www.investor.gov/introduction-investing/general-resources/news-alerts/alerts-bulletins/investor-bulletins/introduction-529-plans-investor-bulletin',
+    publishedAt: '2026-01-28', verifiedAt: '2026-10-10', effectiveFrom: 'Educational bulletin, not a regulation',
+    status: 'official overview', note: 'Dated overview of plan types, investment risks, costs, and qualified uses. A staff bulletin does not replace governing law or plan terms.'
+  },
+  {
+    id: 'SEC-529-QUESTIONS', title: '10 Questions to Consider Before Opening a 529 Account',
+    publisher: 'U.S. Securities and Exchange Commission, Investor.gov',
+    url: 'https://www.investor.gov/introduction-investing/general-resources/news-alerts/alerts-bulletins/investor-bulletins-10',
+    publishedAt: '2026-01-28', verifiedAt: '2026-10-10', effectiveFrom: 'Educational bulletin, not a regulation',
+    status: 'official overview', note: 'Questions about costs, state incentives, account arrangements, and unused funds; no provider ranking.'
+  },
+  {
+    id: 'IRS-IRA-LIMITS', title: 'Retirement Topics — IRA Contribution Limits',
+    publisher: 'Internal Revenue Service',
+    url: 'https://www.irs.gov/retirement-plans/plan-participant-employee/retirement-topics-ira-contribution-limits',
+    publishedAt: 'Not specified here; consult the source revision', verifiedAt: '2026-10-10', effectiveFrom: 'Use the applicable tax-year rules',
+    status: 'official guidance', note: 'Combined IRA limits, taxable-compensation requirement, and Roth income limitations. The comparison does not calculate a child’s allowable contribution.'
+  },
+  {
+    id: 'IRS-ABLE-OVERVIEW', title: 'ABLE Accounts — Tax Benefit for People With Disabilities',
+    publisher: 'Internal Revenue Service',
+    url: 'https://www.irs.gov/government-entities/federal-state-local-governments/able-accounts-tax-benefit-for-people-with-disabilities',
+    publishedAt: 'Not specified here; contains historical examples', verifiedAt: '2026-10-10', effectiveFrom: 'Check current tax-year and program rules',
+    status: 'official overview', note: 'Source for the account purpose and qualified-disability-expense tax treatment, not for current annual dollar limits or disability-onset-age thresholds.'
+  },
+  {
+    id: 'FINRA-CUSTODIAL', title: 'Saving for College: UGMA and UTMA Custodial Accounts',
+    publisher: 'Financial Industry Regulatory Authority (FINRA)',
+    url: 'https://syndication.finra.org/content/saving-college-ugma-and-utma-custodial-accounts',
+    publishedAt: '2017-10-02', verifiedAt: '2026-10-10', effectiveFrom: 'State law governs; historical overview',
+    status: 'regulator overview', note: 'Used only for irrevocable child ownership and custodial structure. Historical tax thresholds and financial-aid figures are not used as current rules; FINRA is not a federal tax authority.'
   }
 ];
 

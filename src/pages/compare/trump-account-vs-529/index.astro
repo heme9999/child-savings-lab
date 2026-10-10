@@ -1,22 +1,19 @@
 ---
 import ArticleLayout from '../../../layouts/ArticleLayout.astro';
+import ComparisonTable from '../../../components/ComparisonTable.astro';
+const rows = [
+  { label: 'Who is eligible?', cells: ['Generally under 18 at election-year end with an employment-valid SSN issued before election; Treasury now uses broad auto enrollment', 'Plans generally allow a broad range of beneficiaries; plan terms vary'] },
+  { label: 'Federal seed?', cells: ['Potential one-time $1,000 for eligible U.S. citizens born 2025–2028', 'No universal federal seed; state incentives may exist'] },
+  { label: 'Main tax design', cells: ['Tax-deferred growth; after the growth period, generally traditional IRA treatment', 'Qualified education withdrawals are generally federally tax-free'] },
+  { label: '2026 contribution framework', cells: ['$5,000 annual limit for most contributions, including employer amounts; exceptions apply', 'Plan contribution ceilings and gift-tax rules require separate review'] },
+  { label: 'Investment menu', cells: ['Restricted eligible index mutual funds and ETFs during the growth period', 'Menu set by the plan; account owner selects among available options'] },
+  { label: 'Before 18', cells: ['Distributions generally restricted during the growth period', 'Account owner can take distributions, with tax consequences based on use'] },
+  { label: 'Who controls it?', cells: ['Child owns it; responsible party acts while child is a minor', 'Account owner generally retains control; custodial arrangements differ'] }
+];
 ---
 <ArticleLayout title="Trump Account vs. 529 plan" description="Compare purpose, eligibility, taxes, contributions, investments, control, and withdrawals without reducing the choice to a single winner." sourceIds={['TREASURY-TD-10056','IRS-FORM-4547-INSTRUCTIONS','IRS-529-QA']}>
   <div class="callout"><strong>Short answer:</strong> a Trump Account is structured as a child-owned retirement account with special pre-18 rules; a 529 is built primarily for education. Some families may use both for different goals.</div>
-  <div style="overflow-x:auto">
-    <table>
-      <thead><tr><th scope="col">Question</th><th scope="col">Trump Account</th><th scope="col">529 plan</th></tr></thead>
-      <tbody>
-        <tr><td>Who is eligible?</td><td>Generally an individual under 18 at election-year end with an employment-valid SSN issued before election; Treasury now uses broad auto enrollment</td><td>Plans generally allow a broad range of beneficiaries; plan terms vary</td></tr>
-        <tr><td>Federal seed?</td><td>Potential one-time $1,000 for eligible U.S. citizens born 2025–2028</td><td>No universal federal seed; state incentives may exist</td></tr>
-        <tr><td>Main tax design</td><td>Tax-deferred growth; after growth period, generally traditional IRA treatment</td><td>Qualified education withdrawals are generally federally tax-free</td></tr>
-        <tr><td>2026 contribution framework</td><td>$5,000 annual limit for most contributions, including employer amounts; exceptions apply</td><td>Plan limits are much higher, while gift-tax rules can matter</td></tr>
-        <tr><td>Investment menu</td><td>Restricted eligible index mutual funds and ETFs during growth period</td><td>Menu set by the plan; account owner selects among available options</td></tr>
-        <tr><td>Before 18</td><td>Distributions generally restricted</td><td>Account owner can take distributions, with tax consequences based on use</td></tr>
-        <tr><td>Who controls it?</td><td>Child owns it; responsible party acts while child is a minor</td><td>Account owner generally retains control</td></tr>
-      </tbody>
-    </table>
-  </div>
+  <ComparisonTable caption="Trump Account and 529 plan: key differences" columns={['Question','Trump Account','529 plan']} rows={rows} />
   <h2>When the Trump Account may be the first action</h2>
   <p>If the child may qualify for the $1,000 pilot contribution, first check auto-account and prior-election status, then review the separate pilot election. A claimed and activated receiving account can also accept family or employer contributions under applicable rules.</p>
   <h2>When a 529 may remain the main savings vehicle</h2>
@@ -29,4 +26,5 @@ import ArticleLayout from '../../../layouts/ArticleLayout.astro';
     <li>What happens if the money is used for a different purpose?</li>
   </ul>
   <p>Use the <a href="/tools/child-savings-account-comparison/">broader account comparison</a> to include UGMA/UTMA, Custodial Roth IRA, and ABLE options.</p>
+  <p>For an education-first starting point, read the <a href="/guides/529-plans/">529 plan guide and plan-comparison checklist</a>.</p>
 </ArticleLayout>

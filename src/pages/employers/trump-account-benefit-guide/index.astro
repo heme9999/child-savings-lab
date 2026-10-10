@@ -1,17 +1,17 @@
 ---
 import ArticleLayout from '../../../layouts/ArticleLayout.astro';
 ---
-<ArticleLayout title="Employer guide to Trump Account contributions" description="A status-labeled implementation brief for HR and payroll teams covering account activation, tax treatment, DOL conditions, and proposed Section 128 procedures." sourceIds={['TREASURY-TD-10056','DOL-TR-2026-02','IRS-PROPOSED-EMPLOYER-2026']} effective="Guidance reviewed through October 8, 2026">
+<ArticleLayout title="Employer guide to Trump Account contributions" description="A status-labeled implementation brief for HR and payroll teams covering account activation, tax treatment, DOL conditions, and proposed Section 128 procedures." sourceIds={['TREASURY-TD-10056','DOL-TR-2026-02','IRS-PROPOSED-EMPLOYER-2026']} effective="Guidance reviewed through October 8, 2026" summary={["Activate a receiving account before sending employer contributions.","The Section 128 ceiling is per employee, not per child; payroll taxes require separate review.","Detailed employer regulations remain proposed. Obtain benefits and payroll advice before implementation."]} contents={[{"id":"framework","label":"Current statutory framework"},{"id":"account-status","label":"Account-status gate added by TD 10056"},{"id":"payroll","label":"Payroll tax treatment"},{"id":"dol-conditions","label":"DOL conditions for avoiding ERISA plan status"},{"id":"proposed-rules","label":"Proposed—not yet final—implementation rules"},{"id":"checklist","label":"Implementation checklist"},{"id":"communications","label":"What not to promise employees"}]}>
   <div class="callout"><strong>Professional review required:</strong> this educational checklist is not a plan document or tax, payroll, benefits, or ERISA opinion. Treasury’s detailed employer regulations remain proposed.</div>
-  <h2>Current statutory framework</h2>
+  <h2 id="framework">Current statutory framework</h2>
   <p>A qualifying Section 128 program may contribute to a Trump Account for an employee or an employee’s dependent during the beneficiary’s growth period. Up to $2,500 per employee per year may be excluded from federal gross income when the requirements are satisfied, and the amount counts inside the account’s general $5,000 annual limit.</p>
   <p>The $2,500 limit is employee-level, not per child. A single employee cannot multiply it across dependents. Amounts outside a qualifying program, or above an applicable exclusion limit, may be taxable compensation.</p>
-  <h2>Account-status gate added by TD 10056</h2>
+  <h2 id="account-status">Account-status gate added by TD 10056</h2>
   <p>An unclaimed auto account generally cannot receive family or employer contributions. Before transmitting funds, confirm through a trustee, payroll processor, or other appropriate service that the destination is a valid, established Trump Account capable of receiving the contribution. A claim or Form 4547 submission without subsequent activation is not enough.</p>
-  <h2>Payroll tax treatment</h2>
+  <h2 id="payroll">Payroll tax treatment</h2>
   <p>Treasury and the IRS state that qualifying Section 128 contributions are excluded from federal gross income and generally are not subject to federal income tax withholding, but there is no corresponding exclusion from FICA, FUTA, or RRTA wages unless another exclusion applies. For 2026, IRS payroll guidance calls for reporting in Form W-2 Box 12 using Code TA.</p>
   <p>Payroll teams should verify the final Form W-2 instructions, state and local wage treatment, the employee and employer FICA calculation, FUTA treatment, and correction mechanics before the first deposit.</p>
-  <h2>DOL conditions for avoiding ERISA plan status</h2>
+  <h2 id="dol-conditions">DOL conditions for avoiding ERISA plan status</h2>
   <p>DOL Technical Release 2026-02 concludes that employer contributions during the growth period generally do not create an ERISA-covered plan when all of these conditions are maintained:</p>
   <ul>
     <li>Employee participation is completely voluntary.</li>
@@ -21,10 +21,10 @@ import ArticleLayout from '../../../layouts/ArticleLayout.astro';
     <li>The employer receives no payment or compensation in connection with the account.</li>
   </ul>
   <p>Employer or trustee restrictions on permitted rollovers beyond Code or regulatory restrictions can also undermine this analysis. Benefits counsel should review communications, vendor contracts, payroll deductions, and any employer endorsement.</p>
-  <h2>Proposed—not yet final—implementation rules</h2>
+  <h2 id="proposed-rules">Proposed—not yet final—implementation rules</h2>
   <p>The August 2026 regulations propose requirements for a separate written plan, employee certifications, independent account verification, nondiscrimination testing, employee notices, annual statements, trustee communications, correction notices, and restrictions on forcing employees to use a particular trustee. Their proposed applicability date is generally for plan years beginning on or after publication of a final rule.</p>
   <p>Salary-reduction treatment is also specialized under the proposal: a Section 125 salary-reduction contribution may be available for a dependent’s account, but not the employee’s own account. Do not implement this design from a summary alone.</p>
-  <h2>Implementation checklist</h2>
+  <h2 id="checklist">Implementation checklist</h2>
   <ol>
     <li><strong>Engage benefits counsel and payroll tax advisers.</strong> Document which rules are statutory, currently effective, DOL guidance, or proposed.</li>
     <li><strong>Design around the DOL conditions.</strong> Keep participation voluntary and prevent investment steering, employer-plan branding, extra withdrawal restrictions, or compensation.</li>
@@ -34,7 +34,7 @@ import ArticleLayout from '../../../layouts/ArticleLayout.astro';
     <li><strong>Control limits and allocation.</strong> Apply the per-employee Section 128 ceiling, monitor plan-level contributions, and explain that other contributors share the account’s general annual limit.</li>
     <li><strong>Test nondiscrimination and corrections.</strong> Treat the detailed mechanics as proposed until finalized and preserve records supporting each determination.</li>
   </ol>
-  <h2>What not to promise employees</h2>
+  <h2 id="communications">What not to promise employees</h2>
   <ul>
     <li>Do not describe the program as an ERISA plan or promise that every design is outside ERISA.</li>
     <li>Do not imply an auto account can immediately receive employer money.</li>

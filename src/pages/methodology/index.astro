@@ -1,16 +1,18 @@
 ---
 import ArticleLayout from '../../layouts/ArticleLayout.astro';
 ---
-<ArticleLayout title="Research and calculator methodology" description="How Child Savings Lab verifies rules, labels uncertainty, calculates projections, protects privacy, and keeps comparisons independent." sourceIds={['TREASURY-TD-10056','IRS-TRUMP-ACCOUNTS','IRS-FORM-4547-INSTRUCTIONS','IRS-PROPOSED-INVESTMENTS-2026']}>
+<ArticleLayout title="Research and calculator methodology" description="How Child Savings Lab verifies rules, labels uncertainty, calculates projections, protects privacy, and keeps comparisons independent." verifiedAt="2026-10-10" effective="Calculator behavior reviewed October 10; Trump Account source records reviewed October 8, 2026" sourceIds={['TREASURY-TD-10056','IRS-TRUMP-ACCOUNTS','IRS-FORM-4547-INSTRUCTIONS','IRS-PROPOSED-INVESTMENTS-2026']}>
   <h2>Source hierarchy</h2>
   <p>We begin with statutes, IRS forms and instructions, Treasury or IRS guidance, Federal Register material, and Department of Labor releases. Financial institutions and publishers may inform industry context, but they do not define federal rules.</p>
   <h2>Rule records</h2>
   <p>Each implemented rule has an internal ID, effective dates, a source ID, and a verification date. Rules are not copied into multiple calculators. Proposed rules are stored and presented as proposed.</p>
   <h2>Eligibility logic</h2>
-  <p>The checker treats Treasury auto enrollment, account claiming, receiving-account activation, rare manual elections, and the separate pilot contribution election as different states. It returns next steps rather than pretending it can read IRS records.</p>
+  <p>The checker treats Treasury auto enrollment, account claiming, receiving-account activation, rare manual elections, and the separate pilot contribution election as different states. It returns next steps rather than pretending it can read IRS records. Missing or uncertain required information produces a request for more information, not a negative eligibility decision.</p>
   <h2>Growth formula</h2>
   <p>The calculator derives the growth-period end from the birth date—December 31 of the year the child turns 17—then compounds monthly. Monthly deposits occur at month-end and annual family or employer deposits at December 31. The selected eligible-fund expense and separate account-fee assumptions are subtracted monthly.</p>
   <p>Later target ages show continued hypothetical growth without post-growth-period IRA contributions. Partial months, taxes, withdrawals, inflation, tracking error, and market sequence are not modeled.</p>
+  <p>Projection starts before July 4, 2026 are rejected. Blank numeric fields are not treated as zero. The sensitivity table uses the selected return and variations of two percentage points, omitting variations outside the supported range. Changing an input hides the previous result until the inputs are validated and calculated again.</p>
+  <p>A printed report includes the assumptions, calculation version, and report time. Homepage links can carry an allowlisted, fictional example preset in a URL fragment; birth dates and custom financial inputs are not put in the URL, sent to a server, or saved by this site.</p>
   <h2>Comparison policy</h2>
   <p>Accounts are compared by purpose, eligibility, ownership and control, contribution framework, tax treatment, investment limits, withdrawal rules, and age transitions. No account or provider receives a higher position because of compensation.</p>
   <h2>Corrections</h2>

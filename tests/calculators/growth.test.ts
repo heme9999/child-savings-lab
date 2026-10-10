@@ -11,8 +11,8 @@ const base: GrowthInput = {
   annualReturnRate: 0,
   fundExpenseRate: 0,
   accountFeeRate: 0,
-  birthDate: '2026-01-15',
-  projectionStartDate: '2026-01-15',
+  birthDate: '2026-07-04',
+  projectionStartDate: '2026-07-04',
   targetAge: 18
 };
 
@@ -81,6 +81,40 @@ describe('growth projection', () => {
 
   it('converts monthly family contributions to an annual amount', () => {
     expect(annualFamilyContribution({ ...base, familyContribution: 100 })).toBe(1200);
+  });
+
+  it.each([-99.99, -99, -98, 18, 18.25, 20])('calculates supported boundary scenarios without throwing at %s%%', (annualReturnRate) => {
+    const input = { ...base, familyContribution: 100, annualReturnRate };
+    const scenarios = projectScenarios(input);
+    expect(scenarios.some((scenario) => scenario.rate === annualReturnRate)).toBe(true);
+    expect(scenarios.every(({ rate, projection }) => rate > -100 && rate <= 20 && Number.isFinite(projection.endingBalance))).toBe(true);
+  });
+
+  it('omits unsupported scenarios rather than changing the selected return', () => {
+    expect(projectScenarios({ ...base, annualReturnRate: 20 }).map(({ rate }) => rate)).toEqual([18, 20]);
+    expect(projectScenarios({ ...base, annualReturnRate: -99 }).map(({ rate }) => rate)).toEqual([-99, -97]);
+  });
+
+  it.each([-100, 20.25, Number.NaN, Number.POSITIVE_INFINITY])('rejects invalid center returns: %s', (annualReturnRate) => {
+    expect(() => projectScenarios({ ...base, annualReturnRate })).toThrow();
+  });
+
+  it.each(['2025-02-01', '2026-01-01', '2026-07-03'])('rejects a projection before deposits were permitted: %s', (projectionStartDate) => {
+    expect(() => projectGrowth({ ...base, birthDate: '2025-01-15', projectionStartDate, familyContribution: 100 })).toThrow('July 4, 2026');
+  });
+
+  it('starts the audited example at the first permitted monthly deposit', () => {
+    const result = projectGrowth({ ...base, birthDate: '2025-01-15', projectionStartDate: '2026-07-04', familyContribution: 100 });
+    expect(result.contributionMonths).toBe(198);
+    expect(result.totalContributed).toBe(19800);
+  });
+
+  it('rejects an invalid contribution frequency', () => {
+    expect(validateGrowthInput({ ...base, familyFrequency: 'weekly' as GrowthInput['familyFrequency'] }).join(' ')).toContain('frequency');
+  });
+
+  it('does not return infinite or NaN balances for overflowing inputs', () => {
+    expect(() => projectGrowth({ ...base, initialAmount: 1e308, annualReturnRate: 20 })).toThrow('too large');
   });
 
   it('enforces employer, aggregate, and fund-expense limits', () => {

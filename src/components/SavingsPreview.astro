@@ -39,15 +39,15 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
     <details class="preview-assumptions">
       <summary>What’s behind this example?</summary>
       <p>Hypothetical activated Trump Account for a child born January 15, 2026. Starts October 8, 2026 with $0. Monthly deposits end December 31, 2043; the balance is shown at age 18 on January 15, 2044. Assumes 0.10% annual fund expenses, no account fees, and no pilot or employer contribution. Constant returns and month-end deposits; excludes taxes, inflation and withdrawals.</p>
-      <a href="/tools/trump-account-growth-calculator/">See the full method and change more assumptions →</a>
+      <a data-preview-link href="/tools/trump-account-growth-calculator/#preset=100-6">See the full method and change more assumptions →</a>
     </details>
     <p class="preview-disclaimer">Illustration, not a forecast. Returns are not guaranteed; investments can lose value.</p>
     <noscript><p class="preview-disclaimer">JavaScript is off. This example shows $100/month with a 6% assumed annual return.</p></noscript>
   </div>
-  <a class="preview-full-link" href="/tools/trump-account-growth-calculator/">Make your own scenario <span aria-hidden="true">↗</span></a>
+  <a class="preview-full-link" data-preview-link href="/tools/trump-account-growth-calculator/#preset=100-6">Continue this scenario <span aria-hidden="true">↗</span></a>
 </aside>
 <script>
-  import { savingsPreview } from '../lib/calculators/preview';
+  import { savingsPreview, previewPresetHash } from '../lib/calculators/preview';
   const root = document.querySelector<HTMLElement>('.savings-preview');
   if (root) {
     const buttons = root.querySelectorAll<HTMLButtonElement>('[data-monthly]');
@@ -56,6 +56,9 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
     const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value);
     const render = () => {
       const result = savingsPreview(monthly, Number(rate?.value ?? 6));
+      root.querySelectorAll<HTMLAnchorElement>('[data-preview-link]').forEach((link) => {
+        link.href = `/tools/trump-account-growth-calculator/${previewPresetHash(monthly, Number(rate?.value ?? 6))}`;
+      });
       const text = (id: string, value: number) => {
         const element = root.querySelector(`#${id}`);
         if (element) element.textContent = usd(value);

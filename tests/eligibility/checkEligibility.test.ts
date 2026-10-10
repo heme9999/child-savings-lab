@@ -81,7 +81,35 @@ describe('checkEligibility', () => {
 
   it('reports missing or invalid inputs', () => {
     const result = checkEligibility({ ...valid, birthDate: '', checkYear: 0 });
-    expect(result.baselineEligible).toBe(false);
-    expect(result.accountReasons.length).toBeGreaterThanOrEqual(2);
+    expect(result.baselineEligible).toBeNull();
+    expect(result.accountPath).toBe('needs-information');
+    expect(result.validationErrors.length).toBeGreaterThanOrEqual(2);
+    expect(result.pilotReasons).toEqual([]);
+  });
+
+  it.each(['', '2026-02-30', 'not-a-date'])('does not infer pilot ineligibility from an invalid date: %s', (birthDate) => {
+    const result = checkEligibility({ ...valid, birthDate });
+    expect(result.pilotStatus).toBe('needs-information');
+    expect(result.pilotReasons.join(' ')).not.toContain('outside');
+    expect(result.canReceiveFamilyOrEmployerContributions).toBeNull();
+  });
+
+  it.each(['hasEmploymentValidSsn', 'isUsCitizen', 'qualifyingChildExpected'] as const)('keeps an unsure %s distinct from No', (field) => {
+    const result = checkEligibility({ ...valid, [field]: null });
+    expect(result.accountPath).toBe('needs-information');
+    expect(result.baselineEligible).toBeNull();
+    expect(result.validationErrors).not.toEqual([]);
+  });
+
+  it('still reports a real date outside the pilot window after complete answers', () => {
+    const result = checkEligibility({ ...valid, birthDate: '2024-12-31' });
+    expect(result.baselineEligible).toBe(true);
+    expect(result.pilotStatus).toBe('not-potentially-eligible');
+    expect(result.pilotReasons.join(' ')).toContain('outside');
+  });
+
+  it('does not route tampered account status to a manual election', () => {
+    const result = checkEligibility({ ...valid, accountStatus: 'invalid' as EligibilityInput['accountStatus'] });
+    expect(result.accountPath).toBe('needs-information');
   });
 });
