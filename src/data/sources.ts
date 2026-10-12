@@ -1,16 +1,19 @@
 export type SourceStatus = 'temporary regulations' | 'official guidance' | 'form instructions' | 'proposed rule' | 'technical release' | 'official overview' | 'regulator overview';
 
-export interface SourceRecord {
+interface SourceDetails {
   id: string;
   title: string;
   publisher: string;
   url: string;
   publishedAt: string;
   verifiedAt: string;
-  effectiveFrom: string;
-  status: SourceStatus;
   note: string;
 }
+
+export type SourceRecord = SourceDetails & (
+  | { status: 'proposed rule'; proposedApplicability: string; effectiveFrom?: never }
+  | { status: Exclude<SourceStatus, 'proposed rule'>; effectiveFrom: string; proposedApplicability?: never }
+);
 
 export const sources: SourceRecord[] = [
   {
@@ -19,7 +22,7 @@ export const sources: SourceRecord[] = [
     publisher: 'U.S. Treasury and Internal Revenue Service',
     url: 'https://www.federalregister.gov/documents/2026/09/30/2026-20026/trump-accounts',
     publishedAt: '2026-09-30',
-    verifiedAt: '2026-10-08',
+    verifiedAt: '2026-10-12',
     effectiveFrom: '2026-09-30',
     status: 'temporary regulations',
     note: 'Controlling temporary rules for automatic enrollment, auto accounts, claiming, activation, and qualified general contributions.'
@@ -85,8 +88,8 @@ export const sources: SourceRecord[] = [
     publisher: 'U.S. Treasury and Internal Revenue Service',
     url: 'https://www.irs.gov/pub/irs-irbs/irb26-37.pdf',
     publishedAt: '2026-09-08',
-    verifiedAt: '2026-10-08',
-    effectiveFrom: '2026-08-11',
+    verifiedAt: '2026-10-12',
+    proposedApplicability: 'Not final. Proposed for plan years beginning on or after publication of final regulations; the proposal describes permitted earlier reliance. August 11, 2026 is the original Federal Register publication date, not an effective date.',
     status: 'proposed rule',
     note: 'Proposed—not final—employer program rules. Employer pages label this status explicitly.'
   },
@@ -96,8 +99,8 @@ export const sources: SourceRecord[] = [
     publisher: 'U.S. Treasury and Internal Revenue Service',
     url: 'https://www.irs.gov/irb/2026-38_irb',
     publishedAt: '2026-09-14',
-    verifiedAt: '2026-10-08',
-    effectiveFrom: '2026-08-21',
+    verifiedAt: '2026-10-12',
+    proposedApplicability: 'Not final. Proposed for tax years beginning on or after January 1, 2026, except the trustee procedures in paragraph (g), which depend on final publication. Earlier reliance has conditions. August 21, 2026 is the original Federal Register publication date, not an effective date.',
     status: 'proposed rule',
     note: 'Explains the statutory 0.10% fund-expense ceiling and distinguishes investment-fund expenses from trustee or intermediary fees.'
   },
@@ -106,9 +109,9 @@ export const sources: SourceRecord[] = [
     title: '529 Plans: Questions and Answers',
     publisher: 'Internal Revenue Service',
     url: 'https://www.irs.gov/newsroom/529-plans-questions-and-answers',
-    publishedAt: '2024-01-01',
+    publishedAt: 'Publication date not established; consult the source revision',
     verifiedAt: '2026-10-10',
-    effectiveFrom: '2024-01-01',
+    effectiveFrom: 'Overview, not a regulation; check applicable-year law',
     status: 'official overview',
     note: 'Federal tax overview for qualified tuition programs. Some examples describe older law; historical K–12 dollar limits are not used as current 2026 limits.'
   },

@@ -1,7 +1,7 @@
 import { isValidIsoDate } from '../dates';
 
 export const FIRST_CONTRIBUTION_DATE = '2026-07-04';
-export const CALCULATION_VERSION = '2026-10-10';
+export const CALCULATION_VERSION = '2026-10-12';
 export type ContributionFrequency = 'monthly' | 'annual';
 
 export interface GrowthInput {
@@ -25,8 +25,19 @@ export interface GrowthProjection {
   feeImpact: number;
   months: number;
   contributionMonths: number;
-  contributionEndDate: string;
+  contributionEndDate: string | null;
+  growthPeriodEndDate: string;
   targetDate: string;
+  yearly: YearlyProjection[];
+}
+
+export interface YearlyProjection {
+  year: number;
+  asOfDate: string;
+  familyContributions: number;
+  employerContributions: number;
+  endingBalance: number;
+  totalContributed: number;
 }
 
 function parseDate(value: string): Date {
@@ -58,6 +69,33 @@ function nextMonthEnd(value: Date): Date {
 
 export function annualFamilyContribution(input: GrowthInput): number {
   return input.familyFrequency === 'monthly' ? input.familyContribution * 12 : input.familyContribution;
+}
+
+// One calendar schedule drives both limit validation and the balance simulation.
+// A month-end equal to the projection start is excluded, as in the original model.
+function* timeline(input: GrowthInput) {
+  const target = birthdayAtAge(parseDate(input.birthDate), input.targetAge);
+  const growthEnd = parseDate(growthPeriodEnd(input)!);
+  for (let date = endOfMonthAfterOrOn(parseDate(input.projectionStartDate)); date <= target; date = nextMonthEnd(date)) {
+    const inGrowthPeriod = date <= growthEnd;
+    yield {
+      date, inGrowthPeriod,
+      family: inGrowthPeriod && (input.familyFrequency === 'monthly' || date.getUTCMonth() === 11) ? input.familyContribution : 0,
+      employer: inGrowthPeriod && date.getUTCMonth() === 11 ? input.annualEmployerContribution : 0
+    };
+  }
+}
+
+export function scheduledYearlyContributions(input: GrowthInput) {
+  const years = new Map<number, { year: number; family: number; employer: number; total: number }>();
+  for (const { date, inGrowthPeriod, family, employer } of timeline(input)) {
+    if (!inGrowthPeriod) continue;
+    const year = date.getUTCFullYear();
+    const row = years.get(year) ?? { year, family: 0, employer: 0, total: 0 };
+    row.family += family; row.employer += employer; row.total += family + employer;
+    years.set(year, row);
+  }
+  return [...years.values()];
 }
 
 export function growthPeriodEnd(input: Pick<GrowthInput, 'birthDate'>): string | null {
@@ -107,8 +145,14 @@ export function validateGrowthInput(input: GrowthInput): string[] {
   }
   if (input.accountFeeRate < 0 || input.accountFeeRate > 5) errors.push('Account or trustee fee rate must be from 0% through 5%.');
   if (input.annualEmployerContribution > 2500) errors.push('Employer contributions exceed the current $2,500 annual limit.');
-  if (annualFamilyContribution(input) + input.annualEmployerContribution > 5000.01) {
-    errors.push('Family and employer contributions together exceed the current $5,000 annual limit.');
+  if (!errors.length) {
+    for (const year of scheduledYearlyContributions(input)) {
+      // Allow machine rounding, not an extra cent of contribution headroom.
+      if (year.total > 5000 + 1e-7) {
+        errors.push(`${year.year}: modeled family and employer deposits exceed the current $5,000 annual benchmark. Reduce deposits scheduled in that year.`);
+        break;
+      }
+    }
   }
   return errors;
 }
@@ -127,23 +171,33 @@ function simulate(input: GrowthInput, annualFeeRate: number): Omit<GrowthProject
   let totalContributed = opening;
   let months = 0;
   let contributionMonths = 0;
+  let contributionEndDate: string | null = null;
+  const years = new Map<number, YearlyProjection>();
+  const yearRow = (date: Date): YearlyProjection => {
+    const year = date.getUTCFullYear();
+    const row = years.get(year) ?? { year, asOfDate: isoDate(date), familyContributions: 0, employerContributions: 0, endingBalance: balance, totalContributed };
+    years.set(year, row);
+    return row;
+  };
+  yearRow(startDate);
 
-  for (let monthEnd = endOfMonthAfterOrOn(startDate); monthEnd <= targetDate; monthEnd = nextMonthEnd(monthEnd)) {
+  for (const { date: monthEnd, inGrowthPeriod, family, employer } of timeline(input)) {
     months += 1;
     balance *= 1 + monthlyNetRate;
-    if (monthEnd <= contributionEnd) {
+    if (inGrowthPeriod) {
       contributionMonths += 1;
-      if (input.familyFrequency === 'monthly') {
-        balance += input.familyContribution;
-        totalContributed += input.familyContribution;
-      }
-      if (monthEnd.getUTCMonth() === 11) {
-        const annualDeposit = (input.familyFrequency === 'annual' ? input.familyContribution : 0) + input.annualEmployerContribution;
-        balance += annualDeposit;
-        totalContributed += annualDeposit;
-      }
+      contributionEndDate = isoDate(monthEnd);
     }
+    balance += family + employer;
+    totalContributed += family + employer;
+    const row = yearRow(monthEnd);
+    row.asOfDate = isoDate(monthEnd);
+    row.familyContributions += family; row.employerContributions += employer;
+    row.endingBalance = balance; row.totalContributed = totalContributed;
   }
+  // A partial target year has no extra deposits or interest beyond the month-end model.
+  const finalRow = yearRow(targetDate);
+  finalRow.asOfDate = isoDate(targetDate); finalRow.endingBalance = balance; finalRow.totalContributed = totalContributed;
 
   return {
     endingBalance: balance,
@@ -151,8 +205,10 @@ function simulate(input: GrowthInput, annualFeeRate: number): Omit<GrowthProject
     investmentGrowth: balance - totalContributed,
     months,
     contributionMonths,
-    contributionEndDate: isoDate(contributionEnd),
-    targetDate: isoDate(targetDate)
+    contributionEndDate,
+    growthPeriodEndDate: isoDate(contributionEnd),
+    targetDate: isoDate(targetDate),
+    yearly: [...years.values()]
   };
 }
 
@@ -162,7 +218,7 @@ export function projectGrowth(input: GrowthInput): GrowthProjection {
   const combinedFeeRate = input.fundExpenseRate + input.accountFeeRate;
   const net = simulate(input, combinedFeeRate);
   const gross = simulate(input, 0);
-  if (![net.endingBalance, net.totalContributed, gross.endingBalance].every(Number.isFinite)) {
+  if (![net.endingBalance, net.totalContributed, gross.endingBalance, ...net.yearly.flatMap((year) => [year.endingBalance, year.totalContributed])].every(Number.isFinite)) {
     throw new Error('The projection is too large to calculate reliably. Reduce the amounts or time horizon.');
   }
   return {

@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { annualFamilyContribution, growthPeriodEnd, projectGrowth, projectScenarios, validateGrowthInput } from '../../src/lib/calculators/growth';
+import { annualFamilyContribution, growthPeriodEnd, projectGrowth, projectScenarios, scheduledYearlyContributions, validateGrowthInput } from '../../src/lib/calculators/growth';
+import { contributionNote } from '../../src/lib/calculators/form';
+import { growthChart } from '../../src/lib/calculators/chart';
 import type { GrowthInput } from '../../src/lib/calculators/growth';
 
 const base: GrowthInput = {
@@ -121,6 +123,77 @@ describe('growth projection', () => {
     expect(validateGrowthInput({ ...base, annualEmployerContribution: 2600 }).join(' ')).toContain('$2,500');
     expect(validateGrowthInput({ ...base, familyContribution: 300, annualEmployerContribution: 2000 }).join(' ')).toContain('$5,000');
     expect(validateGrowthInput({ ...base, fundExpenseRate: 0.11 }).join(' ')).toContain('0.10%');
+  });
+
+  it('accepts the audited three monthly deposits rather than annualizing them to twelve', () => {
+    const input = { ...base, birthDate: '2009-01-15', projectionStartDate: '2026-10-08', familyContribution: 1000 };
+    expect(validateGrowthInput(input)).toEqual([]);
+    expect(scheduledYearlyContributions(input)).toEqual([{ year: 2026, family: 3000, employer: 0, total: 3000 }]);
+    expect(projectGrowth(input).totalContributed).toBe(3000);
+  });
+
+  it('checks partial-year family and employer deposits together', () => {
+    const input = { ...base, birthDate: '2009-01-15', projectionStartDate: '2026-10-08', familyContribution: 1000, annualEmployerContribution: 2000 };
+    expect(projectGrowth(input).totalContributed).toBe(5000);
+    expect(validateGrowthInput({ ...input, annualEmployerContribution: 2000.01 }).join(' ')).toContain('2026:');
+  });
+
+  it('does not let a valid partial start year hide an excessive later full year', () => {
+    const input = { ...base, birthDate: '2010-01-15', projectionStartDate: '2026-10-08', familyContribution: 1000 };
+    expect(validateGrowthInput(input).join(' ')).toContain('2027:');
+    expect(validateGrowthInput(input).join(' ')).not.toContain('2026:');
+  });
+
+  it('keeps annual deposits on December 31 in the same schedule used for limit checks', () => {
+    const input = { ...base, familyContribution: 2500, familyFrequency: 'annual' as const, annualEmployerContribution: 2500, targetAge: 1 };
+    expect(projectGrowth(input).totalContributed).toBe(5000);
+    expect(scheduledYearlyContributions(input).find((year) => year.year === 2026)?.total).toBe(5000);
+    expect(scheduledYearlyContributions(input).find((year) => year.year === 2027)?.total).toBe(0);
+  });
+
+  it('distinguishes the modeled contribution cutoff from the statutory end for an age-10 target', () => {
+    const result = projectGrowth({ ...base, birthDate: '2026-01-15', projectionStartDate: '2026-10-08', familyContribution: 100, targetAge: 10 });
+    expect(result.contributionMonths).toBe(111);
+    expect(result.contributionEndDate).toBe('2035-12-31');
+    expect(result.growthPeriodEndDate).toBe('2043-12-31');
+    expect(result.targetDate).toBe('2036-01-15');
+    expect(contributionNote(result)).toContain('ending 2035-12-31');
+    expect(contributionNote(result)).toContain('Statutory growth period ends 2043-12-31');
+  });
+
+  it('does not invent a contribution date when no month-end is modeled', () => {
+    const result = projectGrowth({ ...base, birthDate: '2009-01-15', projectionStartDate: '2026-12-31' });
+    expect(result.contributionMonths).toBe(0);
+    expect(result.contributionEndDate).toBeNull();
+    expect(contributionNote(result)).toContain('No eligible contribution month-end');
+  });
+
+  it('keeps annual rows reconciled with the final balance and scheduled deposits', () => {
+    const input = { ...base, initialAmount: 500, includePilot: true, familyContribution: 100, annualEmployerContribution: 1000, annualReturnRate: 6, targetAge: 30 };
+    const result = projectGrowth(input);
+    expect(result.yearly.at(-1)?.endingBalance).toBe(result.endingBalance);
+    expect(result.yearly.at(-1)?.totalContributed).toBe(result.totalContributed);
+    expect(result.yearly.reduce((sum, year) => sum + year.familyContributions + year.employerContributions, 0) + 1500).toBe(result.totalContributed);
+    expect(result.yearly.filter((year) => year.year > 2043).every((year) => year.familyContributions === 0 && year.employerContributions === 0)).toBe(true);
+  });
+
+  it.each([0, -99.99, 20])('generates finite chart paths at %s%%, including zero balances', (annualReturnRate) => {
+    const input = { ...base, annualReturnRate };
+    const result = projectGrowth(input);
+    const chart = growthChart(input, result);
+    expect(chart.balancePath).not.toMatch(/NaN|Infinity/);
+    expect(chart.contributionPath).not.toMatch(/NaN|Infinity/);
+    expect(chart.balancePath).toContain('L480.00');
+    expect(chart.end).toBe(result.targetDate);
+  });
+
+  it('plots a nonzero loss scenario separately from starting capital plus deposits', () => {
+    const input = { ...base, initialAmount: 1000, familyContribution: 100, annualReturnRate: -10, targetAge: 10 };
+    const result = projectGrowth(input);
+    const chart = growthChart(input, result);
+    expect(chart.balancePath).not.toBe(chart.contributionPath);
+    expect(chart.balancePath).not.toMatch(/NaN|Infinity/);
+    expect(result.endingBalance).toBeLessThan(result.totalContributed);
   });
 
   it('validates dates, return, account fee, target age, and negative contributions', () => {

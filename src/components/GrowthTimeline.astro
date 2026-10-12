@@ -1,0 +1,33 @@
+---
+import type { GrowthInput, GrowthProjection } from '../lib/calculators/growth';
+import { growthChart } from '../lib/calculators/chart';
+interface Props { input: GrowthInput; projection: GrowthProjection; }
+const { input, projection } = Astro.props;
+const chart = growthChart(input, projection);
+const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value);
+---
+<section class="growth-timeline-panel" id="growth-timeline" aria-labelledby="growth-timeline-title">
+  <div class="eyebrow">See the path, not just the final number</div>
+  <h2 id="growth-timeline-title">A year-by-year view</h2>
+  <p>These lines show the same constant-return illustration as the result above—not market history, uncertainty bands, or a forecast. Negative returns can put the balance below the starting amount plus deposits.</p>
+  <figure class="growth-chart">
+    <svg viewBox="0 0 500 200" role="img" aria-labelledby="growth-chart-title" aria-describedby="growth-chart-description">
+      <title id="growth-chart-title">Modeled balance and starting amount plus deposits</title>
+      <desc id="growth-chart-description">From {chart.start} to {chart.end}: {usd(projection.endingBalance)} modeled balance and {usd(projection.totalContributed)} starting amount plus deposits. Exact values are available in the year-by-year table.</desc>
+      <path d="M20 20H480M20 100H480M20 180H480" stroke="#becdc5" fill="none" />
+      <path id="growth-contribution-path" d={chart.contributionPath} stroke="#7b6851" stroke-width="2" stroke-dasharray="6 4" fill="none" />
+      <path id="growth-balance-path" d={chart.balancePath} stroke="#245848" stroke-width="3" fill="none" />
+    </svg>
+    <div class="growth-chart-axis" aria-hidden="true"><span id="growth-chart-start">{chart.start}</span><span id="growth-chart-end">{chart.end}</span></div>
+    <figcaption><span>— Modeled balance</span><span>┄ Starting amount + deposits</span></figcaption>
+  </figure>
+  <details class="yearly-breakdown print-hide">
+    <summary>Year-by-year balances and deposits</summary>
+    <p>New deposits include only the family and employer amounts scheduled in that year. The starting amount and optional pilot assumption are already in the opening balance. Partial-month returns are not added at the target date.</p>
+    <table class="yearly-table">
+      <caption>Calendar-year snapshots and the final projection target</caption>
+      <thead><tr><th scope="col">As of</th><th scope="col">New deposits</th><th scope="col">Modeled balance</th></tr></thead>
+      <tbody id="growth-yearly-rows">{projection.yearly.map((year) => <tr><th scope="row">{year.asOfDate}</th><td>{usd(year.familyContributions + year.employerContributions)}</td><td>{usd(year.endingBalance)}</td></tr>)}</tbody>
+    </table>
+  </details>
+</section>

@@ -22,7 +22,8 @@ const initial = checkEligibility({
       <div class="form-grid">
         <div class="field">
           <label for="check-year">Review year</label>
-          <input id="check-year" name="checkYear" type="number" min="2026" max="2100" value="2026" required />
+          <input id="check-year" name="checkYear" type="number" min="2026" max="2100" value="2026" aria-describedby="review-year-help" required />
+          <small id="review-year-help">Year being reviewed, not necessarily the year an existing account was first established.</small>
         </div>
         <div class="field">
           <label for="birth-date">Child’s date of birth</label>
@@ -101,7 +102,7 @@ const initial = checkEligibility({
     </div>
     <div id="funding-result">
       <h3>Family or employer contributions</h3>
-      <p><span class="status no">Wait until the receiving account is claimed and activated</span></p>
+      <p><span class="status unknown">{initial.fundingGuidance}</span></p>
     </div>
     <div id="pilot-result">
       <h3>$1,000 pilot election</h3>
@@ -113,7 +114,7 @@ const initial = checkEligibility({
       <p><strong>Form 4547:</strong> {initial.formGuidance}</p>
     </div>
     </div>
-    <p><strong>Rules checked:</strong> October 8, 2026, including TD 10056.</p>
+    <p><strong>Logic and controlling rules checked:</strong> October 12, 2026. Individual source review dates appear in the source library.</p>
     <p><a href="https://www.irs.gov/trumpaccounts">Continue at the official IRS Trump Accounts page →</a></p>
   </section>
 </div>
@@ -161,11 +162,11 @@ const initial = checkEligibility({
       errors.append(list); heading?.focus(); return;
     }
     output.hidden = false;
-    state.textContent = 'Educational next steps based on your answers—not an IRS determination.';
+    state.textContent = 'Account status and pilot eligibility are considered separately. These are educational next steps based on reported answers—not an IRS determination.';
     const list = (items: string[]) => items.length ? `<ul>${items.map((item) => `<li>${item}</li>`).join('')}</ul>` : '';
-    account.innerHTML = `<h3>Account status</h3><p><span class="status ${result.accountPath === 'active' ? 'yes' : 'no'}">${result.accountPathTitle}</span></p>${list(result.accountReasons)}`;
-    funding.innerHTML = `<h3>Family or employer contributions</h3><p><span class="status ${result.canReceiveFamilyOrEmployerContributions ? 'yes' : 'no'}">${result.canReceiveFamilyOrEmployerContributions ? 'Receiving account appears activated; verify trustee instructions' : 'Wait until a receiving account is claimed and activated'}</span></p>`;
-    pilot.innerHTML = `<h3>$1,000 pilot election</h3><p><span class="status ${result.pilotStatus === 'potentially-eligible-to-elect' || result.pilotStatus === 'already-processed' ? 'yes' : 'no'}">${result.pilotStatusTitle}</span></p>${list(result.pilotReasons)}`;
+    account.innerHTML = `<h3>Account status</h3><p><span class="status ${result.accountPath === 'active' ? 'yes' : result.accountPath === 'not-baseline-eligible' ? 'no' : 'unknown'}">${result.accountPathTitle}</span></p>${list(result.accountReasons)}${list(result.accountInformationNeeded)}`;
+    funding.innerHTML = `<h3>Family or employer contributions</h3><p><span class="status ${result.canReceiveFamilyOrEmployerContributions === true ? 'yes' : 'unknown'}">${result.fundingGuidance}</span></p>`;
+    pilot.innerHTML = `<h3>$1,000 pilot election</h3><p><span class="status ${result.pilotStatus === 'potentially-eligible-to-elect' || result.pilotStatus === 'already-processed' ? 'yes' : result.pilotStatus === 'not-potentially-eligible' ? 'no' : 'unknown'}">${result.pilotStatusTitle}</span></p>${list(result.pilotReasons)}${list(result.pilotInformationNeeded)}`;
     detail.innerHTML = `<h3>Next steps</h3>${list(result.requiredActions)}<p><strong>Form 4547:</strong> ${result.formGuidance}</p>`;
     heading?.focus();
   }

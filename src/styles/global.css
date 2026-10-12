@@ -102,6 +102,21 @@ button:disabled { opacity: .6; cursor: not-allowed; }
 .status { display: inline-flex; align-items: center; gap: .45rem; padding: .4rem .65rem; border-radius: 999px; font-weight: 800; }
 .status.yes { background: #d7f4e4; color: #0b5a35; }
 .status.no { background: #f8dede; color: #842020; }
+.status.unknown { background: #f4ecd5; color: #55451b; }
+.growth-timeline-panel { margin-bottom: 2.5rem; padding: clamp(1.15rem, 3vw, 2rem); border: 1px solid var(--line); border-radius: 24px; background: var(--white); }
+.growth-timeline-panel h2 { margin-top: .5rem; }
+.growth-chart { max-width: 850px; margin: 1.5rem auto; }
+.growth-chart svg { display: block; width: 100%; height: auto; }
+.growth-chart-axis, .growth-chart figcaption { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem 1rem; font-size: .8rem; }
+.growth-chart figcaption { justify-content: center; margin-top: .6rem; }
+.yearly-breakdown summary { cursor: pointer; font-weight: 700; }
+.yearly-table { width: 100%; table-layout: fixed; border-collapse: collapse; margin-top: 1rem; font-size: .85rem; }
+.yearly-table th, .yearly-table td { padding: .7rem .3rem; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; text-align: right; }
+.yearly-table th:first-child { text-align: left; }
+.yearly-table caption { text-align: left; padding-bottom: .5rem; }
+.source-applicability { font-size: .9rem; }
+.publication-byline { font-size: .85rem; color: var(--ink-soft); }
+.publication-byline a { text-decoration: underline; }
 .metric-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: .8rem; }
 .metric { padding: 1rem; border: 1px solid rgba(255,255,255,.18); border-radius: 15px; background: rgba(255,255,255,.06); }
 .metric span { display: block; color: #cfe0dc; font-size: .83rem; }

@@ -1,4 +1,11 @@
-import { CALCULATION_VERSION, type GrowthInput } from './growth';
+import { CALCULATION_VERSION, type GrowthInput, type GrowthProjection } from './growth';
+
+export function contributionNote(result: GrowthProjection): string {
+  const window = result.contributionEndDate
+    ? `${result.contributionMonths} eligible contribution month-ends modeled, ending ${result.contributionEndDate}.`
+    : 'No eligible contribution month-end falls within this projection.';
+  return `${window} Statutory growth period ends ${result.growthPeriodEndDate}. Projection target: ${result.targetDate}. Returns are not guaranteed. Taxes, withdrawals, and partial months are not modeled.`;
+}
 
 // Required blanks remain invalid, rather than Number('') silently becoming zero.
 export function formNumber(value: FormDataEntryValue | null): number {

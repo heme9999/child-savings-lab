@@ -1,7 +1,8 @@
 ---
 import { FIRST_CONTRIBUTION_DATE, projectGrowth, projectScenarios } from '../lib/calculators/growth';
 import { previewAssumptions } from '../lib/calculators/preview';
-import { growthAssumptions } from '../lib/calculators/form';
+import { growthAssumptions, contributionNote } from '../lib/calculators/form';
+import GrowthTimeline from './GrowthTimeline.astro';
 const exampleInput = previewAssumptions;
 const example = projectGrowth(exampleInput);
 const examples = projectScenarios(exampleInput);
@@ -12,6 +13,7 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
     <div class="eyebrow">Start with the essentials</div>
     <h2 id="growth-form-title">Model a contribution plan</h2>
     <p>Use hypothetical values. Model family or employer deposits only after a receiving account is claimed and activated.</p>
+    <p class="result-help">Checks apply only to deposits scheduled in this illustration, by calendar year. Prior or other people’s deposits are not included; the starting balance is not a record of prior contributions. Current dollar limits are held constant, without future inflation adjustments.</p>
     <form id="growth-form" novalidate>
       <div class="form-grid">
         <div class="field">
@@ -92,7 +94,7 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
     <div id="growth-output">
       <div class="metric-grid">
         <div class="metric"><span>Hypothetical balance</span><strong id="ending-balance">{usd(example.endingBalance)}</strong></div>
-        <div class="metric"><span>Total contributed</span><strong id="total-contributed">{usd(example.totalContributed)}</strong></div>
+        <div class="metric"><span>Starting amount + deposits</span><strong id="total-contributed">{usd(example.totalContributed)}</strong></div>
         <div class="metric"><span>Hypothetical growth</span><strong id="investment-growth">{usd(example.investmentGrowth)}</strong></div>
         <div class="metric"><span>Estimated fee impact</span><strong id="fee-impact">{usd(example.feeImpact)}</strong></div>
       </div>
@@ -102,7 +104,7 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
         <thead><tr><th scope="col">Annual return</th><th scope="col">Balance</th></tr></thead>
         <tbody id="scenario-rows">{examples.map(({ rate, projection }) => <tr><td>{rate}%</td><td>{usd(projection.endingBalance)}</td></tr>)}</tbody>
       </table>
-      <p id="contribution-note">Contributions modeled for {example.contributionMonths} month-ends, through {example.contributionEndDate}. Projection target: {example.targetDate}. Returns are not guaranteed. Taxes and withdrawals are not modeled.</p>
+      <p id="contribution-note">{contributionNote(example)}</p>
       <details class="projection-assumptions print-hide">
         <summary>Review all scenario assumptions</summary>
         <dl class="assumptions-list" data-assumptions>{growthAssumptions(exampleInput).map(([label, value]) => <div><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
@@ -111,15 +113,17 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
         <h3>Parameters used for this report</h3>
         <dl class="assumptions-list" data-assumptions>{growthAssumptions(exampleInput).map(([label, value]) => <div><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
         <p id="report-generated"></p>
-        <p>Independent education from Child Savings Lab. Not a forecast, eligibility determination, or personalized legal, tax, or investment advice. Source review: October 8, 2026.</p>
+        <p>Independent education from Child Savings Lab. Not a forecast, eligibility determination, or personalized legal, tax, or investment advice. Individual source review dates are listed in the source library.</p>
       </div>
     </div>
   </section>
 </div>
+<GrowthTimeline input={exampleInput} projection={example} />
 
 <script>
   import { projectGrowth, projectScenarios, validateGrowthInput } from '../lib/calculators/growth';
-  import { growthInputFromForm, growthAssumptions } from '../lib/calculators/form';
+  import { growthInputFromForm, growthAssumptions, contributionNote } from '../lib/calculators/form';
+  import { growthChart } from '../lib/calculators/chart';
   import { inputFromPreviewHash } from '../lib/calculators/preview';
 
   const form = document.querySelector<HTMLFormElement>('#growth-form');
@@ -128,6 +132,7 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
   const state = document.querySelector<HTMLElement>('#growth-state');
   const heading = document.querySelector<HTMLElement>('#growth-results-title');
   const print = document.querySelector<HTMLButtonElement>('#print-report');
+  const timeline = document.querySelector<HTMLElement>('#growth-timeline');
   const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
   const setText = (selector: string, value: string) => { const el = document.querySelector<HTMLElement>(selector); if (el) el.textContent = value; };
   let dirty = false;
@@ -142,6 +147,7 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
     messages.forEach((message) => { const li = document.createElement('li'); li.textContent = message; list.append(li); });
     alert.append(title, list); errors.append(alert);
     output.hidden = true;
+    if (timeline) timeline.hidden = true;
     if (print) print.disabled = true;
     if (state) state.textContent = 'No projection is shown until these inputs are corrected.';
     if (focus) heading?.focus();
@@ -161,7 +167,22 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
       setText('#total-contributed', usd.format(result.totalContributed));
       setText('#investment-growth', usd.format(result.investmentGrowth));
       setText('#fee-impact', usd.format(result.feeImpact));
-      setText('#contribution-note', `Contributions modeled for ${result.contributionMonths} month-ends, through ${result.contributionEndDate}. Projection target: ${result.targetDate}. Returns are not guaranteed. Taxes and withdrawals are not modeled.`);
+      setText('#contribution-note', contributionNote(result));
+      const chart = growthChart(input, result);
+      document.querySelector('#growth-balance-path')?.setAttribute('d', chart.balancePath);
+      document.querySelector('#growth-contribution-path')?.setAttribute('d', chart.contributionPath);
+      setText('#growth-chart-start', chart.start); setText('#growth-chart-end', chart.end);
+      setText('#growth-chart-description', `From ${chart.start} to ${chart.end}: ${usd.format(result.endingBalance)} modeled balance and ${usd.format(result.totalContributed)} starting amount plus deposits. Exact values are available in the year-by-year table. Not a forecast.`);
+      const yearlyRows = document.querySelector('#growth-yearly-rows');
+      if (yearlyRows) {
+        yearlyRows.replaceChildren();
+        result.yearly.forEach((year) => {
+          const row = document.createElement('tr');
+          const date = document.createElement('th'); date.scope = 'row'; date.textContent = year.asOfDate; row.append(date);
+          [year.familyContributions + year.employerContributions, year.endingBalance].forEach((value) => { const cell = document.createElement('td'); cell.textContent = usd.format(value); row.append(cell); });
+          yearlyRows.append(row);
+        });
+      }
       const rows = document.querySelector<HTMLElement>('#scenario-rows');
       if (rows) {
         rows.replaceChildren();
@@ -182,6 +203,7 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
       });
       setText('#report-generated', `Calculated locally at ${new Date().toISOString()}. No answers were submitted.`);
       errors.replaceChildren(); output.hidden = false; dirty = false;
+      if (timeline) timeline.hidden = false;
       if (print) print.disabled = false;
       if (state) state.textContent = fromHomepage ? 'Continued from the homepage example. Amount, return, and no-pilot assumption have been preserved.' : 'Calculated using the assumptions below. This is not a forecast.';
       if (focus) heading?.focus();
@@ -193,6 +215,7 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
   form?.addEventListener('input', () => {
     dirty = true;
     if (output) output.hidden = true;
+    if (timeline) timeline.hidden = true;
     errors?.replaceChildren();
     if (print) print.disabled = true;
     if (state) state.textContent = 'Inputs changed. Select Update projection to calculate; the previous result is hidden.';

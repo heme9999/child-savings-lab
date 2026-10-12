@@ -109,7 +109,15 @@ if (!eligibilityHtml.includes('Show next steps') || !eligibilityHtml.includes('L
 if (!growthHtml.includes('Update projection') || !growthHtml.includes('Returns are not guaranteed')) failures.push('Growth tool lacks indexable content or limitation language');
 if (!growthHtml.includes('Parameters used for this report') || !growthHtml.includes('data-assumptions')) failures.push('Growth print report must include its input assumptions');
 if (!growthHtml.includes('min="2026-07-04"')) failures.push('Growth form must retain the statutory earliest contribution date');
+if (!growthHtml.includes('id="growth-timeline"') || !growthHtml.includes('id="growth-yearly-rows"')) failures.push('Growth result must retain its chart and yearly data table');
+if (!/<\/section>\s*<\/div>\s*<section\b[^>]*id="growth-timeline"/.test(growthHtml)) failures.push('Timeline must follow the calculator grid so the sticky result cannot cover it');
+if (!growthHtml.includes('Statutory growth period ends')) failures.push('Growth result must distinguish the model cutoff and statutory growth-period end');
 if (!eligibilityHtml.includes('id="eligibility-output" hidden') || !eligibilityHtml.includes('No eligibility assessment yet')) failures.push('Eligibility checker must not show a positive default determination');
+const sourcesHtml = readFileSync(routeFile('/sources/'), 'utf8');
+for (const match of sourcesHtml.matchAll(/<article[^>]*data-source-status="proposed rule"[^>]*>(.*?)<\/article>/gis)) {
+  if (!match[1].includes('Proposed applicability') || /Effective(?: \/ scope)?:/.test(match[1])) failures.push('Proposed source record must show proposed applicability, not an effective-date label');
+}
+if (!homeHtml.includes('Trump Account checker') || !homeHtml.includes('Trump Account calculator')) failures.push('Global tool navigation must identify its Trump Account scope');
 if (!existsSync(join(root, 'robots.txt'))) failures.push('Missing robots.txt');
 if (!existsSync(join(root, 'sitemap-index.xml'))) failures.push('Missing sitemap-index.xml');
 if (!existsSync(join(root, '_headers'))) failures.push('Missing Cloudflare headers');

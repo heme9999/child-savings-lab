@@ -30,7 +30,7 @@ describe('checkEligibility', () => {
 
   it('does not treat an uncertain relationship as sufficient claim authority', () => {
     const result = checkEligibility({ ...valid, accountStatus: 'auto-account', claimAuthority: 'not-sure' });
-    expect(result.accountReasons.join(' ')).toContain('legal custodian');
+    expect(result.accountInformationNeeded.join(' ')).toContain('legal custodian');
   });
 
   it('routes an election or claim without activation to activation', () => {
@@ -50,10 +50,11 @@ describe('checkEligibility', () => {
     expect(result.formGuidance).toContain('rare manual-account exceptions');
   });
 
-  it('rejects a child who is 18 by election-year end', () => {
+  it('separates the new-election age baseline from adult-stage account handling', () => {
     const result = checkEligibility({ ...valid, birthDate: '2008-12-31' });
     expect(result.baselineEligible).toBe(false);
-    expect(result.accountReasons.join(' ')).toContain('under age 18');
+    expect(result.accountPath).toBe('post-growth-period');
+    expect(result.accountReasons.join(' ')).toContain('does not invalidate');
   });
 
   it('requires an employment-valid SSN issued before election', () => {
@@ -94,11 +95,67 @@ describe('checkEligibility', () => {
     expect(result.canReceiveFamilyOrEmployerContributions).toBeNull();
   });
 
-  it.each(['hasEmploymentValidSsn', 'isUsCitizen', 'qualifyingChildExpected'] as const)('keeps an unsure %s distinct from No', (field) => {
-    const result = checkEligibility({ ...valid, [field]: null });
+  it('keeps an unknown SSN baseline distinct from No', () => {
+    const result = checkEligibility({ ...valid, hasEmploymentValidSsn: null });
     expect(result.accountPath).toBe('needs-information');
     expect(result.baselineEligible).toBeNull();
-    expect(result.validationErrors).not.toEqual([]);
+    expect(result.accountInformationNeeded).not.toEqual([]);
+    expect(result.pilotStatus).toBe('needs-information');
+  });
+
+  it.each(['isUsCitizen', 'qualifyingChildExpected'] as const)('does not erase the account path when %s is unknown', (field) => {
+    const result = checkEligibility({ ...valid, [field]: null });
+    expect(result.accountPath).toBe('check-official-status');
+    expect(result.baselineEligible).toBe(true);
+    expect(result.validationErrors).toEqual([]);
+    expect(result.pilotStatus).toBe('needs-information');
+    expect(result.pilotInformationNeeded).not.toEqual([]);
+  });
+
+  it('preserves a reported activated account with incomplete pilot information', () => {
+    const result = checkEligibility({ ...valid, accountStatus: 'active-account', isUsCitizen: null, qualifyingChildExpected: null });
+    expect(result.accountPath).toBe('active');
+    expect(result.fundingGuidance).toContain('reported as activated');
+    expect(result.pilotStatus).toBe('needs-information');
+    expect(result.pilotInformationNeeded).toHaveLength(2);
+  });
+
+  it('does not request irrelevant citizenship answers for a birth date outside the pilot window', () => {
+    const result = checkEligibility({ ...valid, birthDate: '2016-01-15', accountStatus: 'active-account', isUsCitizen: null, qualifyingChildExpected: null });
+    expect(result.accountPath).toBe('active');
+    expect(result.pilotStatus).toBe('not-potentially-eligible');
+    expect(result.pilotReasons.join(' ')).toContain('outside');
+    expect(result.pilotInformationNeeded).toEqual([]);
+  });
+
+  it('does not send an activated account through activation again in the adult-stage year', () => {
+    const result = checkEligibility({ ...valid, birthDate: '2009-01-15', checkYear: 2027, accountStatus: 'active-account' });
+    expect(result.accountPath).toBe('post-growth-period');
+    expect(result.canReceiveFamilyOrEmployerContributions).toBeNull();
+    expect(result.fundingGuidance).toContain('traditional IRA');
+    expect(result.fundingGuidance).not.toContain('wait');
+    expect(result.requiredActions.join(' ')).toContain('Do not repeat');
+  });
+
+  it('routes an unclaimed adult-stage account to status-specific trustee guidance', () => {
+    const result = checkEligibility({ ...valid, birthDate: '2009-01-15', checkYear: 2027, accountStatus: 'auto-account' });
+    expect(result.accountPath).toBe('post-growth-period');
+    expect(result.requiredActions.join(' ')).toContain('claim, transfer');
+  });
+
+  it('flags conflicting SSN facts without declaring an existing account unactivated', () => {
+    const result = checkEligibility({ ...valid, accountStatus: 'active-account', hasEmploymentValidSsn: false });
+    expect(result.accountPath).toBe('verify-existing-account');
+    expect(result.canReceiveFamilyOrEmployerContributions).toBeNull();
+  });
+
+  it('keeps prior processed or pending pilot status separate from incomplete pilot eligibility', () => {
+    for (const [pilotElectionStatus, expected] of [['processed', 'already-processed'], ['submitted-pending', 'pending']] as const) {
+      const result = checkEligibility({ ...valid, accountStatus: 'active-account', isUsCitizen: null, qualifyingChildExpected: null, pilotElectionStatus });
+      expect(result.accountPath).toBe('active');
+      expect(result.pilotStatus).toBe(expected);
+      expect(result.requiredActions.join(' ')).toMatch(/duplicate|resubmitting/);
+    }
   });
 
   it('still reports a real date outside the pilot window after complete answers', () => {

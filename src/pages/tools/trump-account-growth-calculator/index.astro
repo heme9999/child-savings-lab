@@ -15,14 +15,14 @@ const schema = {
   description: 'Illustrates Trump Account contributions, hypothetical returns, fee impact, and balances across multiple scenarios.'
 };
 ---
-<BaseLayout title="Trump Account Growth Calculator" description="Model family and employer contributions, the $1,000 pilot amount, fees, and multiple hypothetical return scenarios." verifiedAt="2026-10-08">
+<BaseLayout title="Trump Account Growth Calculator" description="Model family and employer contributions, the $1,000 pilot amount, fees, and multiple hypothetical return scenarios." verifiedAt="2026-10-12">
   <script type="application/ld+json" set:html={JSON.stringify(schema)} />
   <div class="shell"><Breadcrumbs items={[{label:'Home',href:'/'},{label:'Tools',href:'/tools/child-savings-account-comparison/'},{label:'Growth calculator'}]} /></div>
   <header class="page-hero shell">
     <div class="eyebrow">Trump Account tool</div>
     <h1>Trump Account growth calculator</h1>
     <p class="lede">See how contributions, assumed returns, and fees could interact over time—without mistaking an illustration for a forecast.</p>
-    <VerifiedBadge />
+    <VerifiedBadge date="2026-10-12" effective="Calculation version October 12; source records have individual review dates" />
   </header>
   <div class="shell">
     <GrowthCalculator />
@@ -36,6 +36,7 @@ const schema = {
       <h2>Calculation method</h2>
       <p>The model calculates the statutory growth-period end from the birth date: December 31 of the calendar year in which the child turns 17. It applies a monthly equivalent of the selected annual return, subtracts monthly equivalents of the fund-expense and account-fee assumptions, deposits monthly family contributions at month-end, and deposits annual family and employer contributions at December 31.</p>
       <p>The start date cannot precede July 4, 2026. The optional pilot amount is modeled at the projection start, not on a predicted government payment date. Changing an input hides the prior result until you calculate again; blank numeric fields must be completed, including an explicit zero where appropriate.</p>
+      <p>Limit checks sum the family and employer deposits actually scheduled in each calendar year, including partial years. They do not assess earlier or outside deposits, or future inflation-indexed limits. The modeled contribution cutoff may precede the statutory growth-period end when a younger target age is selected. The chart and annual table reconcile to the same month-end calculation.</p>
       <p>The “fee impact” compares the same cash flows with and without both fee assumptions. The 0.10% ceiling applies to the eligible investment fund; separate trustee or intermediary fees require their own analysis. Partial months, taxes, inflation, tracking error, market sequence, actual deposit timing, and withdrawals are not modeled.</p>
       <SourceLinks ids={['TREASURY-TD-10056','IRS-PROPOSED-INVESTMENTS-2026','IRS-REV-PROC-2026-25']} />
     </div>

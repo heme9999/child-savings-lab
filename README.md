@@ -39,6 +39,8 @@ Calculator inputs stay in the browser. The site does not ask for or store names,
 
 The homepage passes only allowlisted fictional presets through URL fragments to the full growth calculator. Custom financial inputs and birth dates are not serialized. Edited inputs hide stale results; missing required answers do not produce an eligibility rejection. Printed growth reports include their assumptions and calculation version.
 
+Growth limit checks use the actual modeled deposit schedule per calendar year, including partial years, not an annualized monthly amount. They do not assess prior/outside deposits or predict future indexed limits. Annual table/chart data come from the same simulation. Existing-account paths, adult-stage handling, and incomplete pilot assessments are separate; a new-election age test is not used to invalidate an older account.
+
 The production URL allows crawling and indexing. Version and branch preview URLs remain noindex through Cloudflare `_headers`. Calculator network form submissions are blocked by CSP, and submit buttons remain disabled until local scripts load. The source has not received licensed-professional sign-off; publication does not imply such review.
 
 ## Documentation
@@ -46,3 +48,4 @@ The production URL allows crawling and indexing. Version and branch preview URLs
 - `docs/project-plan.md`
 - `docs/research/serp-audit-2026-10-08.md`
 - `docs/launch-report.md`
+- `docs/release-2026-10-12.md`

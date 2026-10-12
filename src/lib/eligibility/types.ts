@@ -20,6 +20,8 @@ export type AccountPath =
   | 'claim-auto-account'
   | 'complete-activation'
   | 'active'
+  | 'post-growth-period'
+  | 'verify-existing-account'
   | 'manual-exception-review';
 
 export type PilotStatus =
@@ -46,7 +48,10 @@ export interface EligibilityResult {
   accountPath: AccountPath;
   accountPathTitle: string;
   canReceiveFamilyOrEmployerContributions: boolean | null;
+  fundingGuidance: string;
   validationErrors: string[];
+  accountInformationNeeded: string[];
+  pilotInformationNeeded: string[];
   pilotStatus: PilotStatus;
   pilotStatusTitle: string;
   accountReasons: string[];

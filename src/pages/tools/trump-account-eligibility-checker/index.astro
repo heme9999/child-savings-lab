@@ -15,14 +15,14 @@ const schema = {
   description: 'Routes families through auto-account status, claiming, activation, contribution readiness, and the separate $1,000 pilot election.'
 };
 ---
-<BaseLayout title="Trump Account Status and Eligibility Checker" description="Check the next step for an auto account, claim, activation, private contributions, and the separate $1,000 pilot election." verifiedAt="2026-10-08">
+<BaseLayout title="Trump Account Status and Eligibility Checker" description="Check the next step for an auto account, claim, activation, private contributions, and the separate $1,000 pilot election." verifiedAt="2026-10-12">
   <script type="application/ld+json" set:html={JSON.stringify(schema)} />
   <div class="shell"><Breadcrumbs items={[{label:'Home',href:'/'},{label:'Tools',href:'/tools/child-savings-account-comparison/'},{label:'Eligibility checker'}]} /></div>
   <header class="page-hero shell">
     <div class="eyebrow">Trump Account tool</div>
     <h1>Trump Account status and eligibility checker</h1>
     <p class="lede">Find the next step after Treasury auto enrollment—without entering names, SSNs, account numbers, or tax IDs.</p>
-    <VerifiedBadge />
+    <VerifiedBadge date="2026-10-12" effective="Tool logic reviewed October 12; source records have individual review dates" />
   </header>
   <div class="shell">
     <EligibilityChecker />
@@ -36,6 +36,7 @@ const schema = {
       <h2>What changed on September 30, 2026</h2>
       <p>Temporary regulations introduced broad Treasury auto enrollment. The checker therefore tests baseline age and employment-valid SSN requirements, then routes the user through status checking, auto-account claiming, receiving-account activation, or the rare manual-election exception.</p>
       <p>The separate pilot result evaluates the 2025–2028 birth window, U.S. citizenship, qualifying-child expectation, and whether a pilot election is not made, pending, processed, or unknown. The IRS makes all determinations.</p>
+      <p>An unknown pilot answer does not erase a known account-status path. Existing accounts are not invalidated by applying a new-election age test to a later review year. From January 1 of the year the beneficiary turns 18, the checker directs users to adult-stage IRA rules and trustee guidance rather than promising child-period contribution eligibility.</p>
       <SourceLinks ids={['TREASURY-TD-10056','IRS-FORM-4547-INSTRUCTIONS']} />
     </div>
   </section>

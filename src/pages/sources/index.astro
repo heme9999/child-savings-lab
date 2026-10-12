@@ -4,23 +4,26 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import VerifiedBadge from '../../components/VerifiedBadge.astro';
 import { sources } from '../../data/sources';
 ---
-<BaseLayout title="Primary source library" description="The official government and regulatory sources used by Child Savings Lab, with status, historical limitations, and individual verification dates." verifiedAt="2026-10-10">
+<BaseLayout title="Primary source library" description="The official government and regulatory sources used by Child Savings Lab, with status, historical limitations, and individual verification dates." verifiedAt="2026-10-12">
   <div class="shell"><Breadcrumbs items={[{label:'Home',href:'/'},{label:'Sources'}]} /></div>
   <header class="page-hero shell">
     <div class="eyebrow">Evidence register</div>
     <h1>Primary source library</h1>
     <p class="lede">Follow the evidence behind our tools and account guides. Check each record’s review date and limitations: an official page may contain historical examples, and a regulator’s educational overview is not tax law.</p>
-    <VerifiedBadge date="2026-10-10" effective="Source records have individual review dates" />
+    <VerifiedBadge date="2026-10-12" effective="Source records have individual review dates" />
   </header>
   <section class="section shell" style="padding-top:0">
     <div class="card-grid">
       {sources.map((source) => (
-        <article class="card">
+        <article class="card" data-source-status={source.status}>
           <div class="eyebrow">{source.status}</div>
           <h2 style="font-size:1.4rem">{source.title}</h2>
           <p><strong>{source.publisher}</strong></p>
           <p>{source.note}</p>
-          <p><small>Published: {source.publishedAt} · Effective: {source.effectiveFrom} · Verified: {source.verifiedAt}</small></p>
+          <p><small>Linked publication: {source.publishedAt} · Verified: {source.verifiedAt}</small></p>
+          {source.status === 'proposed rule'
+            ? <p class="source-applicability"><strong>Proposed applicability:</strong> {source.proposedApplicability}</p>
+            : <p><small>Effective / scope: {source.effectiveFrom}</small></p>}
           <a href={source.url} rel="external">Open official source →</a>
         </article>
       ))}
