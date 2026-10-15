@@ -1,3 +1,5 @@
+import type { FieldIssue } from '../forms/feedback';
+
 export type AccountStatus =
   | 'unknown'
   | 'auto-account'
@@ -50,6 +52,7 @@ export interface EligibilityResult {
   canReceiveFamilyOrEmployerContributions: boolean | null;
   fundingGuidance: string;
   validationErrors: string[];
+  validationIssues: FieldIssue<keyof EligibilityInput>[];
   accountInformationNeeded: string[];
   pilotInformationNeeded: string[];
   pilotStatus: PilotStatus;

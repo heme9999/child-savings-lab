@@ -68,6 +68,15 @@ describe('sitemap and generated-file consistency', () => {
 const homeHtml = `<title>Child Savings Guides &amp; Free Calculators | Child Savings Lab</title><link rel="canonical" href="${publicSiteUrl}"><h1>Their tomorrow.</h1>`;
 const errorHtml = `<title>Page Not Found | Child Savings Lab</title><link rel="canonical" href="${publicSiteUrl}404"><meta name="robots" content="noindex,nofollow"><h1>Let’s find your next step.</h1>`;
 describe('deployment HTTP regression checks', () => {
+  it('accepts HTML matching the current build', () => {
+    expect(validateHttpPage({ status: 200, html: homeHtml, expectedStatus: 200, expectedPage: { ...pageMetadata(homeHtml), html: homeHtml } })).toEqual([]);
+  });
+  it.each(['<p>Old content</p>', '<script src="/_astro/old.js"></script>'])('rejects stale body or asset references even when metadata is unchanged: %s', (stale) => {
+    expect(validateHttpPage({ status: 200, html: homeHtml + stale, expectedStatus: 200, expectedPage: { ...pageMetadata(homeHtml), html: homeHtml } }).join(' ')).toContain('HTML content differs');
+  });
+  it('checks the error page content against the current build too', () => {
+    expect(validateHttpPage({ status: 404, html: errorHtml + '<p>Old footer</p>', expectedStatus: 404, expectedPage: { ...pageMetadata(errorHtml), html: errorHtml } }).join(' ')).toContain('HTML content differs');
+  });
   it('decodes the descriptive homepage title', () => {
     expect(pageMetadata(homeHtml).title).toBe('Child Savings Guides & Free Calculators | Child Savings Lab');
   });

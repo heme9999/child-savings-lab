@@ -1,7 +1,8 @@
 import { isValidIsoDate } from '../dates';
+import type { FieldIssue } from '../forms/feedback';
 
 export const FIRST_CONTRIBUTION_DATE = '2026-07-04';
-export const CALCULATION_VERSION = '2026-10-12';
+export const CALCULATION_VERSION = '2026-10-15';
 export type ContributionFrequency = 'monthly' | 'annual';
 
 export interface GrowthInput {
@@ -104,57 +105,64 @@ export function growthPeriodEnd(input: Pick<GrowthInput, 'birthDate'>): string |
   return `${birthDate.getUTCFullYear() + 17}-12-31`;
 }
 
-export function validateGrowthInput(input: GrowthInput): string[] {
-  const errors: string[] = [];
-  const numericFields: [string, number][] = [
-    ['Existing starting amount', input.initialAmount],
-    ['Family contribution', input.familyContribution],
-    ['Annual employer contribution', input.annualEmployerContribution],
-    ['Assumed annual return', input.annualReturnRate],
-    ['Eligible fund expense rate', input.fundExpenseRate],
-    ['Separate account/trustee fee', input.accountFeeRate],
-    ['Target age', input.targetAge]
+export function growthInputIssues(input: GrowthInput): FieldIssue<keyof GrowthInput>[] {
+  const errors: FieldIssue<keyof GrowthInput>[] = [];
+  const add = (field: keyof GrowthInput, message: string) => { errors.push({ field, message }); };
+  const numericFields: [keyof GrowthInput, string, number][] = [
+    ['initialAmount', 'Existing starting amount', input.initialAmount],
+    ['familyContribution', 'Family contribution', input.familyContribution],
+    ['annualEmployerContribution', 'Annual employer contribution', input.annualEmployerContribution],
+    ['annualReturnRate', 'Assumed annual return', input.annualReturnRate],
+    ['fundExpenseRate', 'Eligible fund expense rate', input.fundExpenseRate],
+    ['accountFeeRate', 'Separate account/trustee fee', input.accountFeeRate],
+    ['targetAge', 'Target age', input.targetAge]
   ];
-  for (const [label, value] of numericFields) {
-    if (!Number.isFinite(value)) errors.push(`${label}: enter a valid number; a blank is not zero.`);
+  for (const [field, label, value] of numericFields) {
+    if (!Number.isFinite(value)) add(field, `${label}: enter a valid number; a blank is not zero.`);
   }
-  if (!['monthly', 'annual'].includes(input.familyFrequency)) errors.push('Choose a monthly or annual contribution frequency.');
-  if (input.initialAmount < 0 || input.familyContribution < 0 || input.annualEmployerContribution < 0) {
-    errors.push('Contribution amounts cannot be negative.');
+  if (!['monthly', 'annual'].includes(input.familyFrequency)) add('familyFrequency', 'Choose a monthly or annual contribution frequency.');
+  for (const field of ['initialAmount', 'familyContribution', 'annualEmployerContribution'] as const) {
+    if (input[field] < 0) add(field, 'Contribution amounts cannot be negative.');
   }
-  if (!isValidIsoDate(input.birthDate)) errors.push('Enter a complete, valid birth date.');
-  if (!isValidIsoDate(input.projectionStartDate)) errors.push('Enter a complete, valid projection start date.');
+  if (!isValidIsoDate(input.birthDate)) add('birthDate', 'Enter a complete, valid birth date.');
+  if (!isValidIsoDate(input.projectionStartDate)) add('projectionStartDate', 'Enter a complete, valid projection start date.');
   else if (input.projectionStartDate < FIRST_CONTRIBUTION_DATE) {
-    errors.push('Projection start date must be July 4, 2026 or later; Trump Accounts could not accept contributions before that date.');
+    add('projectionStartDate', 'Projection start date must be July 4, 2026 or later; Trump Accounts could not accept contributions before that date.');
   }
   if (!Number.isInteger(input.targetAge) || input.targetAge < 1 || input.targetAge > 65) {
-    errors.push('Target age must be a whole number from 1 through 65.');
+    add('targetAge', 'Target age must be a whole number from 1 through 65.');
   }
   if (isValidIsoDate(input.birthDate) && isValidIsoDate(input.projectionStartDate) && Number.isInteger(input.targetAge)) {
     const birthDate = parseDate(input.birthDate);
     const startDate = parseDate(input.projectionStartDate);
     const targetDate = birthdayAtAge(birthDate, input.targetAge);
     const contributionEnd = new Date(Date.UTC(birthDate.getUTCFullYear() + 17, 11, 31));
-    if (startDate < birthDate) errors.push('Projection start date cannot be before the birth date.');
-    if (startDate >= targetDate) errors.push('Target age must occur after the projection start date.');
-    if (startDate > contributionEnd) errors.push('This child-period calculator must start no later than the end of the growth period.');
+    if (startDate < birthDate) add('projectionStartDate', 'Projection start date cannot be before the birth date.');
+    if (startDate >= targetDate) add('targetAge', 'Target age must occur after the projection start date.');
+    if (startDate > contributionEnd) add('projectionStartDate', 'This child-period calculator must start no later than the end of the growth period.');
   }
-  if (input.annualReturnRate <= -100 || input.annualReturnRate > 20) errors.push('Assumed return must be greater than -100% and no more than 20%.');
+  if (input.annualReturnRate <= -100 || input.annualReturnRate > 20) add('annualReturnRate', 'Assumed return must be greater than -100% and no more than 20%.');
   if (input.fundExpenseRate < 0 || input.fundExpenseRate > 0.1) {
-    errors.push('Eligible-investment fund expenses must be from 0% through the statutory 0.10% maximum.');
+    add('fundExpenseRate', 'Eligible-investment fund expenses must be from 0% through the statutory 0.10% maximum.');
   }
-  if (input.accountFeeRate < 0 || input.accountFeeRate > 5) errors.push('Account or trustee fee rate must be from 0% through 5%.');
-  if (input.annualEmployerContribution > 2500) errors.push('Employer contributions exceed the current $2,500 annual limit.');
+  if (input.accountFeeRate < 0 || input.accountFeeRate > 5) add('accountFeeRate', 'Account or trustee fee rate must be from 0% through 5%.');
+  if (input.annualEmployerContribution > 2500) add('annualEmployerContribution', 'Employer contributions exceed the current $2,500 annual limit.');
   if (!errors.length) {
     for (const year of scheduledYearlyContributions(input)) {
       // Allow machine rounding, not an extra cent of contribution headroom.
       if (year.total > 5000 + 1e-7) {
-        errors.push(`${year.year}: modeled family and employer deposits exceed the current $5,000 annual benchmark. Reduce deposits scheduled in that year.`);
+        const message = `${year.year}: modeled family and employer deposits exceed the current $5,000 annual benchmark. Reduce deposits scheduled in that year.`;
+        add('familyContribution', message);
+        if (input.annualEmployerContribution > 0) add('annualEmployerContribution', message);
         break;
       }
     }
   }
   return errors;
+}
+
+export function validateGrowthInput(input: GrowthInput): string[] {
+  return [...new Set(growthInputIssues(input).map((issue) => issue.message))];
 }
 
 function simulate(input: GrowthInput, annualFeeRate: number): Omit<GrowthProjection, 'feeImpact'> {

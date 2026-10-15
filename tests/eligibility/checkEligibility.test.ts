@@ -14,6 +14,16 @@ const valid: EligibilityInput = {
 };
 
 describe('checkEligibility', () => {
+  it('associates validation errors with the exact required fields', () => {
+    const result = checkEligibility({ ...valid, checkYear: NaN, birthDate: '' });
+    expect(result.validationIssues.map((issue) => issue.field)).toEqual(['checkYear', 'birthDate']);
+    expect(result.validationIssues.map((issue) => issue.message)).toEqual(result.validationErrors);
+  });
+  it('does not mark unknown account or pilot answers as invalid fields', () => {
+    const result = checkEligibility({ ...valid, accountStatus: 'unknown', isUsCitizen: null, qualifyingChildExpected: null, pilotElectionStatus: 'unknown' });
+    expect(result.validationIssues).toEqual([]);
+    expect(result.pilotInformationNeeded.length).toBeGreaterThan(0);
+  });
   it('routes an unknown account to the official status process', () => {
     const result = checkEligibility(valid);
     expect(result.baselineEligible).toBe(true);

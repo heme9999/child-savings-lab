@@ -22,7 +22,7 @@ After committing and pushing the verified source to GitHub, deploy with:
 npm run deploy:cloudflare
 ```
 
-This rebuilds and verifies the site, deploys to Cloudflare Pages, then runs `npm run validate:deployment -- --wait-for-deployment` against production. It retries the complete suite at most four times, with 10-second gaps, to allow a just-published deployment to propagate. All checks must pass together; failure is never waived. The deployment checks request every public page, the sitemap index and its child XML files, robots.txt, and three intentionally missing paths with both GET and HEAD. They reject homepage fallback, HTTP 200 error pages, mismatched page metadata, stale sitemap files, missing copyright/ownership tags, and unexpected production noindex headers. A failed check exits nonzero; it does not automatically roll back the deployment.
+This rebuilds and verifies the site, deploys to Cloudflare Pages, then runs `npm run validate:deployment -- --wait-for-deployment` against production. It retries the complete suite at most four times, with 10-second gaps, to allow a just-published deployment to propagate. All checks must pass together; failure is never waived. The deployment checks request every public page, the sitemap index and its child XML files, robots.txt, and three intentionally missing paths with both GET and HEAD. They reject homepage fallback, HTTP 200 error pages, mismatched page metadata or full HTML content (including bundled asset references), stale sitemap files, missing copyright/ownership tags, and unexpected production noindex headers. A failed check exits nonzero; it does not automatically roll back the deployment. Build and test the exact source revision being deployed; a newer local build is expected to fail against an older live release.
 
 To check an existing deployment after a successful local build:
 
@@ -39,6 +39,8 @@ Calculator inputs stay in the browser. The site does not ask for or store names,
 
 The homepage passes only allowlisted fictional presets through URL fragments to the full growth calculator. Custom financial inputs and birth dates are not serialized. Edited inputs hide stale results; missing required answers do not produce an eligibility rejection. Printed growth reports include their assumptions and calculation version.
 
+The `/tools/` directory explains each tool’s scope. Form errors provide inline descriptions and keyboard-focusable links, preserve existing help text, and reveal invalid advanced fields. Reports preserve the calculation input precision instead of rounding small fee assumptions to zero. DOM feedback tests use jsdom; they do not replace real-browser layout and screen-reader checks.
+
 Growth limit checks use the actual modeled deposit schedule per calendar year, including partial years, not an annualized monthly amount. They do not assess prior/outside deposits or predict future indexed limits. Annual table/chart data come from the same simulation. Existing-account paths, adult-stage handling, and incomplete pilot assessments are separate; a new-election age test is not used to invalidate an older account.
 
 The production URL allows crawling and indexing. Version and branch preview URLs remain noindex through Cloudflare `_headers`. Calculator network form submissions are blocked by CSP, and submit buttons remain disabled until local scripts load. The source has not received licensed-professional sign-off; publication does not imply such review.
@@ -49,3 +51,4 @@ The production URL allows crawling and indexing. Version and branch preview URLs
 - `docs/research/serp-audit-2026-10-08.md`
 - `docs/launch-report.md`
 - `docs/release-2026-10-12.md`
+- `docs/release-2026-10-15.md`

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { formNumber, growthAssumptions, growthInputFromForm } from '../../src/lib/calculators/form';
+import { formNumber, growthAssumptions, growthInputFromForm, reportDecimal } from '../../src/lib/calculators/form';
 import { previewAssumptions, inputFromPreviewHash, previewPresetHash, savingsPreview } from '../../src/lib/calculators/preview';
-import { projectGrowth, validateGrowthInput } from '../../src/lib/calculators/growth';
+import { growthInputIssues, projectGrowth, validateGrowthInput } from '../../src/lib/calculators/growth';
 
 describe('calculator input and report contracts', () => {
   it.each(['', ' ', null, 'NaN', 'not-a-number'])('does not silently parse a missing numeric answer as zero: %s', (value) => {
@@ -22,6 +22,29 @@ describe('calculator input and report contracts', () => {
     expect(summary['Projection start date']).toBe('2026-10-08');
     expect(summary['Annual fund expense rate']).toBe('0.10%');
     expect(Object.keys(summary)).toHaveLength(11);
+  });
+  it.each([[0, '0.00'], [0.1, '0.10'], [0.004, '0.004'], [0.005, '0.005'], [1e-7, '0.0000001'], [1e21, '1000000000000000000000.00'], [0.10000000149011612, '0.10000000149011612']])('preserves report precision for %s', (value, expected) => {
+    expect(reportDecimal(value as number)).toBe(expected);
+    expect(Number(reportDecimal(value as number))).toBe(value);
+  });
+  it('keeps small fee rates and hypothetical sub-cent money reproducible', () => {
+    const summary = Object.fromEntries(growthAssumptions({ ...previewAssumptions, fundExpenseRate: 0.004, accountFeeRate: 0.005, initialAmount: 1234.567, familyContribution: 0.001 }));
+    expect(summary['Annual fund expense rate']).toBe('0.004%');
+    expect(summary['Annual account/trustee fee rate']).toBe('0.005%');
+    expect(summary['Existing starting amount']).toBe('$1,234.567');
+    expect(summary['Family contribution']).toBe('$0.001 each month-end');
+  });
+  it('does not format invalid numeric assumptions as printable values', () => {
+    expect(() => reportDecimal(NaN)).toThrow('finite');
+    expect(() => reportDecimal(Infinity)).toThrow('finite');
+  });
+  it('identifies advanced and basic invalid fields without parsing message strings', () => {
+    const issues = growthInputIssues({ ...previewAssumptions, initialAmount: -1, annualReturnRate: NaN, fundExpenseRate: 0.11 });
+    expect(issues.map((issue) => issue.field)).toEqual(expect.arrayContaining(['initialAmount', 'annualReturnRate', 'fundExpenseRate']));
+    expect(issues.map((issue) => issue.message)).toEqual(validateGrowthInput({ ...previewAssumptions, initialAmount: -1, annualReturnRate: NaN, fundExpenseRate: 0.11 }));
+  });
+  it('links a combined annual limit error to both deposit fields', () => {
+    expect(growthInputIssues({ ...previewAssumptions, familyContribution: 300, annualEmployerContribution: 2000 }).map((issue) => issue.field)).toEqual(['familyContribution', 'annualEmployerContribution']);
   });
 });
 

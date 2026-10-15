@@ -38,7 +38,7 @@ export function checkEligibility(input: EligibilityInput): EligibilityResult {
     accountPath: 'needs-information', accountPathTitle: pathTitle('needs-information'),
     canReceiveFamilyOrEmployerContributions: null,
     fundingGuidance: 'Funding eligibility has not been assessed. Confirm the relevant facts using official instructions.',
-    validationErrors: [], accountInformationNeeded: [], pilotInformationNeeded: [],
+    validationErrors: [], validationIssues: [], accountInformationNeeded: [], pilotInformationNeeded: [],
     pilotStatus: 'needs-information', pilotStatusTitle: pilotTitle('needs-information'),
     accountReasons: [], pilotReasons: [], requiredActions: [],
     formGuidance: 'Form 4547 remains relevant to the separate pilot election and rare manual-account exceptions; it is no longer the default account-opening path after auto enrollment began.',
@@ -49,12 +49,15 @@ export function checkEligibility(input: EligibilityInput): EligibilityResult {
     result.pilotStatusTitle = pilotTitle(result.pilotStatus);
     return result;
   };
-  if (!Number.isInteger(input.checkYear) || input.checkYear < 2026 || input.checkYear > 2100) result.validationErrors.push('Choose a review year from 2026 through 2100.');
-  if (!isValidIsoDate(input.birthDate)) result.validationErrors.push('Enter a complete, valid date of birth.');
-  else if (Number.isInteger(input.checkYear) && input.birthDate > input.checkYear + '-12-31') result.validationErrors.push('The birth date must be on or before the end of the review year.');
-  if (!['unknown', 'auto-account', 'claim-started', 'manual-election-only', 'active-account', 'no-account-confirmed'].includes(input.accountStatus)) result.validationErrors.push('Choose an account status, including Unknown if you have not checked.');
-  if (!['guardian-or-legal-custodian', 'beneficiary-with-legal-capacity', 'not-sure'].includes(input.claimAuthority)) result.validationErrors.push('Choose a claim-authority answer.');
-  if (!['not-made', 'submitted-pending', 'processed', 'unknown'].includes(input.pilotElectionStatus)) result.validationErrors.push('Choose a pilot-election status.');
+  const invalid = (field: keyof EligibilityInput, message: string) => {
+    result.validationErrors.push(message); result.validationIssues.push({ field, message });
+  };
+  if (!Number.isInteger(input.checkYear) || input.checkYear < 2026 || input.checkYear > 2100) invalid('checkYear', 'Choose a review year from 2026 through 2100.');
+  if (!isValidIsoDate(input.birthDate)) invalid('birthDate', 'Enter a complete, valid date of birth.');
+  else if (Number.isInteger(input.checkYear) && input.birthDate > input.checkYear + '-12-31') invalid('birthDate', 'The birth date must be on or before the end of the review year.');
+  if (!['unknown', 'auto-account', 'claim-started', 'manual-election-only', 'active-account', 'no-account-confirmed'].includes(input.accountStatus)) invalid('accountStatus', 'Choose an account status, including Unknown if you have not checked.');
+  if (!['guardian-or-legal-custodian', 'beneficiary-with-legal-capacity', 'not-sure'].includes(input.claimAuthority)) invalid('claimAuthority', 'Choose a claim-authority answer.');
+  if (!['not-made', 'submitted-pending', 'processed', 'unknown'].includes(input.pilotElectionStatus)) invalid('pilotElectionStatus', 'Choose a pilot-election status.');
   if (result.validationErrors.length) return finish();
 
   const ageAtYearEnd = input.checkYear - Number(input.birthDate.slice(0, 4));

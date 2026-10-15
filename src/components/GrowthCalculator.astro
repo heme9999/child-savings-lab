@@ -15,6 +15,7 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
     <p>Use hypothetical values. Model family or employer deposits only after a receiving account is claimed and activated.</p>
     <p class="result-help">Checks apply only to deposits scheduled in this illustration, by calendar year. Prior or other people’s deposits are not included; the starting balance is not a record of prior contributions. Current dollar limits are held constant, without future inflation adjustments.</p>
     <form id="growth-form" novalidate>
+      <div id="growth-errors"></div>
       <div class="form-grid">
         <div class="field">
           <label for="birth-date">Child’s date of birth</label>
@@ -90,7 +91,6 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
     <div class="eyebrow" style="color:#9ed5bf">Illustrative projection</div>
     <h2 id="growth-results-title" tabindex="-1">At age <span id="result-age">18</span></h2>
     <p id="growth-state">Worked example: $100/month, 6% assumed return, no pilot amount. Update to calculate your answers.</p>
-    <div id="growth-errors"></div>
     <div id="growth-output">
       <div class="metric-grid">
         <div class="metric"><span>Hypothetical balance</span><strong id="ending-balance">{usd(example.endingBalance)}</strong></div>
@@ -121,13 +121,15 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
 <GrowthTimeline input={exampleInput} projection={example} />
 
 <script>
-  import { projectGrowth, projectScenarios, validateGrowthInput } from '../lib/calculators/growth';
+  import { projectGrowth, projectScenarios, growthInputIssues } from '../lib/calculators/growth';
+  import { formFeedback, type FieldIssue } from '../lib/forms/feedback';
   import { growthInputFromForm, growthAssumptions, contributionNote } from '../lib/calculators/form';
   import { growthChart } from '../lib/calculators/chart';
   import { inputFromPreviewHash } from '../lib/calculators/preview';
 
   const form = document.querySelector<HTMLFormElement>('#growth-form');
   const errors = document.querySelector<HTMLElement>('#growth-errors');
+  const feedback = form && errors ? formFeedback(form, errors) : null;
   const output = document.querySelector<HTMLElement>('#growth-output');
   const state = document.querySelector<HTMLElement>('#growth-state');
   const heading = document.querySelector<HTMLElement>('#growth-results-title');
@@ -137,27 +139,20 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
   const setText = (selector: string, value: string) => { const el = document.querySelector<HTMLElement>(selector); if (el) el.textContent = value; };
   let dirty = false;
 
-  function showErrors(messages: string[], focus: boolean): void {
+  function showErrors(issues: FieldIssue[], focus: boolean): void {
     if (!errors || !output) return;
-    errors.replaceChildren();
-    const alert = document.createElement('div');
-    alert.setAttribute('role', 'alert');
-    const title = document.createElement('h3'); title.textContent = 'Check these inputs';
-    const list = document.createElement('ul'); list.className = 'error-list';
-    messages.forEach((message) => { const li = document.createElement('li'); li.textContent = message; list.append(li); });
-    alert.append(title, list); errors.append(alert);
+    feedback?.show(issues, focus);
     output.hidden = true;
     if (timeline) timeline.hidden = true;
     if (print) print.disabled = true;
     if (state) state.textContent = 'No projection is shown until these inputs are corrected.';
-    if (focus) heading?.focus();
   }
 
   function render(focus = true, fromHomepage = false): void {
     if (!form || !errors || !output) return;
     const input = growthInputFromForm(new FormData(form));
-    const messages = validateGrowthInput(input);
-    if (messages.length) { showErrors(messages, focus); return; }
+    const issues = growthInputIssues(input);
+    if (issues.length) { showErrors(issues, focus); return; }
     try {
       // Finish both calculations before exposing a result; never leave stale metrics after an exception.
       const result = projectGrowth(input);
@@ -202,13 +197,13 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
         });
       });
       setText('#report-generated', `Calculated locally at ${new Date().toISOString()}. No answers were submitted.`);
-      errors.replaceChildren(); output.hidden = false; dirty = false;
+      feedback?.clear(); output.hidden = false; dirty = false;
       if (timeline) timeline.hidden = false;
       if (print) print.disabled = false;
       if (state) state.textContent = fromHomepage ? 'Continued from the homepage example. Amount, return, and no-pilot assumption have been preserved.' : 'Calculated using the assumptions below. This is not a forecast.';
       if (focus) heading?.focus();
     } catch (error) {
-      showErrors([error instanceof Error ? error.message : 'The projection could not be calculated. Please check your inputs and try again.'], focus);
+      showErrors([{ message: error instanceof Error ? error.message : 'The projection could not be calculated. Please check your inputs and try again.' }], focus);
     }
   }
 
@@ -216,7 +211,7 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
     dirty = true;
     if (output) output.hidden = true;
     if (timeline) timeline.hidden = true;
-    errors?.replaceChildren();
+    feedback?.clear();
     if (print) print.disabled = true;
     if (state) state.textContent = 'Inputs changed. Select Update projection to calculate; the previous result is hidden.';
   });

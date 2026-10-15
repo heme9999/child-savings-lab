@@ -19,6 +19,7 @@ const initial = checkEligibility({
     <p>Since Treasury auto enrollment began, most families should check account status before considering a new Form 4547 account election.</p>
     <div class="privacy-note"><span aria-hidden="true">◉</span><span>No names, Social Security numbers, addresses, or tax IDs are requested. Inputs stay in this browser and are not saved.</span></div>
     <form id="eligibility-form" novalidate>
+      <div id="eligibility-errors"></div>
       <div class="form-grid">
         <div class="field">
           <label for="check-year">Review year</label>
@@ -94,7 +95,6 @@ const initial = checkEligibility({
     <div class="eyebrow" style="color:#9ed5bf">Educational result</div>
     <h2 id="eligibility-results-title" tabindex="-1">Your next steps</h2>
     <p id="eligibility-state">No eligibility assessment yet. Complete the questions, then select Show next steps. Hypothetical answers are welcome.</p>
-    <div id="eligibility-errors"></div>
     <div id="eligibility-output" hidden>
     <div id="account-result">
       <h3>Account status</h3>
@@ -122,6 +122,7 @@ const initial = checkEligibility({
 <script>
   import { checkEligibility } from '../lib/eligibility/checkEligibility';
   import { formNumber } from '../lib/calculators/form';
+  import { formFeedback } from '../lib/forms/feedback';
   import type { AccountStatus, ClaimAuthority, EligibilityInput, PilotElectionStatus } from '../lib/eligibility/types';
 
   const form = document.querySelector<HTMLFormElement>('#eligibility-form');
@@ -130,6 +131,7 @@ const initial = checkEligibility({
   const pilot = document.querySelector<HTMLElement>('#pilot-result');
   const detail = document.querySelector<HTMLElement>('#eligibility-detail');
   const errors = document.querySelector<HTMLElement>('#eligibility-errors');
+  const feedback = form && errors ? formFeedback(form, errors) : null;
   const output = document.querySelector<HTMLElement>('#eligibility-output');
   const state = document.querySelector<HTMLElement>('#eligibility-state');
   const heading = document.querySelector<HTMLElement>('#eligibility-results-title');
@@ -153,13 +155,11 @@ const initial = checkEligibility({
       qualifyingChildExpected: boolValue(data, 'qualifyingChildExpected')
     };
     const result = checkEligibility(input);
-    errors.replaceChildren();
+    feedback?.clear();
     if (result.validationErrors.length) {
       output.hidden = true;
       state.textContent = 'More information is needed. Eligibility has not been assessed.';
-      const list = document.createElement('ul'); list.className = 'error-list'; list.setAttribute('role', 'alert');
-      result.validationErrors.forEach((message) => { const li = document.createElement('li'); li.textContent = message; list.append(li); });
-      errors.append(list); heading?.focus(); return;
+      feedback?.show(result.validationIssues); return;
     }
     output.hidden = false;
     state.textContent = 'Account status and pilot eligibility are considered separately. These are educational next steps based on reported answers—not an IRS determination.';
@@ -174,7 +174,7 @@ const initial = checkEligibility({
   form?.addEventListener('submit', (event) => { event.preventDefault(); render(); });
   const clearResult = () => {
     if (output) output.hidden = true;
-    errors?.replaceChildren();
+    feedback?.clear();
     if (state) state.textContent = 'No eligibility assessment yet. Complete the questions, then select Show next steps.';
   };
   form?.addEventListener('input', clearResult);

@@ -112,6 +112,7 @@ export function validateHttpPage({ status, html, headersNoindex = '', expectedSt
   if (metadata.title !== expectedPage.title) failures.push('title differs from the built page (possible homepage fallback or stale deployment)');
   if (metadata.h1 !== expectedPage.h1) failures.push('H1 differs from the built page');
   if (metadata.canonical !== expectedPage.canonical) failures.push('canonical differs from the built page');
+  if (typeof expectedPage.html === 'string' && html.trim() !== expectedPage.html.trim()) failures.push('HTML content differs from the built file (stale content or asset references)');
   if (expectedStatus === 404 && !metadata.noindex) failures.push('404 response is missing noindex');
   if (requireIndexable && expectedStatus === 200 && (metadata.noindex || /noindex/i.test(headersNoindex))) failures.push('public page is unexpectedly noindex');
   return failures;

@@ -30,7 +30,7 @@ export function growthInputFromForm(data: Pick<FormData, 'get'>): GrowthInput {
 }
 
 export function growthAssumptions(input: GrowthInput): [string, string][] {
-  const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 }).format(value);
+  const usd = (value: number) => `$${reportDecimal(value, true)}`;
   return [
     ['Birth date (hypothetical values are welcome)', input.birthDate],
     ['Projection start date', input.projectionStartDate],
@@ -39,9 +39,25 @@ export function growthAssumptions(input: GrowthInput): [string, string][] {
     ['Pilot assumption', input.includePilot ? '$1,000 included in the starting balance; eligibility and payment not confirmed' : 'Not included'],
     ['Annual employer contribution', `${usd(input.annualEmployerContribution)} each December 31`],
     ['Assumed annual return', `${input.annualReturnRate}%`],
-    ['Annual fund expense rate', `${input.fundExpenseRate.toFixed(2)}%`],
-    ['Annual account/trustee fee rate', `${input.accountFeeRate.toFixed(2)}%`],
+    ['Annual fund expense rate', `${reportDecimal(input.fundExpenseRate)}%`],
+    ['Annual account/trustee fee rate', `${reportDecimal(input.accountFeeRate)}%`],
     ['Target age', String(input.targetAge)],
     ['Calculation version (not a policy review date)', CALCULATION_VERSION]
   ];
+}
+
+// Expand the shortest round-trip Number representation, without rounding away
+// valid inputs such as 0.004% or sub-cent hypothetical contributions.
+export function reportDecimal(value: number, grouped = false): string {
+  if (!Number.isFinite(value)) throw new Error('Report assumptions must be finite.');
+  const sign = value < 0 ? '-' : '';
+  const [coefficient = '0', exponent = '0'] = String(Math.abs(value)).split('e');
+  const [whole = '0', fraction = ''] = coefficient.split('.');
+  const digits = whole + fraction;
+  const point = whole.length + Number(exponent);
+  const expanded = point <= 0 ? `0.${'0'.repeat(-point)}${digits}`
+    : point >= digits.length ? digits + '0'.repeat(point - digits.length)
+    : `${digits.slice(0, point)}.${digits.slice(point)}`;
+  const [integer = '0', decimals = ''] = expanded.split('.');
+  return `${sign}${grouped ? integer.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : integer}.${decimals.padEnd(2, '0')}`;
 }

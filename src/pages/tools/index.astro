@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+const tools = [
+  { question: 'What is my next account step?', title: 'Trump Account checker', description: 'Explore account status, claiming, activation, and the separate $1,000 pilot election. Educational guidance, not an IRS determination.', href: '/tools/trump-account-eligibility-checker/', action: 'Check next steps', scope: 'Trump Accounts only' },
+  { question: 'How might a contribution plan grow?', title: 'Trump Account calculator', description: 'Illustrate deposits, assumed returns, and fees with an annual chart and printable assumptions. Not a forecast or tax estimate.', href: '/tools/trump-account-growth-calculator/', action: 'Model a scenario', scope: 'Trump Account contribution rules' },
+  { question: 'Which account rules should I compare?', title: 'Child savings account comparison', description: 'Compare the purpose, ownership, and key constraints of Trump Accounts, 529 plans, UGMA/UTMA, Custodial Roth IRAs, and ABLE accounts.', href: '/tools/child-savings-account-comparison/', action: 'Compare account types', scope: 'Five account types · Reading guide' }
+];
+---
+<BaseLayout title="Free Child Savings Tools & Account Comparisons" description="Choose a free Trump Account status checker, growth calculator, or five-account comparison. Clear scope, no signup, and browser-only calculator inputs.">
+  <div class="shell"><Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Tools' }]} /></div>
+  <header class="page-hero shell">
+    <div class="eyebrow">Free tools · No signup</div>
+    <h1>Start with your question.</h1>
+    <p class="lede">Understand the next step, explore a savings scenario, or compare account rules. Choose the tool that matches what you’re trying to learn.</p>
+  </header>
+  <section class="section shell" aria-labelledby="available-tools">
+    <h2 id="available-tools">Choose a tool</h2>
+    <div class="card-grid">
+      {tools.map((tool) => <article class="card">
+        <div class="eyebrow">{tool.scope}</div>
+        <h3>{tool.question}</h3>
+        <p><strong>{tool.title}</strong></p>
+        <p>{tool.description}</p>
+        <a class="button" href={tool.href}>{tool.action}</a>
+      </article>)}
+    </div>
+    <div class="privacy-note">Calculator answers are processed in your browser, not saved or submitted. Hypothetical values are welcome; never enter an SSN or account number.</div>
+    <p>The checker and calculator currently cover Trump Accounts—not 529 projections or personalized account recommendations. For education savings, start with the <a href="/guides/529-plans/">529 plan guide</a>. Read our <a href="/methodology/">methods and limitations</a> before acting on an illustration.</p>
+  </section>
+</BaseLayout>

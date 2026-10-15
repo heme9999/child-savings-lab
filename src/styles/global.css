@@ -81,7 +81,13 @@ p, li { color: var(--ink-soft); }
 .field label, fieldset legend { color: var(--deep); font-weight: 750; }
 .field small { color: #61706e; }
 input, select { min-height: 46px; width: 100%; padding: .65rem .75rem; border: 1px solid #829791; border-radius: 10px; background: white; color: var(--ink); }
-input:invalid { border-color: var(--error); }
+input[aria-invalid="true"], select[aria-invalid="true"] { border: 2px solid var(--error); }
+input[id], select[id], .form-error-summary h3 { scroll-margin-top: 160px; }
+.field-error { color: var(--error); font-size: .9rem; }
+.form-error-summary { margin-bottom: 1.25rem; padding: 1rem; border: 2px solid var(--error); border-radius: 12px; background: #fff2f0; }
+.form-error-summary h3 { margin: 0 0 .75rem; }
+.form-error-summary ul { margin: 0; padding-left: 1.25rem; }
+.form-error-summary a { color: var(--error); overflow-wrap: anywhere; }
 fieldset { margin: 0; padding: 0; border: 0; }
 .radio-row { display: flex; flex-wrap: wrap; gap: .7rem; }
 .radio-option { display: inline-flex; align-items: center; gap: .4rem; padding: .55rem .7rem; border: 1px solid var(--line); border-radius: 10px; }
