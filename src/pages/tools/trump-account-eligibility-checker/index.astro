@@ -3,7 +3,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 import EligibilityChecker from '../../../components/EligibilityChecker.astro';
 import SourceLinks from '../../../components/SourceLinks.astro';
-import VerifiedBadge from '../../../components/VerifiedBadge.astro';
+import ToolHero from '../../../components/ToolHero.astro';
 import NextSteps from '../../../components/NextSteps.astro';
 const schema = {
   '@context': 'https://schema.org',
@@ -18,12 +18,7 @@ const schema = {
 <BaseLayout title="Trump Account Status and Eligibility Checker" description="Check the next step for an auto account, claim, activation, private contributions, and the separate $1,000 pilot election." verifiedAt="2026-10-12">
   <script type="application/ld+json" set:html={JSON.stringify(schema)} />
   <div class="shell"><Breadcrumbs items={[{label:'Home',href:'/'},{label:'Tools',href:'/tools/'},{label:'Eligibility checker'}]} /></div>
-  <header class="page-hero shell">
-    <div class="eyebrow">Trump Account tool</div>
-    <h1>Trump Account status and eligibility checker</h1>
-    <p class="lede">Find the next step after Treasury auto enrollment—without entering names, SSNs, account numbers, or tax IDs.</p>
-    <VerifiedBadge date="2026-10-12" effective="Tool logic reviewed October 12; source records have individual review dates" />
-  </header>
+  <ToolHero title="Trump Account status and eligibility checker" description="Check account status and the separate pilot election. No names, SSNs, or account numbers." date="2026-10-12" dateLabel="Rules checked" />
   <div class="shell">
     <EligibilityChecker />
     <NextSteps heading="What would you like to understand next?" links={[

@@ -15,9 +15,8 @@ const initial = checkEligibility({
 <div class="tool-layout" data-eligibility-checker>
   <section class="tool-panel" aria-labelledby="eligibility-form-title">
     <div class="eyebrow">Private by design</div>
-    <h2 id="eligibility-form-title">Find the correct account path</h2>
-    <p>Since Treasury auto enrollment began, most families should check account status before considering a new Form 4547 account election.</p>
-    <div class="privacy-note"><span aria-hidden="true">◉</span><span>No names, Social Security numbers, addresses, or tax IDs are requested. Inputs stay in this browser and are not saved.</span></div>
+    <h2 id="eligibility-form-title">Check the next step</h2>
+    <p>Check official account status before considering a new Form 4547 account election.</p>
     <form id="eligibility-form" novalidate>
       <div id="eligibility-errors"></div>
       <div class="form-grid">
@@ -89,6 +88,7 @@ const initial = checkEligibility({
         <button class="button secondary" type="reset">Reset</button>
       </div>
     </form>
+    <div class="privacy-note"><span aria-hidden="true">◉</span><span>No names, Social Security numbers, addresses, or tax IDs are requested. Inputs stay in this browser and are not saved.</span></div>
     <noscript><p class="privacy-note">Enable JavaScript to run this checker locally. No eligibility assessment is made until you complete the required information; your inputs are not submitted.</p></noscript>
   </section>
   <section class="result-panel" aria-labelledby="eligibility-results-title" aria-live="polite" aria-atomic="true">
@@ -123,6 +123,7 @@ const initial = checkEligibility({
   import { checkEligibility } from '../lib/eligibility/checkEligibility';
   import { formNumber } from '../lib/calculators/form';
   import { formFeedback } from '../lib/forms/feedback';
+  import { revealResult } from '../lib/forms/focus';
   import type { AccountStatus, ClaimAuthority, EligibilityInput, PilotElectionStatus } from '../lib/eligibility/types';
 
   const form = document.querySelector<HTMLFormElement>('#eligibility-form');
@@ -168,7 +169,7 @@ const initial = checkEligibility({
     funding.innerHTML = `<h3>Family or employer contributions</h3><p><span class="status ${result.canReceiveFamilyOrEmployerContributions === true ? 'yes' : 'unknown'}">${result.fundingGuidance}</span></p>`;
     pilot.innerHTML = `<h3>$1,000 pilot election</h3><p><span class="status ${result.pilotStatus === 'potentially-eligible-to-elect' || result.pilotStatus === 'already-processed' ? 'yes' : result.pilotStatus === 'not-potentially-eligible' ? 'no' : 'unknown'}">${result.pilotStatusTitle}</span></p>${list(result.pilotReasons)}${list(result.pilotInformationNeeded)}`;
     detail.innerHTML = `<h3>Next steps</h3>${list(result.requiredActions)}<p><strong>Form 4547:</strong> ${result.formGuidance}</p>`;
-    heading?.focus();
+    revealResult(heading);
   }
 
   form?.addEventListener('submit', (event) => { event.preventDefault(); render(); });

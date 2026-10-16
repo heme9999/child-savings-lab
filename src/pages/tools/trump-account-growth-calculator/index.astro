@@ -3,7 +3,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 import GrowthCalculator from '../../../components/GrowthCalculator.astro';
 import SourceLinks from '../../../components/SourceLinks.astro';
-import VerifiedBadge from '../../../components/VerifiedBadge.astro';
+import ToolHero from '../../../components/ToolHero.astro';
 import NextSteps from '../../../components/NextSteps.astro';
 const schema = {
   '@context': 'https://schema.org',
@@ -18,12 +18,7 @@ const schema = {
 <BaseLayout title="Trump Account Growth Calculator" description="Model family and employer contributions, the $1,000 pilot amount, fees, and multiple hypothetical return scenarios." verifiedAt="2026-10-15">
   <script type="application/ld+json" set:html={JSON.stringify(schema)} />
   <div class="shell"><Breadcrumbs items={[{label:'Home',href:'/'},{label:'Tools',href:'/tools/'},{label:'Growth calculator'}]} /></div>
-  <header class="page-hero shell">
-    <div class="eyebrow">Trump Account tool</div>
-    <h1>Trump Account growth calculator</h1>
-    <p class="lede">See how contributions, assumed returns, and fees could interact over time—without mistaking an illustration for a forecast.</p>
-    <VerifiedBadge date="2026-10-15" effective="Calculation software version October 15; not a new policy review. Source records have individual review dates" />
-  </header>
+  <ToolHero title="Trump Account growth calculator" description="Explore contributions, returns, and fees. An illustration—not a forecast." date="2026-10-15" dateLabel="Calculation version" />
   <div class="shell">
     <GrowthCalculator />
     <NextSteps heading="A balance is one part of the picture." links={[

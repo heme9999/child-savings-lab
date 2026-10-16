@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import { siteContact, siteVerification } from '../data/site';
+import PrimaryNavigation from '../components/PrimaryNavigation.astro';
 
 interface Props {
   title: string;
@@ -54,13 +55,11 @@ const jsonLd = {
           <span class="brand-mark" aria-hidden="true">CS</span>
           <span>Child Savings Lab</span>
         </a>
-        <nav aria-label="Primary navigation">
-          <a href="/trump-accounts/">Trump Accounts</a>
-          <a href="/guides/529-plans/">529 plans</a>
-          <a href="/tools/">Tools</a>
-          <a href="/tools/child-savings-account-comparison/">Compare</a>
-          <a href="/sources/">Sources</a>
-        </nav>
+        <PrimaryNavigation class="desktop-navigation" />
+        <details class="mobile-navigation" data-mobile-navigation>
+          <summary aria-controls="mobile-site-links">Menu <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="m3 6 5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" /></svg></summary>
+          <PrimaryNavigation id="mobile-site-links" label="Mobile primary navigation" />
+        </details>
       </div>
     </header>
     <main id="main-content">
@@ -92,5 +91,9 @@ const jsonLd = {
         <span>Last site-wide source review: October 8, 2026, including TD 10056 · Educational information only.</span>
       </div>
     </footer>
+    <script>
+      import { enhanceMobileNavigation } from '../lib/mobile-navigation';
+      document.querySelectorAll<HTMLDetailsElement>('[data-mobile-navigation]').forEach(enhanceMobileNavigation);
+    </script>
   </body>
 </html>

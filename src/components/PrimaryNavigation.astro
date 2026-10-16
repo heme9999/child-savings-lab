@@ -1,0 +1,8 @@
+---
+import { primaryNavigation } from '../lib/navigation';
+interface Props { class?: string; id?: string; label?: string; }
+const { class: className, id, label = 'Primary navigation' } = Astro.props;
+---
+<nav aria-label={label} class:list={['primary-navigation', className]} id={id}>
+  {primaryNavigation(Astro.url.pathname).map((item) => <a href={item.href} aria-current={item.current}>{item.label}</a>)}
+</nav>

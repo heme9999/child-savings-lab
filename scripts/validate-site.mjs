@@ -106,7 +106,7 @@ const googleVerification = [...homeHead.matchAll(/<meta name="google-site-verifi
 if (googleVerification.length !== 1 || !googleVerification[0]?.[1]?.trim()) failures.push('Homepage must retain the Google Search Console ownership tag in its head');
 const eligibilityHtml = readFileSync(routeFile('/tools/trump-account-eligibility-checker/'), 'utf8');
 const growthHtml = readFileSync(routeFile('/tools/trump-account-growth-calculator/'), 'utf8');
-if (!eligibilityHtml.includes('Show next steps') || !eligibilityHtml.includes('Last verified')) failures.push('Status tool lacks rendered content or verification date');
+if (!eligibilityHtml.includes('Show next steps') || !eligibilityHtml.includes('Rules checked:')) failures.push('Status tool lacks rendered content or verification date');
 if (!growthHtml.includes('Update projection') || !growthHtml.includes('Returns are not guaranteed')) failures.push('Growth tool lacks indexable content or limitation language');
 if (!growthHtml.includes('Parameters used for this report') || !growthHtml.includes('data-assumptions')) failures.push('Growth print report must include its input assumptions');
 for (const [name, html] of [['growth', growthHtml], ['eligibility', eligibilityHtml]]) {
@@ -122,7 +122,11 @@ const sourcesHtml = readFileSync(routeFile('/sources/'), 'utf8');
 for (const match of sourcesHtml.matchAll(/<article[^>]*data-source-status="proposed rule"[^>]*>(.*?)<\/article>/gis)) {
   if (!match[1].includes('Proposed applicability') || /Effective(?: \/ scope)?:/.test(match[1])) failures.push('Proposed source record must show proposed applicability, not an effective-date label');
 }
-if (!/<nav aria-label="Primary navigation">[\s\S]*?href="\/tools\/"/.test(homeHtml)) failures.push('Primary navigation must link to the tools hub');
+if (!/<nav\b[^>]*aria-label="Primary navigation"[^>]*>[\s\S]*?href="\/tools\/"/.test(homeHtml)) failures.push('Primary navigation must link to the tools hub');
+if (!homeHtml.includes('data-mobile-navigation') || !homeHtml.includes('aria-controls="mobile-site-links"')) failures.push('Mobile navigation must retain its native disclosure and controlled links');
+for (const [name, html] of [['growth', growthHtml], ['eligibility', eligibilityHtml]]) {
+  if (!html.includes('tool-hero') || !html.includes('tool-meta')) failures.push(`${name}: tool pages must retain the compact header and review metadata`);
+}
 const toolsHtml = readFileSync(routeFile('/tools/'), 'utf8');
 if (!toolsHtml.includes('Trump Account checker') || !toolsHtml.includes('Trump Account calculator') || !toolsHtml.includes('not 529 projections')) failures.push('Tools hub must identify the current tools and their Trump Account scope');
 if (!existsSync(join(root, 'robots.txt'))) failures.push('Missing robots.txt');

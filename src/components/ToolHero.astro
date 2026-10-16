@@ -1,0 +1,11 @@
+---
+import { formatReviewDate } from '../lib/dates';
+interface Props { title: string; description: string; date: string; dateLabel: string; }
+const { title, description, date, dateLabel } = Astro.props;
+---
+<header class="page-hero tool-hero shell">
+  <div class="eyebrow">Trump Account tool</div>
+  <h1>{title}</h1>
+  <p class="lede">{description}</p>
+  <p class="tool-meta"><span>{dateLabel}: <time datetime={date} data-review-date>{formatReviewDate(date)}</time></span><a href="/sources/">Sources &amp; review dates</a></p>
+</header>

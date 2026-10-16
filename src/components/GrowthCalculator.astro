@@ -11,9 +11,8 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
 <div class="tool-layout" data-growth-calculator>
   <section class="tool-panel" aria-labelledby="growth-form-title">
     <div class="eyebrow">Start with the essentials</div>
-    <h2 id="growth-form-title">Model a contribution plan</h2>
+    <h2 id="growth-form-title">Build a scenario</h2>
     <p>Use hypothetical values. Model family or employer deposits only after a receiving account is claimed and activated.</p>
-    <p class="result-help">Checks apply only to deposits scheduled in this illustration, by calendar year. Prior or other people’s deposits are not included; the starting balance is not a record of prior contributions. Current dollar limits are held constant, without future inflation adjustments.</p>
     <form id="growth-form" novalidate>
       <div id="growth-errors"></div>
       <div class="form-grid">
@@ -83,9 +82,11 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
         <button class="button" type="submit" disabled>Update projection</button>
         <button class="button secondary" type="button" id="print-report" disabled>Print report</button>
       </div>
+      <p class="form-state" id="growth-form-state" role="status" hidden></p>
     </form>
     <noscript><p class="privacy-note">Enable JavaScript to calculate locally. The displayed projection is a worked example; your inputs are not submitted.</p></noscript>
     <p class="privacy-note">Runs locally without saving or sending your answers. An illustration—not a forecast, tax estimate, investment recommendation, or account-status confirmation.</p>
+    <details class="tool-context"><summary>What this limit check covers</summary><p class="result-help">Checks apply only to deposits scheduled in this illustration, by calendar year. Prior or other people’s deposits are not included; the starting balance is not a record of prior contributions. Current dollar limits are held constant, without future inflation adjustments.</p></details>
   </section>
   <section class="result-panel" aria-labelledby="growth-results-title" aria-live="polite" aria-atomic="true">
     <div class="eyebrow" style="color:#9ed5bf">Illustrative projection</div>
@@ -123,6 +124,7 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
 <script>
   import { projectGrowth, projectScenarios, growthInputIssues } from '../lib/calculators/growth';
   import { formFeedback, type FieldIssue } from '../lib/forms/feedback';
+  import { revealResult } from '../lib/forms/focus';
   import { growthInputFromForm, growthAssumptions, contributionNote } from '../lib/calculators/form';
   import { growthChart } from '../lib/calculators/chart';
   import { inputFromPreviewHash } from '../lib/calculators/preview';
@@ -133,6 +135,7 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
   const output = document.querySelector<HTMLElement>('#growth-output');
   const state = document.querySelector<HTMLElement>('#growth-state');
   const heading = document.querySelector<HTMLElement>('#growth-results-title');
+  const formState = document.querySelector<HTMLElement>('#growth-form-state');
   const print = document.querySelector<HTMLButtonElement>('#print-report');
   const timeline = document.querySelector<HTMLElement>('#growth-timeline');
   const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
@@ -146,6 +149,7 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
     if (timeline) timeline.hidden = true;
     if (print) print.disabled = true;
     if (state) state.textContent = 'No projection is shown until these inputs are corrected.';
+    if (formState) { formState.hidden = false; formState.textContent = 'Correct the marked inputs, then update your projection.'; }
   }
 
   function render(focus = true, fromHomepage = false): void {
@@ -198,10 +202,11 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
       });
       setText('#report-generated', `Calculated locally at ${new Date().toISOString()}. No answers were submitted.`);
       feedback?.clear(); output.hidden = false; dirty = false;
+      if (formState) { formState.hidden = true; formState.textContent = ''; }
       if (timeline) timeline.hidden = false;
       if (print) print.disabled = false;
       if (state) state.textContent = fromHomepage ? 'Continued from the homepage example. Amount, return, and no-pilot assumption have been preserved.' : 'Calculated using the assumptions below. This is not a forecast.';
-      if (focus) heading?.focus();
+      if (focus) revealResult(heading);
     } catch (error) {
       showErrors([{ message: error instanceof Error ? error.message : 'The projection could not be calculated. Please check your inputs and try again.' }], focus);
     }
@@ -214,6 +219,7 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
     feedback?.clear();
     if (print) print.disabled = true;
     if (state) state.textContent = 'Inputs changed. Select Update projection to calculate; the previous result is hidden.';
+    if (formState) { formState.hidden = false; formState.textContent = 'Inputs changed. Update projection to see the new result.'; }
   });
   form?.addEventListener('submit', (event) => { event.preventDefault(); render(); });
   form?.querySelector<HTMLButtonElement>('button[type="submit"]')?.removeAttribute('disabled');
