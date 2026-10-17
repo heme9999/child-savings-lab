@@ -17,6 +17,10 @@ const rows = [
   { id: 'custodial-roth-ira', label: 'Custodial Roth IRA basics' },
   { id: 'able-accounts', label: 'ABLE account basics' }
 ]}>
+  <section slot="overview" class="account-quick-view" aria-labelledby="purpose-overview">
+    <h2 id="purpose-overview">Start with the purpose</h2>
+    <ul>{rows.map((row) => <li><a href={row.href}>{row.label}</a><span>{row.cells[0]}</span></li>)}</ul>
+  </section>
   <p>No single account is “best” for every child. The useful question is what the money is for, who should control it, and which tax rules fit that goal.</p>
   <h2 id="account-overview">Account overview</h2>
   <ComparisonTable caption="Five child savings account types: purpose, control, and constraints" columns={['Account','Primary purpose','Control','Key constraint']} rows={rows} />

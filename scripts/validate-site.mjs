@@ -112,7 +112,15 @@ if (!growthHtml.includes('Parameters used for this report') || !growthHtml.inclu
 for (const [name, html] of [['growth', growthHtml], ['eligibility', eligibilityHtml]]) {
   if (!new RegExp(`<form\\b[^>]*id="${name}-form"[^>]*>\\s*<div id="${name}-errors"`).test(html)) failures.push(`${name}: validation summary must appear before inputs inside its form`);
   if (!/<nav\b[^>]*aria-label="Breadcrumb">[\s\S]*?href="\/tools\/"/.test(html)) failures.push(`${name}: Tools breadcrumb must link to the tools directory`);
+  const resultTag = html.match(/<section\b[^>]*class="result-panel"[^>]*>/)?.[0] ?? '';
+  if (!resultTag || /aria-live|aria-atomic/.test(resultTag)) failures.push(`${name}: the entire result must not be an atomic live region`);
+  if (!new RegExp(`<p[^>]*id="${name}-announcement"[^>]*role="status"[^>]*><\\/p>`).test(html)) failures.push(`${name}: a persistent, initially empty announcement region is required`);
 }
+for (const page of manifest.pages.filter(page => page.html.includes('class="article-contents'))) {
+  if (!/<details class="article-contents[^\"]*">/.test(page.html)) failures.push(`${page.route}: contents must use a closed native disclosure`);
+  if (!page.html.includes('Review scope &amp; publication') || !page.html.includes('data-review-date')) failures.push(`${page.route}: compact article metadata must preserve scope and date`);
+}
+if (!readFileSync(routeFile('/tools/child-savings-account-comparison/'), 'utf8').includes('id="purpose-overview"')) failures.push('Comparison must retain its purpose-first overview');
 if (!growthHtml.includes('min="2026-07-04"')) failures.push('Growth form must retain the statutory earliest contribution date');
 if (!growthHtml.includes('id="growth-timeline"') || !growthHtml.includes('id="growth-yearly-rows"')) failures.push('Growth result must retain its chart and yearly data table');
 if (!/<\/section>\s*<\/div>\s*<section\b[^>]*id="growth-timeline"/.test(growthHtml)) failures.push('Timeline must follow the calculator grid so the sticky result cannot cover it');

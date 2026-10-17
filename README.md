@@ -43,6 +43,8 @@ The `/tools/` directory explains each tool’s scope. Form errors provide inline
 
 Mobile navigation is a native disclosure that works without JavaScript; optional enhancements close it on Escape or an outside press. Primary navigation marks the current section and has touch targets at least 44px high. Tool headers put the first inputs within the tested narrow-screen viewports. Explicit tool submission focuses and reveals the result panel instantly; editing still hides stale results. Hover effects require a fine hover-capable pointer, and moving press feedback respects reduced motion. Browser viewport checks do not replace real-phone keyboard, zoom, and touch checks.
 
+Article scope/publication details and contents use native disclosures, while review dates stay visible. The comparison offers an early purpose-first overview. Short eligibility select labels retain full, wrapping explanations that synchronize after selection and native reset. Result panels are not atomic live regions: separate persistent status nodes announce brief updates. The primary growth balance is visually distinct from secondary metrics. Focus colors are checked against light and dark surfaces, and anchor/error navigation is immediate by default.
+
 Growth limit checks use the actual modeled deposit schedule per calendar year, including partial years, not an annualized monthly amount. They do not assess prior/outside deposits or predict future indexed limits. Annual table/chart data come from the same simulation. Existing-account paths, adult-stage handling, and incomplete pilot assessments are separate; a new-election age test is not used to invalidate an older account.
 
 The production URL allows crawling and indexing. Version and branch preview URLs remain noindex through Cloudflare `_headers`. Calculator network form submissions are blocked by CSP, and submit buttons remain disabled until local scripts load. The source has not received licensed-professional sign-off; publication does not imply such review.
@@ -55,3 +57,4 @@ The production URL allows crawling and indexing. Version and branch preview URLs
 - `docs/release-2026-10-12.md`
 - `docs/release-2026-10-15.md`
 - `docs/release-2026-10-16.md`
+- `docs/release-2026-10-17.md`

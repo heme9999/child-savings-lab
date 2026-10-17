@@ -51,5 +51,41 @@ describe('mobile and motion style contracts', () => {
     const layout = readFileSync('src/layouts/BaseLayout.astro', 'utf8');
     expect(layout).not.toMatch(/user-scalable=no|maximum-scale=1/);
   });
+  it('keeps keyboard and error navigation immediate by default', () => {
+    const html = rules.find(rule => rule.selector === 'html');
+    expect(html.style.getPropertyValue('scroll-behavior')).toBe('auto');
+    expect(css).not.toMatch(/scroll-behavior:\s*smooth/);
+  });
+  it('uses contrasting focus tokens on light and dark surfaces', () => {
+    const root = rules.find(rule => rule.selector === ':root');
+    const ring = root.style.getPropertyValue('--focus-ring').trim();
+    const gold = root.style.getPropertyValue('--gold').trim();
+    const luminance = hex => {
+      const rgb = hex.slice(1).match(/../g).map(value => {
+        const x = parseInt(value, 16) / 255;
+        return x <= .04045 ? x / 12.92 : ((x + .055) / 1.055) ** 2.4;
+      });
+      return rgb[0] * .2126 + rgb[1] * .7152 + rgb[2] * .0722;
+    };
+    const contrast = (a, b) => (Math.max(luminance(a), luminance(b)) + .05) / (Math.min(luminance(a), luminance(b)) + .05);
+    for (const bg of ['#f7f3e8', '#fffefa', '#ffffff']) expect(contrast(ring, bg)).toBeGreaterThanOrEqual(3);
+    for (const bg of ['#123a3a', '#0e2d2d', '#245848']) expect(contrast(gold, bg)).toBeGreaterThanOrEqual(3);
+    for (const selector of ['.result-panel', '.site-footer', '.topic-panel', '.preview-full-link']) {
+      expect(rules.find(rule => rule.selector === selector).style.getPropertyValue('--focus-ring')).toBe('var(--gold)');
+    }
+    expect(rules.find(rule => rule.selector === ':focus-visible').style.getPropertyValue('outline')).toContain('var(--focus-ring)');
+  });
+  it('gives the primary balance more emphasis than secondary metrics', () => {
+    expect(rules.find(rule => rule.selector === '.metric-primary').style.getPropertyValue('grid-column')).toBe('1 / -1');
+    expect(rules.find(rule => rule.selector === '.metric-primary strong').style.getPropertyValue('font-size')).toContain('clamp(2.2rem');
+    expect(rules.find(rule => rule.selector === '.metric strong').style.getPropertyValue('font-size')).toBe('1.2rem');
+  });
+  it('keeps preview explanations and chart text at least 14px at the default root size', () => {
+    for (const selector of ['.preview-presets button span', '.preview-result > span', '.preview-result p', '.preview-axis', '.preview-chart figcaption', '.preview-rate-row label', '.preview-assumptions', '.preview-disclaimer']) {
+      for (const rule of rules.filter(rule => rule.selector === selector && rule.style.getPropertyValue('font-size'))) {
+        expect(parseFloat(rule.style.getPropertyValue('font-size'))).toBeGreaterThanOrEqual(.875);
+      }
+    }
+  });
 });
 dom.window.close();

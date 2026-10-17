@@ -1,0 +1,14 @@
+---
+import { formatReviewDate } from '../lib/dates';
+interface Props { date: string; effective: string; }
+const { date, effective } = Astro.props;
+---
+<div class="article-meta">
+  <p>Last verified: <time datetime={date} data-review-date>{formatReviewDate(date)}</time></p>
+  <details>
+    <summary>Review scope &amp; publication</summary>
+    <p><strong>Effective for:</strong> {effective}</p>
+    <p class="publication-byline">Published by <a href="/about/">Child Savings Lab</a> · Individually operated · <a href="/editorial-policy/#corrections">Editorial standards &amp; corrections</a></p>
+  </details>
+  <p class="print-only"><strong>Effective for:</strong> {effective} · Published by Child Savings Lab · Individually operated. Editorial standards and corrections: /editorial-policy/#corrections.</p>
+</div>

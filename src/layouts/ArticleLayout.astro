@@ -1,7 +1,7 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import VerifiedBadge from '../components/VerifiedBadge.astro';
+import ArticleMeta from '../components/ArticleMeta.astro';
 import SourceLinks from '../components/SourceLinks.astro';
 
 interface Props {
@@ -35,12 +35,12 @@ const {
       <div class="eyebrow">{eyebrow}</div>
       <h1>{title}</h1>
       <p class="lede">{description}</p>
-      <p class="publication-byline">Published by <a href="/about/">Child Savings Lab</a> · Individually operated · <a href="/editorial-policy/#corrections">Editorial standards &amp; corrections</a></p>
-      <VerifiedBadge date={verifiedAt} effective={effective} />
+      <ArticleMeta date={verifiedAt} effective={effective} />
     </header>
     <div class="article-body shell">
       {summary.length > 0 && <aside class="quick-summary" aria-label="At a glance"><strong>In 30 seconds</strong><ul>{summary.map((point) => <li>{point}</li>)}</ul></aside>}
-      {contents.length > 0 && <nav class="article-contents print-hide" aria-label="On this page"><strong>On this page</strong><ol>{contents.map((item) => <li><a href={`#${item.id}`}>{item.label}</a></li>)}</ol></nav>}
+      <slot name="overview" />
+      {contents.length > 0 && <details class="article-contents print-hide"><summary>On this page <span>{contents.length} sections</span></summary><nav aria-label="On this page"><ol>{contents.map((item) => <li><a href={`#${item.id}`}>{item.label}</a></li>)}</ol></nav></details>}
       <slot />
       {sourceIds.length > 0 && <SourceLinks ids={sourceIds} />}
     </div>

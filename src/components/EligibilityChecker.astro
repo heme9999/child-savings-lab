@@ -1,5 +1,6 @@
 ---
 import { checkEligibility } from '../lib/eligibility/checkEligibility';
+import { accountStatusOptions, claimAuthorityOptions } from '../data/eligibility-options';
 
 const initial = checkEligibility({
   checkYear: 2026,
@@ -39,23 +40,18 @@ const initial = checkEligibility({
         </fieldset>
         <div class="field full">
           <label for="account-status">What is the official account status?</label>
-          <select id="account-status" name="accountStatus" required>
-            <option value="unknown" selected>Unknown — I have not checked</option>
-            <option value="auto-account">Treasury auto account exists but has not been claimed</option>
-            <option value="claim-started">Auto-account claim started; receiving account not activated</option>
-            <option value="manual-election-only">Form 4547 election made; account not activated</option>
-            <option value="active-account">Claimed or other receiving account is activated</option>
-            <option value="no-account-confirmed">IRS confirms no account or prior election</option>
+          <select id="account-status" name="accountStatus" aria-describedby="account-status-detail" required>
+            {accountStatusOptions.map((option) => <option value={option.value} selected={option.value === 'unknown'}>{option.label}</option>)}
           </select>
+          <small class="selection-detail" id="account-status-detail">{accountStatusOptions[0].description}</small>
         </div>
         <div class="field full">
           <label for="claim-authority">Who would claim an auto account?</label>
-          <select id="claim-authority" name="claimAuthority" required>
-            <option value="guardian-or-legal-custodian">Guardian or legal custodian with property-management authority</option>
-            <option value="beneficiary-with-legal-capacity">Beneficiary with legal capacity under state law</option>
-            <option value="not-sure" selected>Not sure / relationship alone has not been legally confirmed</option>
+          <select id="claim-authority" name="claimAuthority" aria-describedby="claim-authority-detail claim-authority-help" required>
+            {claimAuthorityOptions.map((option) => <option value={option.value} selected={option.value === 'not-sure'}>{option.label}</option>)}
           </select>
-          <small>A parent or relative is not automatically authorized unless applicable law gives the required authority.</small>
+          <small class="selection-detail" id="claim-authority-detail">{claimAuthorityOptions[2].description}</small>
+          <small id="claim-authority-help">A parent or relative is not automatically authorized unless applicable law gives the required authority.</small>
         </div>
         <fieldset class="field full">
           <legend>Is the child a U.S. citizen?</legend>
@@ -91,7 +87,7 @@ const initial = checkEligibility({
     <div class="privacy-note"><span aria-hidden="true">◉</span><span>No names, Social Security numbers, addresses, or tax IDs are requested. Inputs stay in this browser and are not saved.</span></div>
     <noscript><p class="privacy-note">Enable JavaScript to run this checker locally. No eligibility assessment is made until you complete the required information; your inputs are not submitted.</p></noscript>
   </section>
-  <section class="result-panel" aria-labelledby="eligibility-results-title" aria-live="polite" aria-atomic="true">
+  <section class="result-panel" aria-labelledby="eligibility-results-title">
     <div class="eyebrow" style="color:#9ed5bf">Educational result</div>
     <h2 id="eligibility-results-title" tabindex="-1">Your next steps</h2>
     <p id="eligibility-state">No eligibility assessment yet. Complete the questions, then select Show next steps. Hypothetical answers are welcome.</p>
@@ -102,7 +98,8 @@ const initial = checkEligibility({
     </div>
     <div id="funding-result">
       <h3>Family or employer contributions</h3>
-      <p><span class="status unknown">{initial.fundingGuidance}</span></p>
+      <p><span class="status unknown">Not assessed</span></p>
+      <p>{initial.fundingGuidance}</p>
     </div>
     <div id="pilot-result">
       <h3>$1,000 pilot election</h3>
@@ -118,12 +115,16 @@ const initial = checkEligibility({
     <p><a href="https://www.irs.gov/trumpaccounts">Continue at the official IRS Trump Accounts page →</a></p>
   </section>
 </div>
+<p class="visually-hidden" id="eligibility-announcement" role="status" aria-atomic="true"></p>
 
 <script>
   import { checkEligibility } from '../lib/eligibility/checkEligibility';
   import { formNumber } from '../lib/calculators/form';
   import { formFeedback } from '../lib/forms/feedback';
   import { revealResult } from '../lib/forms/focus';
+  import { describeSelection } from '../lib/forms/selection';
+  import { announceResult } from '../lib/forms/announcement';
+  import { accountStatusOptions, claimAuthorityOptions } from '../data/eligibility-options';
   import type { AccountStatus, ClaimAuthority, EligibilityInput, PilotElectionStatus } from '../lib/eligibility/types';
 
   const form = document.querySelector<HTMLFormElement>('#eligibility-form');
@@ -136,6 +137,12 @@ const initial = checkEligibility({
   const output = document.querySelector<HTMLElement>('#eligibility-output');
   const state = document.querySelector<HTMLElement>('#eligibility-state');
   const heading = document.querySelector<HTMLElement>('#eligibility-results-title');
+  const announcement = document.querySelector<HTMLElement>('#eligibility-announcement');
+  for (const [id, options] of [['account-status', accountStatusOptions], ['claim-authority', claimAuthorityOptions]] as const) {
+    const select = form?.querySelector<HTMLSelectElement>(`#${id}`);
+    const description = document.querySelector<HTMLElement>(`#${id}-detail`);
+    if (select && description) describeSelection(select, description, options);
+  }
 
   function boolValue(data: FormData, name: string): boolean | null {
     const value = data.get(name);
@@ -158,6 +165,7 @@ const initial = checkEligibility({
     const result = checkEligibility(input);
     feedback?.clear();
     if (result.validationErrors.length) {
+      announceResult(announcement, '');
       output.hidden = true;
       state.textContent = 'More information is needed. Eligibility has not been assessed.';
       feedback?.show(result.validationIssues); return;
@@ -166,17 +174,21 @@ const initial = checkEligibility({
     state.textContent = 'Account status and pilot eligibility are considered separately. These are educational next steps based on reported answers—not an IRS determination.';
     const list = (items: string[]) => items.length ? `<ul>${items.map((item) => `<li>${item}</li>`).join('')}</ul>` : '';
     account.innerHTML = `<h3>Account status</h3><p><span class="status ${result.accountPath === 'active' ? 'yes' : result.accountPath === 'not-baseline-eligible' ? 'no' : 'unknown'}">${result.accountPathTitle}</span></p>${list(result.accountReasons)}${list(result.accountInformationNeeded)}`;
-    funding.innerHTML = `<h3>Family or employer contributions</h3><p><span class="status ${result.canReceiveFamilyOrEmployerContributions === true ? 'yes' : 'unknown'}">${result.fundingGuidance}</span></p>`;
+    const fundingStatus = result.canReceiveFamilyOrEmployerContributions === true ? 'Reported activated' : result.canReceiveFamilyOrEmployerContributions === false ? 'Not ready' : 'Not assessed';
+    funding.innerHTML = `<h3>Family or employer contributions</h3><p><span class="status ${result.canReceiveFamilyOrEmployerContributions === true ? 'yes' : 'unknown'}">${fundingStatus}</span></p><p>${result.fundingGuidance}</p>`;
     pilot.innerHTML = `<h3>$1,000 pilot election</h3><p><span class="status ${result.pilotStatus === 'potentially-eligible-to-elect' || result.pilotStatus === 'already-processed' ? 'yes' : result.pilotStatus === 'not-potentially-eligible' ? 'no' : 'unknown'}">${result.pilotStatusTitle}</span></p>${list(result.pilotReasons)}${list(result.pilotInformationNeeded)}`;
     detail.innerHTML = `<h3>Next steps</h3>${list(result.requiredActions)}<p><strong>Form 4547:</strong> ${result.formGuidance}</p>`;
+    announceResult(announcement, 'Next steps updated. Review account status and the separate pilot election.');
     revealResult(heading);
   }
 
   form?.addEventListener('submit', (event) => { event.preventDefault(); render(); });
   const clearResult = () => {
+    const hadResult = output && !output.hidden;
     if (output) output.hidden = true;
     feedback?.clear();
     if (state) state.textContent = 'No eligibility assessment yet. Complete the questions, then select Show next steps.';
+    if (hadResult) announceResult(announcement, 'Answers changed. Previous next steps hidden. Select Show next steps to update.');
   };
   form?.addEventListener('input', clearResult);
   form?.addEventListener('reset', clearResult);
