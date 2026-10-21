@@ -8,8 +8,9 @@ Keep Child Savings Lab as the neutral parent brand. Trump Accounts remain the fi
 
 - Production baseline: 19 public routes, three genuine 404 paths, robots and both sitemap resources passed GET/HEAD and full-content checks before changes.
 - The correct Search Console URL-prefix property was inspected in the existing authorized account. Both submitted sitemap rows still showed `Couldn't fetch`; the index entry was last submitted October 8.
-- On October 21, Google Inspection Tool smartphone successfully fetched `/sitemap-index.xml`: crawl allowed `Yes`, page fetch `Successful`. A sitemap not being indexed as a search page is not itself an error.
-- The same sitemap index was resubmitted once, with a visible `Sitemap submitted successfully` confirmation. The list still showed `Couldn't fetch` and zero discovered pages at the subsequent check. Submission receipt and a live-fetch success are not evidence of sitemap processing, URL indexing, ranking, or traffic. No Cloudflare security protections were weakened.
+- On October 21, Google Inspection Tool smartphone successfully fetched both `/sitemap-index.xml` and `/sitemap-0.xml`: crawl allowed `Yes`, page fetch `Successful`. Both XML files also passed `xmllint` locally. A sitemap not being indexed as a search page is not itself an error.
+- Each of the two existing sitemap URLs was resubmitted once, with visible `Sitemap submitted successfully` confirmations. Both rows showed October 21 submission dates but still showed `Couldn't fetch` and zero discovered pages at the subsequent check. Submission receipt and live-fetch success are not evidence of sitemap processing, URL indexing, ranking, or traffic. No Cloudflare security protections were weakened.
+- The correct property's Manual actions and Security issues reports both showed `No issues detected`. This does not establish the historical sitemap failure's cause or certify the absence of every site issue.
 - Google guidance: https://support.google.com/webmasters/answer/7451001?hl=en
 
 The historical failure's exact cause is not established. If the report remains unsuccessful, check the detailed request and authentic crawler/security evidence before changing hosting settings or repeatedly submitting.
