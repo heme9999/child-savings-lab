@@ -37,6 +37,13 @@ describe('native mobile disclosure enhancements', () => {
     document.querySelector('summary').click();
     expect(document.querySelector('details').open).toBe(true);
   });
+  it('closes again with native summary behavior after enhancement', () => {
+    const details = document.querySelector('details'); enhanceMobileNavigation(details);
+    details.querySelector('summary').click();
+    expect(details.open).toBe(true);
+    details.querySelector('summary').click();
+    expect(details.open).toBe(false);
+  });
   it('Escape closes the menu and returns focus to its trigger', () => {
     const details = document.querySelector('details'); enhanceMobileNavigation(details); details.open = true;
     const key = new dom.window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true });

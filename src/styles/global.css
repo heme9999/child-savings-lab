@@ -267,7 +267,8 @@ button:disabled { opacity: .6; cursor: not-allowed; }
   .mobile-navigation { display: block; }
   .mobile-navigation .primary-navigation { position: absolute; top: calc(100% + .25rem); right: 0; z-index: 21; display: grid; width: min(22rem, 100%); padding: .5rem; border: 1px solid var(--line); border-radius: 14px; background: var(--white); box-shadow: var(--shadow); }
   .mobile-navigation .primary-navigation a { font-size: 1rem; }
-  .site-header { position: static; }
+  /* Keep the header's z-index effective without making it sticky on mobile. */
+  .site-header { position: relative; }
   .hero-grid, .tool-layout, .footer-grid { grid-template-columns: 1fr; }
   .card-grid { grid-template-columns: 1fr 1fr; }
   .result-panel { position: static; scroll-margin-top: 1rem; }

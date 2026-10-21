@@ -36,6 +36,25 @@ describe('mobile and motion style contracts', () => {
     const nav = rules.find((rule) => rule.selector === '.primary-navigation a');
     expect(nav.style.getPropertyValue('min-height')).toBe('44px');
   });
+  it('keeps the non-sticky mobile header above positioned page content', () => {
+    const header = rules.find(rule => rule.selector === '.site-header' && !rule.media);
+    const mobileHeader = rules.find(rule => rule.selector === '.site-header' && rule.media === '(max-width: 820px)');
+    // A static header ignores this z-index and can trap its dropdown below the hero.
+    expect(mobileHeader.style.getPropertyValue('position')).toBe('relative');
+    expect(Number(header.style.getPropertyValue('z-index'))).toBeGreaterThan(0);
+    expect(header.style.getPropertyValue('position')).toBe('sticky');
+  });
+  it('keeps the expanded dropdown opaque and outside the header bounds', () => {
+    const menu = rules.find(rule => rule.selector === '.mobile-navigation .primary-navigation' && rule.media === '(max-width: 820px)');
+    expect(menu.style.getPropertyValue('position')).toBe('absolute');
+    expect(menu.style.getPropertyValue('background')).toBe('var(--white)');
+    expect(Number(menu.style.getPropertyValue('z-index'))).toBeGreaterThan(0);
+    for (const rule of rules.filter(rule => ['.site-header', '.header-inner', '.mobile-navigation'].includes(rule.selector))) {
+      for (const property of ['overflow', 'overflow-x', 'overflow-y']) {
+        expect(['hidden', 'clip']).not.toContain(rule.style.getPropertyValue(property));
+      }
+    }
+  });
   it('aligns tool card actions without fixing the card height', () => {
     const card = rules.find((rule) => rule.selector === '.tool-card');
     const action = rules.find((rule) => rule.selector === '.tool-card .button');
