@@ -5,6 +5,7 @@ import EligibilityChecker from '../../../components/EligibilityChecker.astro';
 import SourceLinks from '../../../components/SourceLinks.astro';
 import ToolHero from '../../../components/ToolHero.astro';
 import NextSteps from '../../../components/NextSteps.astro';
+import ToolExplainer from '../../../components/ToolExplainer.astro';
 const schema = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
@@ -21,6 +22,28 @@ const schema = {
   <ToolHero title="Trump Account status and eligibility checker" description="Check account status and the separate pilot election. No names, SSNs, or account numbers." date="2026-10-12" dateLabel="Rules checked" />
   <div class="shell">
     <EligibilityChecker />
+    <ToolExplainer name="Trump Account status checker"
+      steps={[
+        { title: 'Start with reported account information', text: 'Enter a birth date, answer the SSN-validity question without entering the number, and select the account status you know. Hypothetical answers are welcome.' },
+        { title: 'Review the separate questions', text: 'Check the review year and claiming-authority section. Open the pilot details if you want to explore the separate $1,000 election. Leave uncertain answers as Not sure rather than guessing.' },
+        { title: 'Read each result separately', text: 'Select Show next steps. Review account status, contribution readiness, and the pilot election as separate findings. Follow the official links to check records or take an account action.' }
+      ]}
+      features={[
+        { title: 'Account status before paperwork', text: 'Reported status guides the next step instead of treating every visitor as someone who needs a new account election.' },
+        { title: 'A separate pilot assessment', text: 'Incomplete pilot answers do not erase an otherwise known account-status path.' },
+        { title: 'Uncertainty stays visible', text: 'Not sure means more information is needed. It is not automatically an eligibility denial.' },
+        { title: 'Private, local answers', text: 'There is no IRS lookup or submission. The tool does not request a name, SSN, address, tax ID, or account number.' }
+      ]}
+      useCase="Use this educational checklist when you are unsure whether to check status, review claiming or activation, or investigate the separate pilot election. It is not an IRS determination or a substitute for advice about your legal authority or tax circumstances."
+      questions={[
+        { title: 'Does this checker look up my child’s IRS account?', text: 'No. It uses the answers you report and cannot confirm IRS or trustee records. Use the official IRS link in the result to continue.' },
+        { title: 'Does having an account mean the pilot amount is confirmed?', text: 'No. The tool treats account status, readiness for family or employer contributions, and the separate pilot election independently. An account-status answer is not confirmation of a pilot payment.' },
+        { title: 'Can I leave the pilot questions unanswered?', text: 'Yes. They begin as Not sure or Unknown. Account guidance can still be explored, while missing pilot information stays unresolved rather than being treated as a denial.' },
+        { title: 'Is being a parent enough to establish claiming authority?', text: 'The checker does not assume that a family relationship alone establishes the required legal authority. Read the complete explanation beside the selected answer and confirm the applicable requirements.' },
+        { title: 'Do I need to enter an SSN or account number?', text: 'No. Answer only the yes, no, or not-sure question about SSN validity; never enter the number. A fictional birth date can be used to explore the tool. Answers are not saved or sent by the application.' },
+        { title: 'Can the tool submit Form 4547 or activate an account?', text: 'No. It cannot file a form, claim or activate an account, move money, or make a contribution. Any action must take place through the appropriate official service or trustee.' }
+      ]}
+    />
     <NextSteps heading="What would you like to understand next?" links={[
       { title: 'Explore a savings scenario', description: 'See how contributions, fees, and assumed returns interact.', href: '/tools/trump-account-growth-calculator/' },
       { title: 'Understand Form 4547', description: 'Learn when a separate pilot or manual election matters.', href: '/forms/form-4547-guide/' }

@@ -1,0 +1,21 @@
+---
+interface Item { title: string; text: string; }
+interface Props { name: string; steps: Item[]; features: Item[]; useCase: string; questions: Item[]; }
+const { name, steps, features, useCase, questions } = Astro.props;
+---
+<section class="tool-explainer" aria-labelledby="how-to-use">
+  <h2 id="how-to-use">How to use the {name}</h2>
+  <ol class="tool-steps">
+    {steps.map(step => <li><h3>{step.title}</h3><p>{step.text}</p></li>)}
+  </ol>
+  <h2>What this tool makes clearer</h2>
+  <div class="tool-features">
+    {features.map(feature => <div><h3>{feature.title}</h3><p>{feature.text}</p></div>)}
+  </div>
+  <h2>When to use it</h2>
+  <p>{useCase}</p>
+  <div class="tool-questions">
+    <h2 id="tool-questions">Frequently asked questions</h2>
+    {questions.map(question => <section><h3>{question.title}</h3><p>{question.text}</p></section>)}
+  </div>
+</section>

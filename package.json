@@ -10,6 +10,7 @@
     "check": "astro check",
     "test": "vitest run",
     "test:watch": "vitest",
+    "generate:social": "node scripts/generate-social-images.mjs",
     "validate:site": "node scripts/validate-site.mjs",
     "validate:deployment": "node scripts/validate-deployment.mjs",
     "deploy:cloudflare": "npm run verify && npx --yes wrangler pages deploy dist --project-name child-savings-lab-mvp --branch main && npm run validate:deployment -- --wait-for-deployment",
@@ -24,6 +25,7 @@
     "@astrojs/check": "0.9.10",
     "html-validate": "11.16.2",
     "jsdom": "30.1.2",
+    "sharp": "0.35.5",
     "typescript": "6.0.3",
     "vitest": "5.0.3"
   }

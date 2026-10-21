@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import { pageMetadata, readBuildManifest, validateSitemapConsistency } from './lib/site-manifest.mjs';
+import { metaContent, validatePublicationMetadata, validateSocialPng } from './lib/seo-checks.mjs';
 
 const root = resolve('dist');
 const requiredRoutes = [
@@ -63,6 +64,14 @@ for (const file of htmlFiles) {
   if (!isNotFound && /<meta[^>]+name="robots"[^>]+content="[^"]*noindex/i.test(html)) failures.push(`${name}: public launch page must allow indexing`);
   if (html.includes('Public test environment:') || html.includes('Pre-production status:') || html.includes('Draft test terms:')) failures.push(`${name}: obsolete pre-launch notice`);
   if (!html.includes('application/ld+json')) failures.push(`${name}: missing JSON-LD`);
+  failures.push(...validatePublicationMetadata(html, { isHome: name === 'index.html', siteUrl: canonical }).map(message => `${name}: ${message}`));
+  const socialImage = metaContent(html, 'og:image');
+  if (socialImage) {
+    try {
+      const path = resolve(root, `.${new URL(socialImage).pathname}`);
+      failures.push(...validateSocialPng(readFileSync(path)).map(message => `${name}: ${message}`));
+    } catch { failures.push(`${name}: sharing image file is missing or invalid`); }
+  }
   const reviewTags = [...html.matchAll(/<time\b[^>]*data-review-date[^>]*>/gi)];
   for (const tag of reviewTags) {
     const date = tag[0].match(/datetime="([^"]+)"/)?.[1];
@@ -134,7 +143,12 @@ if (!/<nav\b[^>]*aria-label="Primary navigation"[^>]*>[\s\S]*?href="\/tools\/"/.
 if (!homeHtml.includes('data-mobile-navigation') || !homeHtml.includes('aria-controls="mobile-site-links"')) failures.push('Mobile navigation must retain its native disclosure and controlled links');
 for (const [name, html] of [['growth', growthHtml], ['eligibility', eligibilityHtml]]) {
   if (!html.includes('tool-hero') || !html.includes('tool-meta')) failures.push(`${name}: tool pages must retain the compact header and review metadata`);
+  if (!html.includes('id="how-to-use"') || !html.includes('Frequently asked questions')) failures.push(`${name}: tool must retain usage instructions and readable questions`);
+  if (!html.includes('"@type":"WebApplication"')) failures.push(`${name}: tool application identity is missing`);
 }
+if (growthHtml.indexOf('name="familyContribution"') > growthHtml.indexOf('name="birthDate"')) failures.push('Growth calculator must lead with the contribution input and disclose date assumptions');
+if (!growthHtml.includes('id="growth-date-summary"') || !growthHtml.includes('id="growth-extra-summary"')) failures.push('Growth assumptions must remain visible while disclosures are closed');
+if (!eligibilityHtml.includes('id="pilot-questions"') || !eligibilityHtml.includes('Unanswered pilot questions stay')) failures.push('Checker must keep the separate, unresolved pilot assessment explicit');
 const toolsHtml = readFileSync(routeFile('/tools/'), 'utf8');
 if (!toolsHtml.includes('Trump Account checker') || !toolsHtml.includes('Trump Account calculator') || !toolsHtml.includes('not 529 projections')) failures.push('Tools hub must identify the current tools and their Trump Account scope');
 if (!existsSync(join(root, 'robots.txt'))) failures.push('Missing robots.txt');

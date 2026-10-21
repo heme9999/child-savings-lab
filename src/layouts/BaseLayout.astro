@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import { siteContact, siteVerification } from '../data/site';
 import PrimaryNavigation from '../components/PrimaryNavigation.astro';
+import { pageSchema, websiteSchema, socialCardForPath } from '../lib/seo';
 
 interface Props {
   title: string;
@@ -14,16 +15,10 @@ interface Props {
 const { title, description, type = 'website', verifiedAt, noindex = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const fullTitle = title === 'Child Savings Lab' ? title : `${title} | Child Savings Lab`;
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': type === 'article' ? 'Article' : 'WebSite',
-  name: title,
-  headline: title,
-  description,
-  url: canonical.toString(),
-  publisher: { '@type': 'Organization', name: 'Child Savings Lab', url: Astro.site?.toString() },
-  ...(verifiedAt ? { dateModified: verifiedAt } : {})
-};
+const site = Astro.site ?? new URL('/', canonical);
+const jsonLd = pageSchema({ title, description, canonical, site, type, verifiedAt });
+const socialCard = socialCardForPath(Astro.url.pathname);
+const socialImage = new URL(socialCard.path, site);
 ---
 <!doctype html>
 <html lang="en-US">
@@ -41,10 +36,18 @@ const jsonLd = {
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content={socialImage} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={socialCard.alt} />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialImage} />
+    <meta name="twitter:image:alt" content={socialCard.alt} />
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    {Astro.url.pathname === '/' && <script type="application/ld+json" set:html={JSON.stringify(websiteSchema(site))} />}
     <title>{fullTitle}</title>
   </head>
   <body>

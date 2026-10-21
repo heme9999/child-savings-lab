@@ -5,6 +5,7 @@ import GrowthCalculator from '../../../components/GrowthCalculator.astro';
 import SourceLinks from '../../../components/SourceLinks.astro';
 import ToolHero from '../../../components/ToolHero.astro';
 import NextSteps from '../../../components/NextSteps.astro';
+import ToolExplainer from '../../../components/ToolExplainer.astro';
 const schema = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
@@ -21,6 +22,28 @@ const schema = {
   <ToolHero title="Trump Account growth calculator" description="Explore contributions, returns, and fees. An illustration—not a forecast." date="2026-10-15" dateLabel="Calculation version" />
   <div class="shell">
     <GrowthCalculator />
+    <ToolExplainer name="Trump Account growth calculator"
+      steps={[
+        { title: 'Choose a contribution plan', text: 'Enter a family amount, monthly or yearly frequency, an assumed return, and a target age. Monthly deposits are modeled at month-end; yearly deposits at December 31.' },
+        { title: 'Check the example assumptions', text: 'Open Dates & pilot amount to change the fictional birth and start dates. The pilot starts at No. Starting balances, employer deposits, and fees are available under Advanced assumptions.' },
+        { title: 'Compare, then keep the assumptions', text: 'Update the projection, compare the return scenarios, and read the annual table. Print the report to retain the inputs and calculation version. A modeled balance is not a forecast.' }
+      ]}
+      features={[
+        { title: 'Calendar-year checks', text: 'Scheduled deposits are checked in each modeled calendar year, including partial years. Earlier and outside deposits are not known.' },
+        { title: 'Fees shown separately', text: 'Compare the same cash flows with and without the fund and account-fee assumptions.' },
+        { title: 'Reproducible illustrations', text: 'The chart, annual table, and printable assumptions come from the same monthly model.' },
+        { title: 'No account access', text: 'Inputs stay in this browser. No signup, account number, SSN, or connection to a financial provider is needed.' }
+      ]}
+      useCase="Use it to explore a household contribution idea, compare fee assumptions, or prepare questions for a trustee or adviser. It does not calculate tax bills, remaining legal contribution capacity, or a personalized investment recommendation."
+      questions={[
+        { title: 'Is the $1,000 pilot amount included by default?', text: 'No. Turning it on adds a starting-balance assumption at the projection start. It does not confirm eligibility, an election, receipt of money, or a government payment date.' },
+        { title: 'Why can the contribution cutoff differ from the target date?', text: 'The model separates the statutory growth-period end from the selected projection target. A younger target can shorten the contribution schedule; a later target does not add post-growth-period IRA contributions. Both dates appear in the result.' },
+        { title: 'How are partial calendar years handled?', text: 'The limit check adds the family and employer deposits actually scheduled in each calendar year. It does not assume twelve monthly deposits in a partial year or know what other contributors already deposited.' },
+        { title: 'Are fees, taxes, and inflation all included?', text: 'The selected fund-expense and account-fee assumptions are included. Taxes, inflation, withdrawals, tracking error, market sequence, and partial months are not modeled. The result is a nominal, hypothetical illustration.' },
+        { title: 'Why did the previous result disappear?', text: 'Changing an input hides the old result and disables printing until you update the projection. Blank numeric fields must be completed, including an explicit zero where appropriate.' },
+        { title: 'Can I use this as a 529 calculator?', text: 'No. This tool uses the Trump Account model and contribution schedule. The account comparison and 529 guide explain other account types; this is not a 529 projection or a ranking of providers.' }
+      ]}
+    />
     <NextSteps heading="A balance is one part of the picture." links={[
       { title: 'Compare the account rules', description: 'Explore purpose, ownership, and withdrawal differences.', href: '/tools/child-savings-account-comparison/' },
       { title: 'Check contribution limits', description: 'Understand how family and employer amounts fit together.', href: '/contributions/trump-account-contribution-limits/' }

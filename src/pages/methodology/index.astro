@@ -1,5 +1,7 @@
 ---
 import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import { referenceScenarios } from '../../data/reference-scenarios';
+const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value);
 ---
 <ArticleLayout title="Research and calculator methodology" description="How Child Savings Lab verifies rules, labels uncertainty, calculates projections, protects privacy, and keeps comparisons independent." verifiedAt="2026-10-12" effective="Calculator behavior reviewed October 12; source records have individual review dates" sourceIds={['TREASURY-TD-10056','IRS-TRUMP-ACCOUNTS','IRS-FORM-4547-INSTRUCTIONS','IRS-PROPOSED-INVESTMENTS-2026']}>
   <h2>Source hierarchy</h2>
@@ -16,6 +18,16 @@ import ArticleLayout from '../../layouts/ArticleLayout.astro';
   <p>The displayed modeled cutoff is the last eligible month-end within the selected projection, separate from the statutory growth-period end. Annual chart/table snapshots use the same calculation; a final partial-year row does not add partial-month growth. The dashed line includes the starting amount and optional pilot assumption, not a claim about lifetime tax basis.</p>
   <p>Projection starts before July 4, 2026 are rejected. Blank numeric fields are not treated as zero. The sensitivity table uses the selected return and variations of two percentage points, omitting variations outside the supported range. Changing an input hides the previous result until the inputs are validated and calculated again.</p>
   <p>A printed report includes the assumptions, calculation version, and report time. Homepage links can carry an allowlisted, fictional example preset in a URL fragment; birth dates and custom financial inputs are not put in the URL, sent to a server, or saved by this site.</p>
+  <h2 id="worked-examples">Reproduce a worked example</h2>
+  <p>All three fictional scenarios below use a January 15, 2026 birth date, an October 8, 2026 start, target age 18, no pilot amount, no opening balance, no employer contribution, and no separate account fee. The schedule contains 207 monthly deposits. These are software checks, not independent professional review or predictions.</p>
+  <div class="reference-examples" role="region" aria-label="Calculation reference examples" tabindex="0">
+    <table>
+      <caption>Same dates, different contribution and return assumptions</caption>
+      <thead><tr><th scope="col">Scenario</th><th scope="col">Monthly amount</th><th scope="col">Return / fund fee</th><th scope="col">Modeled balance</th></tr></thead>
+      <tbody>{referenceScenarios.map(scenario => <tr><th scope="row">{scenario.label}</th><td>{usd(scenario.familyContribution)}</td><td>{scenario.annualReturnRate}% / {scenario.fundExpenseRate}%</td><td>{usd(scenario.result.endingBalance)}</td></tr>)}</tbody>
+    </table>
+  </div>
+  <p>For the zero-return, zero-fee check, $100 × 207 deposits = $20,700. The other rows include a constant assumed return and the selected fee; actual returns will not follow this constant path. Try the inputs in the <a href="/tools/trump-account-growth-calculator/">Trump Account growth calculator</a> and compare the full report assumptions.</p>
   <h2>Comparison policy</h2>
   <p>Accounts are compared by purpose, eligibility, ownership and control, contribution framework, tax treatment, investment limits, withdrawal rules, and age transitions. No account or provider receives a higher position because of compensation.</p>
   <h2>Corrections</h2>

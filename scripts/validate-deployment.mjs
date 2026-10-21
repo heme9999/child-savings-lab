@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { missingPaths, publicSiteUrl, readBuildManifest, validateHttpPage, validateSitemapConsistency } from './lib/site-manifest.mjs';
+import { assetMime, collectReleaseAssets, validateAssetResponse } from './lib/seo-checks.mjs';
 
 // Check the hosting layer, not Astro's dev server: a visible error page with HTTP 200 still fails.
 async function main() {
@@ -19,12 +20,14 @@ async function main() {
   if (!notFound?.noindex) throw new Error('Build must include a noindex top-level 404.html before deployment testing.');
   const requireIndexable = deployment.origin === new URL(publicSiteUrl).origin;
   const pages = manifest.pages.filter((page) => !page.isError && !page.noindex);
+  const assets = collectReleaseAssets(pages, manifest.bundledAssets).map(path => ({ path, status: 200, assetBytes: readFileSync(resolve(root, `.${path}`)), expectedMime: assetMime(path) }));
   const cases = [
     ...pages.map((page) => ({ path: page.route, status: 200, page })),
     ...missingPaths.map((path) => ({ path, status: 404, page: notFound })),
     { path: '/sitemap-index.xml', status: 200, body: manifest.indexXml, contentType: 'xml' },
     ...sitemap.sitemapUrls.map((url) => ({ path: new URL(url).pathname, status: 200, body: manifest.sitemapFiles.get(new URL(url).pathname), contentType: 'xml' })),
-    { path: '/robots.txt', status: 200, body: readFileSync(resolve(root, 'robots.txt'), 'utf8'), contentType: 'text/plain' }
+    { path: '/robots.txt', status: 200, body: readFileSync(resolve(root, 'robots.txt'), 'utf8'), contentType: 'text/plain' },
+    ...assets
   ];
   const maxAttempts = waitForDeployment ? 4 : 1;
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
@@ -36,9 +39,17 @@ async function main() {
         try {
           const url = new URL(check.path, deployment);
           const [get, head] = await Promise.all(['GET', 'HEAD'].map((method) => fetch(url, { method, redirect: 'manual', signal: AbortSignal.timeout(15000) })));
-          const html = await get.text();
           const errors = [];
           if (head.status !== check.status) errors.push(`HEAD expected HTTP ${check.status}, received ${head.status}`);
+          if (check.assetBytes) {
+            const bytes = Buffer.from(await get.arrayBuffer());
+            errors.push(...validateAssetResponse({ status: get.status, bytes, contentType: get.headers.get('content-type'), expectedBytes: check.assetBytes, expectedMime: check.expectedMime }));
+            if (!check.expectedMime.test(head.headers.get('content-type') ?? '')) errors.push('HEAD asset MIME type does not match its file type');
+            if (errors.length) failures.push(`${check.path}: ${errors.join('; ')}`);
+            console.log(`${errors.length ? 'FAIL' : 'PASS'} GET ${get.status} / HEAD ${head.status} ${check.path}`);
+            continue;
+          }
+          const html = await get.text();
           if (check.page) {
             errors.push(...validateHttpPage({ status: get.status, html, headersNoindex: get.headers.get('x-robots-tag') ?? '', expectedStatus: check.status, expectedPage: check.page, requireIndexable }));
             if (!get.headers.get('content-type')?.includes('text/html')) errors.push('page response is not HTML');
@@ -61,7 +72,7 @@ async function main() {
     }
     await Promise.all(Array.from({ length: 4 }, worker));
     if (!failures.length) {
-      console.log(`Deployment regression passed at ${deployment.origin}: ${pages.length} public pages, ${missingPaths.length} genuine 404 paths, and ${cases.length - pages.length - missingPaths.length} sitemap/robots resources; GET and HEAD checked.`);
+      console.log(`Deployment regression passed at ${deployment.origin}: ${pages.length} public pages, ${missingPaths.length} genuine 404 paths, ${cases.length - pages.length - missingPaths.length - assets.length} sitemap/robots resources, and ${assets.length} JS/CSS/social assets; GET and HEAD checked, asset MIME and SHA-256 matched.`);
       return;
     }
     if (attempt === maxAttempts) throw new Error(`Deployment regression failed:\n- ${failures.join('\n- ')}`);

@@ -3,29 +3,23 @@ import { FIRST_CONTRIBUTION_DATE, projectGrowth, projectScenarios } from '../lib
 import { previewAssumptions } from '../lib/calculators/preview';
 import { growthAssumptions, contributionNote } from '../lib/calculators/form';
 import GrowthTimeline from './GrowthTimeline.astro';
+import { growthDateSummary, growthExtraSummary } from '../lib/forms/assumptions';
 const exampleInput = previewAssumptions;
 const example = projectGrowth(exampleInput);
 const examples = projectScenarios(exampleInput);
 const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value);
+const defaultAnswers = new Map<string, string>(Object.entries(exampleInput).map(([key, value]) => [key, String(value)]));
+defaultAnswers.set('fundExpenseRate', '0.10');
+defaultAnswers.set('accountFeeRate', '0');
 ---
 <p class="visually-hidden" id="growth-announcement" role="status" aria-atomic="true"></p>
 <div class="tool-layout" data-growth-calculator>
   <section class="tool-panel" aria-labelledby="growth-form-title">
-    <div class="eyebrow">Start with the essentials</div>
     <h2 id="growth-form-title">Build a scenario</h2>
-    <p>Use hypothetical values. Model family or employer deposits only after a receiving account is claimed and activated.</p>
+    <p class="tool-intro">Prefilled example only. Actual deposits require a claimed, activated receiving account.</p>
     <form id="growth-form" novalidate>
       <div id="growth-errors"></div>
-      <div class="form-grid">
-        <div class="field">
-          <label for="birth-date">Child’s date of birth</label>
-          <input id="birth-date" name="birthDate" type="date" value={exampleInput.birthDate} required />
-        </div>
-        <div class="field">
-          <label for="projection-start-date">Projection start date</label>
-          <input id="projection-start-date" name="projectionStartDate" type="date" min={FIRST_CONTRIBUTION_DATE} value={exampleInput.projectionStartDate} aria-describedby="start-date-help" required />
-          <small id="start-date-help">July 4, 2026 or later, and not before the account can accept deposits.</small>
-        </div>
+      <div class="form-grid growth-essentials">
         <div class="field">
           <label for="family-contribution">Family contribution (USD)</label>
           <input id="family-contribution" name="familyContribution" type="number" min="0" step="any" value="100" inputmode="decimal" required />
@@ -33,8 +27,8 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
         <div class="field">
           <label for="family-frequency">Contribution frequency</label>
           <select id="family-frequency" name="familyFrequency">
-            <option value="monthly" selected>Every month-end</option>
-            <option value="annual">Each December 31</option>
+            <option value="monthly" selected>Monthly</option>
+            <option value="annual">Yearly</option>
           </select>
         </div>
         <div class="field">
@@ -45,15 +39,36 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
           <label for="target-age">Target age</label>
           <input id="target-age" name="targetAge" type="number" min="1" max="65" step="1" value="18" inputmode="numeric" required />
         </div>
-        <fieldset class="field full">
+      </div>
+      <details class="form-disclosure" id="date-assumptions">
+        <summary>Dates &amp; pilot amount <span class="assumption-summary" id="growth-date-summary">{growthDateSummary(defaultAnswers)}</span></summary>
+        <div class="form-grid">
+          <div class="field">
+            <label for="birth-date">Child’s date of birth</label>
+            <input id="birth-date" name="birthDate" type="date" value={exampleInput.birthDate} required />
+          </div>
+          <div class="field">
+            <label for="projection-start-date">Projection start date</label>
+            <input id="projection-start-date" name="projectionStartDate" type="date" min={FIRST_CONTRIBUTION_DATE} value={exampleInput.projectionStartDate} aria-describedby="start-date-help" required />
+            <small id="start-date-help">July 4, 2026 or later, and not before the account can accept deposits.</small>
+          </div>
+          <fieldset class="field full">
           <legend>Include the $1,000 pilot amount?</legend>
           <div class="radio-row">
             <label class="radio-option"><input type="radio" name="includePilot" value="true" /> Yes</label>
             <label class="radio-option"><input type="radio" name="includePilot" value="false" checked /> No</label>
           </div>
           <small>This is a starting-balance assumption, not a check of eligibility or payment timing. <a href="/tools/trump-account-eligibility-checker/">Check the separate pilot requirements.</a></small>
-        </fieldset>
+          </fieldset>
+        </div>
+        <p class="assumption-summary">Monthly deposits occur at month-end; yearly deposits at December 31. These dates are fictional example assumptions until you change them.</p>
+      </details>
+      <p class="assumption-summary" id="growth-extra-summary">{growthExtraSummary(defaultAnswers)}</p>
+      <div class="form-actions">
+        <button class="button" type="submit" disabled>Update projection</button>
+        <button class="button secondary" type="button" id="print-report" disabled>Print report</button>
       </div>
+      <p class="form-state" id="growth-form-state" hidden></p>
       <details class="advanced-assumptions" id="advanced-assumptions">
         <summary>Advanced assumptions: starting balance, employer deposits &amp; fees</summary>
         <p>Enter 0 if an amount or fee does not apply. Blank fields are not treated as zero.</p>
@@ -78,12 +93,8 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
             <small id="account-fee-help">Annual modeling assumption; confirm actual trustee fees and treatment.</small>
           </div>
         </div>
+        <div class="form-actions"><button class="button secondary" type="submit" disabled>Apply assumptions</button></div>
       </details>
-      <div class="form-actions">
-        <button class="button" type="submit" disabled>Update projection</button>
-        <button class="button secondary" type="button" id="print-report" disabled>Print report</button>
-      </div>
-      <p class="form-state" id="growth-form-state" hidden></p>
     </form>
     <noscript><p class="privacy-note">Enable JavaScript to calculate locally. The displayed projection is a worked example; your inputs are not submitted.</p></noscript>
     <p class="privacy-note">Runs locally without saving or sending your answers. An illustration—not a forecast, tax estimate, investment recommendation, or account-status confirmation.</p>
@@ -130,6 +141,7 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
   import { growthInputFromForm, growthAssumptions, contributionNote } from '../lib/calculators/form';
   import { growthChart } from '../lib/calculators/chart';
   import { inputFromPreviewHash } from '../lib/calculators/preview';
+  import { growthDateSummary, growthExtraSummary } from '../lib/forms/assumptions';
 
   const form = document.querySelector<HTMLFormElement>('#growth-form');
   const errors = document.querySelector<HTMLElement>('#growth-errors');
@@ -144,6 +156,12 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
   const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
   const setText = (selector: string, value: string) => { const el = document.querySelector<HTMLElement>(selector); if (el) el.textContent = value; };
   let dirty = false;
+  const syncSummaries = () => {
+    if (!form) return;
+    const data = new FormData(form);
+    setText('#growth-date-summary', growthDateSummary(data));
+    setText('#growth-extra-summary', growthExtraSummary(data));
+  };
 
   function showErrors(issues: FieldIssue[], focus: boolean): void {
     if (!errors || !output) return;
@@ -219,7 +237,8 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
     }
   }
 
-  form?.addEventListener('input', () => {
+  const markDirty = () => {
+    syncSummaries();
     if (!dirty) announceResult(announcement, 'Inputs changed. Previous projection hidden. Update projection to recalculate.');
     dirty = true;
     if (output) output.hidden = true;
@@ -228,9 +247,11 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
     if (print) print.disabled = true;
     if (state) state.textContent = 'Inputs changed. Select Update projection to calculate; the previous result is hidden.';
     if (formState) { formState.hidden = false; formState.textContent = 'Inputs changed. Update projection to see the new result.'; }
-  });
+  };
+  form?.addEventListener('input', markDirty);
+  form?.addEventListener('change', markDirty);
   form?.addEventListener('submit', (event) => { event.preventDefault(); render(); });
-  form?.querySelector<HTMLButtonElement>('button[type="submit"]')?.removeAttribute('disabled');
+  form?.querySelectorAll<HTMLButtonElement>('button[type="submit"]').forEach(button => button.removeAttribute('disabled'));
   print?.removeAttribute('disabled');
   print?.addEventListener('click', () => window.print());
   window.addEventListener('beforeprint', () => {
@@ -243,4 +264,5 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
     const rate = form.querySelector<HTMLInputElement>('#return-rate');
     if (contribution && rate) { contribution.value = String(preset.familyContribution); rate.value = String(preset.annualReturnRate); render(false, true); }
   }
+  syncSummaries();
 </script>

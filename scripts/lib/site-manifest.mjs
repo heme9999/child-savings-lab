@@ -28,6 +28,7 @@ export function pageMetadata(html) {
 export function readBuildManifest(root) {
   const pages = [];
   const sitemapFiles = new Map();
+  const bundledAssets = [];
   function walk(directory) {
     for (const entry of readdirSync(directory, { withFileTypes: true })) {
       const path = join(directory, entry.name);
@@ -40,11 +41,11 @@ export function readBuildManifest(root) {
           const route = file === 'index.html' ? '/' : `/${file.replace(/index\.html$/, '').replace(/\.html$/, '')}`;
           pages.push({ file, path, route, html, isError: /^(404|500)\.html$/.test(file), ...pageMetadata(html) });
         }
-      }
+      } else if (/\.(js|css)$/.test(entry.name)) bundledAssets.push(`/${relative(root, path).replaceAll('\\', '/')}`);
     }
   }
   walk(root);
-  return { pages, sitemapFiles, indexXml: sitemapFiles.get('/sitemap-index.xml') ?? '' };
+  return { pages, sitemapFiles, bundledAssets, indexXml: sitemapFiles.get('/sitemap-index.xml') ?? '' };
 }
 
 function locations(xml, kind, name, failures) {

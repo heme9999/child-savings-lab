@@ -15,17 +15,11 @@ const initial = checkEligibility({
 ---
 <div class="tool-layout" data-eligibility-checker>
   <section class="tool-panel" aria-labelledby="eligibility-form-title">
-    <div class="eyebrow">Private by design</div>
     <h2 id="eligibility-form-title">Check the next step</h2>
-    <p>Check official account status before considering a new Form 4547 account election.</p>
+    <p class="tool-intro">Start with account status. The separate pilot questions can be explored below.</p>
     <form id="eligibility-form" novalidate>
       <div id="eligibility-errors"></div>
       <div class="form-grid">
-        <div class="field">
-          <label for="check-year">Review year</label>
-          <input id="check-year" name="checkYear" type="number" min="2026" max="2100" value="2026" aria-describedby="review-year-help" required />
-          <small id="review-year-help">Year being reviewed, not necessarily the year an existing account was first established.</small>
-        </div>
         <div class="field">
           <label for="birth-date">Child’s date of birth</label>
           <input id="birth-date" name="birthDate" type="date" required />
@@ -45,14 +39,34 @@ const initial = checkEligibility({
           </select>
           <small class="selection-detail" id="account-status-detail">{accountStatusOptions[0].description}</small>
         </div>
-        <div class="field full">
-          <label for="claim-authority">Who would claim an auto account?</label>
-          <select id="claim-authority" name="claimAuthority" aria-describedby="claim-authority-detail claim-authority-help" required>
-            {claimAuthorityOptions.map((option) => <option value={option.value} selected={option.value === 'not-sure'}>{option.label}</option>)}
-          </select>
-          <small class="selection-detail" id="claim-authority-detail">{claimAuthorityOptions[2].description}</small>
-          <small id="claim-authority-help">A parent or relative is not automatically authorized unless applicable law gives the required authority.</small>
+      </div>
+      <p class="assumption-summary">Unanswered pilot questions stay “Not sure”—they do not mean ineligible. This tool cannot look up IRS records.</p>
+      <div class="form-actions">
+        <button class="button" type="submit" disabled>Show next steps</button>
+        <button class="button secondary" type="reset">Reset</button>
+      </div>
+      <details class="form-disclosure" id="eligibility-context">
+        <summary>Review year &amp; claiming authority <span class="assumption-summary" id="eligibility-context-summary">Review year 2026 · Claim authority: Not sure</span></summary>
+        <div class="form-grid">
+          <div class="field">
+            <label for="check-year">Review year</label>
+            <input id="check-year" name="checkYear" type="number" min="2026" max="2100" value="2026" aria-describedby="review-year-help" required />
+            <small id="review-year-help">Year being reviewed, not necessarily the year an existing account was first established.</small>
+          </div>
+          <div class="field full">
+            <label for="claim-authority">Who would claim an auto account?</label>
+            <select id="claim-authority" name="claimAuthority" aria-describedby="claim-authority-detail claim-authority-help" required>
+              {claimAuthorityOptions.map((option) => <option value={option.value} selected={option.value === 'not-sure'}>{option.label}</option>)}
+            </select>
+            <small class="selection-detail" id="claim-authority-detail">{claimAuthorityOptions[2].description}</small>
+            <small id="claim-authority-help">A parent or relative is not automatically authorized unless applicable law gives the required authority.</small>
+          </div>
         </div>
+        <div class="form-actions"><button class="button secondary" type="submit" disabled>Update account details</button></div>
+      </details>
+      <details class="form-disclosure" id="pilot-questions">
+        <summary>Separate $1,000 pilot details <span class="assumption-summary">Optional for account-status guidance. Complete these to explore the pilot election.</span></summary>
+        <div class="form-grid">
         <fieldset class="field full">
           <legend>Is the child a U.S. citizen?</legend>
           <div class="radio-row">
@@ -78,11 +92,9 @@ const initial = checkEligibility({
             <option value="unknown" selected>Unknown</option>
           </select>
         </div>
-      </div>
-      <div class="form-actions">
-        <button class="button" type="submit" disabled>Show next steps</button>
-        <button class="button secondary" type="reset">Reset</button>
-      </div>
+        </div>
+        <div class="form-actions"><button class="button secondary" type="submit" disabled>Update with pilot answers</button></div>
+      </details>
     </form>
     <div class="privacy-note"><span aria-hidden="true">◉</span><span>No names, Social Security numbers, addresses, or tax IDs are requested. Inputs stay in this browser and are not saved.</span></div>
     <noscript><p class="privacy-note">Enable JavaScript to run this checker locally. No eligibility assessment is made until you complete the required information; your inputs are not submitted.</p></noscript>
@@ -124,6 +136,7 @@ const initial = checkEligibility({
   import { revealResult } from '../lib/forms/focus';
   import { describeSelection } from '../lib/forms/selection';
   import { announceResult } from '../lib/forms/announcement';
+  import { eligibilityContextSummary } from '../lib/forms/assumptions';
   import { accountStatusOptions, claimAuthorityOptions } from '../data/eligibility-options';
   import type { AccountStatus, ClaimAuthority, EligibilityInput, PilotElectionStatus } from '../lib/eligibility/types';
 
@@ -138,6 +151,10 @@ const initial = checkEligibility({
   const state = document.querySelector<HTMLElement>('#eligibility-state');
   const heading = document.querySelector<HTMLElement>('#eligibility-results-title');
   const announcement = document.querySelector<HTMLElement>('#eligibility-announcement');
+  const contextSummary = document.querySelector<HTMLElement>('#eligibility-context-summary');
+  const syncContextSummary = () => {
+    if (form && contextSummary) contextSummary.textContent = eligibilityContextSummary(new FormData(form));
+  };
   for (const [id, options] of [['account-status', accountStatusOptions], ['claim-authority', claimAuthorityOptions]] as const) {
     const select = form?.querySelector<HTMLSelectElement>(`#${id}`);
     const description = document.querySelector<HTMLElement>(`#${id}-detail`);
@@ -184,6 +201,7 @@ const initial = checkEligibility({
 
   form?.addEventListener('submit', (event) => { event.preventDefault(); render(); });
   const clearResult = () => {
+    syncContextSummary();
     const hadResult = output && !output.hidden;
     if (output) output.hidden = true;
     feedback?.clear();
@@ -191,6 +209,8 @@ const initial = checkEligibility({
     if (hadResult) announceResult(announcement, 'Answers changed. Previous next steps hidden. Select Show next steps to update.');
   };
   form?.addEventListener('input', clearResult);
-  form?.addEventListener('reset', clearResult);
-  form?.querySelector<HTMLButtonElement>('button[type="submit"]')?.removeAttribute('disabled');
+  form?.addEventListener('change', clearResult);
+  form?.addEventListener('reset', () => { clearResult(); setTimeout(syncContextSummary, 0); });
+  form?.querySelectorAll<HTMLButtonElement>('button[type="submit"]').forEach(button => button.removeAttribute('disabled'));
+  syncContextSummary();
 </script>
