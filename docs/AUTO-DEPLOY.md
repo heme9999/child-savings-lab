@@ -2,7 +2,7 @@
 
 ## Current enablement status
 
-On November 9, 2026, the user authorized a dedicated deployment credential and explicitly increased its validity from 90 to 180 days. The credential has been created and saved to this repository's encrypted Actions secret; `CLOUDFLARE_DEPLOY_ENABLED` is now `true`. This documentation update is the normal main push used to test the first automatic publication. Completion still requires a successful deploy job, matching Cloudflare source revision, and live regression results; credential setup alone is not publication proof.
+On November 9, 2026, the user authorized a dedicated deployment credential and explicitly increased its validity from 90 to 180 days. The credential has been created and saved to this repository's encrypted Actions secret; `CLOUDFLARE_DEPLOY_ENABLED` is `true`. The first normal main push successfully completed verification, automatic production publication, and live HTTP regression. The evidence below records that acceptance run; later main pushes publish newer revisions through the same workflow.
 
 Credential metadata (never the value):
 
@@ -12,6 +12,15 @@ Credential metadata (never the value):
 - Expires: `2027-05-08T07:35:00Z` (May 8, 2027, 15:35 China Standard Time), 180 days after the start.
 - Destination: repository Actions secret `CLOUDFLARE_API_TOKEN` in `heme9999/child-savings-lab`; creation was visibly confirmed by GitHub and secret-name metadata was independently checked.
 - No DNS, billing, other-account permission, broad local OAuth credential, or other project's token was granted or reused. No expiry reminder automation was created.
+
+## First automatic publication evidence
+
+- Initial workflow-only commit `4f17bb6a3714333fd61681e908bd0de8016143a8`: [run 42579806128](https://github.com/heme9999/child-savings-lab/actions/runs/42579806128) passed verification and correctly skipped publication while the enable variable was unset.
+- After credential setup and enablement, normal push commit `083062c72d5205a6f750c3bb084d9be2bde48cf4`: [run 42580853395](https://github.com/heme9999/child-savings-lab/actions/runs/42580853395), event `push`, completed both `verify` and `Deploy production` successfully on November 9, 2026, at 07:41 UTC.
+- Cloudflare production deployment `e2d15ef6-9a10-4298-b36f-a787b9b46c2b`, branch `main`, source shown as `083062c`; [immutable deployment](https://e2d15ef6.child-savings-lab-mvp.pages.dev/). Publication supplied the full Actions commit SHA; the independent Cloudflare deployment listing confirmed the matching source prefix and Production environment.
+- The automatic regression passed GET and HEAD for 19 public pages, 3 genuine 404 paths, 3 sitemap/robots resources, and 11 static assets, including HTML markers, MIME types and SHA-256 comparisons (72 HTTP checks).
+- The website content was unchanged by the automation setup. Local verification passed 229 tests, site validation and accessibility structure checks. Dependency audit reported zero known vulnerabilities after compatible lockfile updates.
+- The first run reported Node 20 action-runtime deprecation. The follow-up configuration uses the official checkout/setup-node v6 actions with Node 24 runtimes, disables persisted Git checkout credentials, and selects `ubuntu-24.04` explicitly. Application builds continue to use Node 22. This follow-up push must pass the same complete workflow before being treated as deployed.
 
 ## Release path
 
@@ -60,3 +69,5 @@ Cloudflare Pages token permissions are account-wide, not single-project permissi
 - [Cloudflare Direct Upload limitation](https://developers.cloudflare.com/pages/get-started/direct-upload/)
 - [Cloudflare Direct Upload with CI](https://developers.cloudflare.com/pages/how-to/use-direct-upload-with-continuous-integration/)
 - [GitHub Actions secrets](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets)
+- [Official checkout v6 runtime](https://github.com/actions/checkout/blob/v6/action.yml)
+- [Official setup-node v6 runtime](https://github.com/actions/setup-node/blob/v6/action.yml)
