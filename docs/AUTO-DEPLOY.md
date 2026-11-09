@@ -2,7 +2,16 @@
 
 ## Current enablement status
 
-The deployment workflow has been prepared, but no Cloudflare repository secret or deployment-enable variable existed at the initial inspection. Automatic publication must not be described as enabled until the credential is configured with the user's authorization, the switch is enabled, and a real main push successfully deploys and passes production checks.
+On November 9, 2026, the user authorized a dedicated deployment credential and explicitly increased its validity from 90 to 180 days. The credential has been created and saved to this repository's encrypted Actions secret; `CLOUDFLARE_DEPLOY_ENABLED` is now `true`. This documentation update is the normal main push used to test the first automatic publication. Completion still requires a successful deploy job, matching Cloudflare source revision, and live regression results; credential setup alone is not publication proof.
+
+Credential metadata (never the value):
+
+- Name: `child-savings-lab GitHub Actions`.
+- Permission: only `Cloudflare Pages: Edit`, account `testing pages` (`dcb7b7a33a34b85d7bdf6ba4c01af700`). This is account-wide Pages access, not project-only access.
+- Valid from: `2026-11-09T07:35:00Z` (November 9, 15:35 China Standard Time).
+- Expires: `2027-05-08T07:35:00Z` (May 8, 2027, 15:35 China Standard Time), 180 days after the start.
+- Destination: repository Actions secret `CLOUDFLARE_API_TOKEN` in `heme9999/child-savings-lab`; creation was visibly confirmed by GitHub and secret-name metadata was independently checked.
+- No DNS, billing, other-account permission, broad local OAuth credential, or other project's token was granted or reused. No expiry reminder automation was created.
 
 ## Release path
 
