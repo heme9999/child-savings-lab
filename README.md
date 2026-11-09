@@ -16,7 +16,13 @@ npm run verify
 
 ## Deploy and check HTTP behavior
 
-After committing and pushing the verified source to GitHub, deploy with:
+The workflow in `.github/workflows/ci.yml` can automatically publish verified `main` pushes to the existing Cloudflare Pages project. It must first be enabled with a dedicated repository secret and explicit deployment variable; merely pushing this workflow does not enable publication. See [the setup and verification guide](docs/AUTO-DEPLOY.md).
+
+Once enabled, push to GitHub and wait for both `verify` and `Deploy production`. Do not also deploy the same revision manually. PRs only run checks. Deployments are serialized, older main revisions are skipped, and publication is followed by the full production HTTP regression.
+
+The existing Direct Upload project and public URL are retained. Cloudflare will still display `Git Provider: No`: GitHub Actions performs the automated upload rather than Cloudflare's native Git integration.
+
+For an explicitly requested manual fallback, deploy with:
 
 ```bash
 npm run deploy:cloudflare

@@ -4,10 +4,21 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  WRANGLER_SEND_METRICS: 'false'
 
 jobs:
   verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: verify-${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -16,3 +27,80 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run verify
+
+  deploy:
+    name: Deploy production
+    needs: verify
+    if: >-
+      github.repository == 'heme9999/child-savings-lab' &&
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      vars.CLOUDFLARE_DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    concurrency:
+      group: child-savings-lab-production
+      cancel-in-progress: false
+    env:
+      CLOUDFLARE_ACCOUNT_ID: dcb7b7a33a34b85d7bdf6ba4c01af700
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run validate:site
+      - run: npm run validate:a11y
+
+      - name: Check that this is still the latest main commit
+        id: latest
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          remote_sha="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/main" --jq '.object.sha')"
+          if [[ "$remote_sha" == "$GITHUB_SHA" ]]; then
+            echo 'publish=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'publish=false' >> "$GITHUB_OUTPUT"
+            echo 'A newer main commit exists; this run will not replace production.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Check deployment credential
+        if: steps.latest.outputs.publish == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        shell: bash
+        run: |
+          if [[ -z "$CLOUDFLARE_API_TOKEN" ]]; then
+            echo '::error::Configure the CLOUDFLARE_API_TOKEN repository secret before enabling production deployment.'
+            exit 1
+          fi
+
+      - name: Publish existing Cloudflare Pages project
+        if: steps.latest.outputs.publish == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: >-
+          npx --no-install wrangler pages deploy dist
+          --project-name child-savings-lab-mvp
+          --branch main
+          --commit-hash "$GITHUB_SHA"
+          --commit-dirty=false
+
+      - name: Verify the published website
+        if: steps.latest.outputs.publish == 'true'
+        run: npm run validate:deployment -- --wait-for-deployment
+
+      - name: Record production release
+        if: steps.latest.outputs.publish == 'true'
+        shell: bash
+        run: |
+          {
+            echo '### Production deployment verified'
+            echo "Commit: $GITHUB_SHA"
+            echo 'Website: https://child-savings-lab-mvp.pages.dev/'
+            echo 'GET/HEAD, real 404s, sitemap/robots, production index policy, HTML and static asset checks passed.'
+          } >> "$GITHUB_STEP_SUMMARY"
