@@ -3,16 +3,15 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 const tools = [
   { question: 'What is my next account step?', title: 'Trump Account checker', description: 'Explore account status, claiming, activation, and the separate $1,000 pilot election. Educational guidance, not an IRS determination.', href: '/tools/trump-account-eligibility-checker/', action: 'Check next steps', scope: 'Trump Accounts only' },
-  { question: 'How might a contribution plan grow?', title: 'Trump Account calculator', description: 'Illustrate deposits, assumed returns, and fees with an annual chart and printable assumptions. Not a forecast or tax estimate.', href: '/tools/trump-account-growth-calculator/', action: 'Model a scenario', scope: 'Trump Account contribution rules' },
-  { question: 'Which account rules should I compare?', title: 'Child savings account comparison', description: 'Compare the purpose, ownership, and key constraints of Trump Accounts, 529 plans, UGMA/UTMA, Custodial Roth IRAs, and ABLE accounts.', href: '/tools/child-savings-account-comparison/', action: 'Compare account types', scope: 'Five account types · Reading guide' }
+  { question: 'How might a contribution plan grow?', title: 'Trump Account calculator', description: 'Illustrate deposits, assumed returns, and fees with an annual chart and printable assumptions. Not a forecast or tax estimate.', href: '/tools/trump-account-growth-calculator/', action: 'Model a scenario', scope: 'Trump Account contribution rules' }
 ];
 ---
-<BaseLayout title="Free Child Savings Tools & Account Comparisons" description="Choose a free Trump Account status checker, growth calculator, or five-account comparison. Clear scope, no signup, and browser-only calculator inputs.">
+<BaseLayout title="Free Child Savings Tools & Account Comparisons" description="Try two free Trump Account tools: a status checker and growth calculator. Find separate account comparison guides, with no signup or saved financial inputs.">
   <div class="shell"><Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Tools' }]} /></div>
   <header class="page-hero directory-hero shell">
     <div class="eyebrow">Free tools · No signup</div>
     <h1>Free child savings tools.</h1>
-    <p class="lede">Understand the next step, explore a savings scenario, or compare account rules. Choose the tool that matches what you’re trying to learn.</p>
+    <p class="lede">Two interactive Trump Account tools help you explore account next steps and savings scenarios. Reading guides explain account differences separately. Choose the question you want to work through first.</p>
   </header>
   <section class="section directory-section shell" aria-labelledby="available-tools">
     <h2 id="available-tools">Choose a tool</h2>
@@ -27,5 +26,31 @@ const tools = [
     </div>
     <div class="privacy-note">Calculator answers are processed in your browser, not saved or submitted. Hypothetical values are welcome; never enter an SSN or account number.</div>
     <p>The checker and calculator currently cover Trump Accounts—not 529 projections or personalized account recommendations. For education savings, start with the <a href="/guides/529-plans/">529 plan guide</a>. Read our <a href="/methodology/">methods and limitations</a> before acting on an illustration.</p>
+  </section>
+  <section class="section tint" aria-labelledby="choose-by-question">
+    <div class="article-body shell">
+      <h2 id="choose-by-question">Which tool should I start with?</h2>
+      <h3>Start with the checker for account questions</h3>
+      <p>Use the status and eligibility checker when you are unsure which step comes next. It asks what you know about the account and separates that from the pilot-election questions. An account may exist while claiming or activation still needs attention. An incomplete pilot answer stays unresolved. The result helps you prepare for an official status check; it cannot retrieve records, confirm a payment, or establish your legal authority to manage an account.</p>
+      <h3>Start with the calculator for a contribution scenario</h3>
+      <p>Use the growth calculator to explore an amount and deposit schedule you choose. Compare family deposits, an annual employer amount, selected fees, and several hypothetical returns. Open the date assumptions before relying on the time horizon. A starting balance or pilot assumption is simply an input: the calculator cannot confirm where that money came from, whether a pilot election was processed, or whether a receiving account is ready for deposits.</p>
+
+      <h2>Account comparisons are reading guides</h2>
+      <p>The <a href="/guides/child-savings-account-comparison/">child savings account comparison guide</a> compares five account types by purpose, control, and constraints. It is a static reading guide, with no questionnaire, calculated recommendation, or provider ranking. Use it when your question is which rules to study rather than how a particular contribution schedule compounds. These focused guides can help you continue:</p>
+      <ul>
+        <li><a href="/guides/529-plans/">529 plans</a>: a starting point for an education savings goal.</li>
+        <li><a href="/compare/trump-account-vs-529/">Trump Account vs. 529 plan</a>: compare the different account frameworks.</li>
+        <li><a href="/forms/form-4547-guide/">Form 4547</a>: understand the separate election and official filing paths.</li>
+        <li><a href="/contributions/trump-account-contribution-limits/">Contribution limits</a>: read the scope and calendar-year examples before modeling deposits.</li>
+      </ul>
+
+      <h2>Build a scenario you can check again</h2>
+      <p>Begin with a fictional example, then change one assumption at a time. Keep the birth date, projection start, deposit frequency, and target age consistent when comparing balances. Review contributions and modeled growth separately, since a higher balance can reflect more money added. The annual table helps explain the time path; the fee comparison holds the cash flows constant. Printing the report keeps the inputs beside the result so an illustration can be reproduced later.</p>
+      <p>The projection is nominal and hypothetical. It does not model taxes, inflation, withdrawals, variable market returns, or future changes to contribution limits. Its calendar-year checks cover scheduled deposits in this scenario, not earlier deposits or money contributed by other people. Read the <a href="/methodology/#worked-examples">calculation methodology and worked examples</a> for those boundaries. A successful calculation is not confirmation of your remaining legal contribution capacity.</p>
+
+      <h2>Keep sensitive details out of the tools</h2>
+      <p>The checker and calculator run in your browser without an account or signup. You can use hypothetical dates and amounts. Do not enter a Social Security number, child’s name, account number, tax ID, or financial document. Tool answers are not submitted to this publication. Following an official-service link takes you to a separate website with its own privacy practices and account requirements. Our <a href="/privacy/">privacy policy</a> explains the distinction between local inputs and ordinary website hosting.</p>
+      <p>If a date or number looks wrong, correct it before reading a result. Blank numeric fields need an explicit answer, including zero when appropriate. If you change the calculator’s assumptions, update the projection before printing. To report a problem, use the <a href="/contact/">publisher contact page</a> and include the page address and a fictional example, without identifying information. These tools support learning and better questions; they do not file forms, open accounts, transfer funds, or provide personalized financial advice.</p>
+    </div>
   </section>
 </BaseLayout>

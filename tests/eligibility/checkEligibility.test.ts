@@ -14,6 +14,18 @@ const valid: EligibilityInput = {
 };
 
 describe('checkEligibility', () => {
+  it.each(['0005-05-15', '0026-01-15', '1899-12-31'])('does not interpret an implausible birth year as an adult account: %s', (birthDate) => {
+    const result = checkEligibility({ ...valid, birthDate });
+    expect(result.validationIssues).toEqual([{ field: 'birthDate', message: expect.stringContaining('four-digit year') }]);
+    expect(result.accountPath).toBe('needs-information');
+    expect(result.baselineEligible).toBeNull();
+    expect(result.pilotStatus).toBe('needs-information');
+  });
+  it.each(['1900-01-01', '2005-05-15'])('preserves valid adult-stage dates rather than limiting births to the pilot window: %s', (birthDate) => {
+    const result = checkEligibility({ ...valid, birthDate });
+    expect(result.validationIssues).toEqual([]);
+    expect(result.accountPath).toBe('post-growth-period');
+  });
   it('associates validation errors with the exact required fields', () => {
     const result = checkEligibility({ ...valid, checkYear: NaN, birthDate: '' });
     expect(result.validationIssues.map((issue) => issue.field)).toEqual(['checkYear', 'birthDate']);

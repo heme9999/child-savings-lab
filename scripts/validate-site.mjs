@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
-import { pageMetadata, readBuildManifest, validateSitemapConsistency } from './lib/site-manifest.mjs';
+import { pageMetadata, permanentRedirects, readBuildManifest, validateSitemapConsistency } from './lib/site-manifest.mjs';
 import { metaContent, validatePublicationMetadata, validateSocialPng } from './lib/seo-checks.mjs';
 
 const root = resolve('dist');
@@ -11,7 +11,7 @@ const requiredRoutes = [
   '/tools/',
   '/tools/trump-account-eligibility-checker/',
   '/tools/trump-account-growth-calculator/',
-  '/tools/child-savings-account-comparison/',
+  '/guides/child-savings-account-comparison/',
   '/forms/form-4547-guide/',
   '/compare/trump-account-vs-529/',
   '/contributions/trump-account-contribution-limits/',
@@ -109,7 +109,9 @@ for (const file of htmlFiles) {
 }
 
 const homeHtml = readFileSync(routeFile('/'), 'utf8');
-if (pageMetadata(homeHtml).title !== 'Child Savings Guides & Free Calculators | Child Savings Lab') failures.push('Homepage must retain its descriptive child-savings title');
+if (pageMetadata(homeHtml).title !== 'Trump Account & Child Savings Calculators | Child Savings Lab') failures.push('Homepage must retain its approved Trump Account and child-savings title');
+if (pageMetadata(homeHtml).h1 !== 'Trump Account calculator and family guide') failures.push('Homepage must retain its approved H1');
+if (pageMetadata(readFileSync(routeFile('/trump-accounts/'), 'utf8')).title !== 'Trump Accounts Explained (2026): How They Work, $1,000 Pilot, How to Claim') failures.push('Trump Accounts guide must retain its approved document title');
 const homeHead = homeHtml.match(/<head>(.*?)<\/head>/is)?.[1] ?? '';
 const googleVerification = [...homeHead.matchAll(/<meta name="google-site-verification" content="([^"]+)"/g)];
 if (googleVerification.length !== 1 || !googleVerification[0]?.[1]?.trim()) failures.push('Homepage must retain the Google Search Console ownership tag in its head');
@@ -129,7 +131,19 @@ for (const page of manifest.pages.filter(page => page.html.includes('class="arti
   if (!/<details class="article-contents[^\"]*">/.test(page.html)) failures.push(`${page.route}: contents must use a closed native disclosure`);
   if (!page.html.includes('Review scope &amp; publication') || !page.html.includes('data-review-date')) failures.push(`${page.route}: compact article metadata must preserve scope and date`);
 }
-if (!readFileSync(routeFile('/tools/child-savings-account-comparison/'), 'utf8').includes('id="purpose-overview"')) failures.push('Comparison must retain its purpose-first overview');
+if (!readFileSync(routeFile('/guides/child-savings-account-comparison/'), 'utf8').includes('id="purpose-overview"')) failures.push('Comparison guide must retain its purpose-first overview');
+if (existsSync(routeFile('/tools/child-savings-account-comparison/'))) failures.push('Former comparison URL must redirect, not generate a second indexable copy');
+const redirectFile = join(root, '_redirects');
+if (!existsSync(redirectFile)) failures.push('Missing Cloudflare redirects');
+else {
+  const rules = readFileSync(redirectFile, 'utf8').split(/\r?\n/).map(line => line.trim()).filter(line => line && !line.startsWith('#'));
+  if (rules.length !== permanentRedirects.length) failures.push('Cloudflare redirect file must match the checked redirect inventory');
+  for (const { path, destination } of permanentRedirects) {
+    if (!rules.includes(`${path} ${destination} 301`)) failures.push(`Missing checked permanent redirect: ${path}`);
+    const target = destination.endsWith('/') ? routeFile(destination) : join(root, destination);
+    if (!existsSync(target)) failures.push(`Redirect destination is missing from the build: ${destination}`);
+  }
+}
 if (!growthHtml.includes('min="2026-07-04"')) failures.push('Growth form must retain the statutory earliest contribution date');
 if (!growthHtml.includes('id="growth-timeline"') || !growthHtml.includes('id="growth-yearly-rows"')) failures.push('Growth result must retain its chart and yearly data table');
 if (!/<\/section>\s*<\/div>\s*<section\b[^>]*id="growth-timeline"/.test(growthHtml)) failures.push('Timeline must follow the calculator grid so the sticky result cannot cover it');

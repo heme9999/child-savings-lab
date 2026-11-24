@@ -4,16 +4,16 @@ import SavingsPreview from '../components/SavingsPreview.astro';
 import GoalIllustration from '../components/GoalIllustration.astro';
 import '../styles/home.css';
 ---
-<BaseLayout title="Child Savings Guides & Free Calculators" description="Free, independent tools and source-linked guides to explore Trump Accounts, 529 plans, and other ways to save for a child. Start with your question.">
+<BaseLayout title="Trump Account & Child Savings Calculators" description="Use a free Trump Account calculator and eligibility checker, then compare child savings options. Explore source-linked family guides with no signup.">
   <div class="home-page">
     <section class="home-hero">
       <div class="shell home-hero-grid">
         <div class="home-hero-copy">
           <div class="eyebrow"><span class="little-sun" aria-hidden="true">✳</span> Big futures. Small beginnings.</div>
-          <h1>Child savings.<br /> A clearer <em>first step.</em></h1>
-          <p class="lede">You don’t need all the answers to start. Explore clear guides and free tools for saving for a child—from Trump Accounts to 529 plans and beyond.</p>
+          <h1>Trump Account calculator<br /> and <em>family guide</em></h1>
+          <p class="lede">Explore a contribution plan, check your next account step, and compare savings options for a child. Free, independent tools and source-linked guides, with no signup.</p>
           <div class="hero-actions">
-            <a class="button" href="/tools/">Explore free tools <span aria-hidden="true">→</span></a>
+            <a class="button" href="/tools/trump-account-growth-calculator/">Open the calculator <span aria-hidden="true">→</span></a>
             <a class="home-text-link" href="#start">Find my starting point <span aria-hidden="true">↓</span></a>
           </div>
           <p class="home-hero-reassurance"><span aria-hidden="true">✓</span> No sign-up. No SSNs or account numbers. Just a place to start.</p>
@@ -26,7 +26,7 @@ import '../styles/home.css';
     <section class="home-start" id="start" aria-labelledby="start-heading">
       <div class="shell">
         <div class="home-section-heading">
-          <div><div class="eyebrow">Start with your question</div><h2 id="start-heading">What’s on your mind?</h2></div>
+          <div><div class="eyebrow">Start with your question</div><h2 id="start-heading">Check Trump Account eligibility</h2></div>
           <p>Choose one thing to understand today.<br />You can explore the rest as you go.</p>
         </div>
         <div class="question-grid">
@@ -42,13 +42,14 @@ import '../styles/home.css';
             <p>Explore a Trump Account scenario with family contributions, fees, and different hypothetical returns. No promises—just transparent math.</p>
             <span class="question-cta">Open the growth calculator <span aria-hidden="true">↗</span></span>
           </a>
-          <a class="question-card compare-card" href="/tools/child-savings-account-comparison/">
+          <a class="question-card compare-card" href="/guides/child-savings-account-comparison/">
             <div class="question-card-top"><span class="question-label">Understand the choices</span><GoalIllustration kind="compare" /></div>
             <h3>Which account fits which goal?</h3>
             <p>Compare education savings, custodial accounts, retirement pathways, and disability savings by purpose—not by a sponsored ranking.</p>
-            <span class="question-cta">Compare five account types <span aria-hidden="true">↗</span></span>
+            <span class="question-cta">Read the account comparison <span aria-hidden="true">↗</span></span>
           </a>
         </div>
+        <p class="result-help">The checker separates reported account status from eligibility for a new election, readiness for contributions, and the pilot amount. Those answers can differ. If you are unsure about an answer, keep it unresolved and follow the official status-checking route. A checklist result cannot authenticate an account, verify your relationship to a child, or replace instructions from the IRS or the receiving trustee.</p>
       </div>
     </section>
 
@@ -56,16 +57,17 @@ import '../styles/home.css';
       <div class="shell goals-grid">
         <div>
           <div class="eyebrow">A goal before an account</div>
-          <h2 id="goals-heading">There’s more than one way<br />to save for their future.</h2>
+          <h2 id="goals-heading">Trump Account vs 529</h2>
           <p>College. A longer-term head start. Support for disability-related needs. Different goals bring different rules, ownership, and trade-offs.</p>
-          <a class="home-text-link" href="/tools/child-savings-account-comparison/">See the purpose-first comparison <span aria-hidden="true">→</span></a>
+          <p>A 529 plan starts with an education goal; a Trump Account follows a different retirement-account framework. Compare who controls the money, permitted uses, and withdrawal restrictions before comparing balances. Our <a href="/compare/trump-account-vs-529/">Trump Account vs. 529 guide</a> explains those differences without ranking providers.</p>
+          <a class="home-text-link" href="/guides/child-savings-account-comparison/">See the purpose-first comparison <span aria-hidden="true">→</span></a>
         </div>
         <div class="goal-map" role="list" aria-label="Account types to learn about">
           <div role="listitem"><span class="goal-map-symbol" aria-hidden="true">01</span><span><strong>Education</strong><small><a href="/guides/529-plans/">Learn about 529 plans →</a></small></span></div>
           <div role="listitem"><span class="goal-map-symbol" aria-hidden="true">02</span><span><strong>Long-term child investing</strong><small><a href="/trump-accounts/">Understand Trump Account restrictions →</a></small></span></div>
-          <div role="listitem"><span class="goal-map-symbol" aria-hidden="true">03</span><span><strong>A flexible gift to a child</strong><small><a href="/tools/child-savings-account-comparison/#custodial-accounts">Learn UGMA/UTMA ownership trade-offs →</a></small></span></div>
-          <div role="listitem"><span class="goal-map-symbol" aria-hidden="true">04</span><span><strong>Retirement with earned income</strong><small><a href="/tools/child-savings-account-comparison/#custodial-roth-ira">Understand Custodial Roth IRAs →</a></small></span></div>
-          <div role="listitem"><span class="goal-map-symbol" aria-hidden="true">05</span><span><strong>Disability-related expenses</strong><small><a href="/tools/child-savings-account-comparison/#able-accounts">Explore ABLE eligibility and qualified uses →</a></small></span></div>
+          <div role="listitem"><span class="goal-map-symbol" aria-hidden="true">03</span><span><strong>A flexible gift to a child</strong><small><a href="/guides/child-savings-account-comparison/#custodial-accounts">Learn UGMA/UTMA ownership trade-offs →</a></small></span></div>
+          <div role="listitem"><span class="goal-map-symbol" aria-hidden="true">04</span><span><strong>Retirement with earned income</strong><small><a href="/guides/child-savings-account-comparison/#custodial-roth-ira">Understand Custodial Roth IRAs →</a></small></span></div>
+          <div role="listitem"><span class="goal-map-symbol" aria-hidden="true">05</span><span><strong>Disability-related expenses</strong><small><a href="/guides/child-savings-account-comparison/#able-accounts">Explore ABLE eligibility and qualified uses →</a></small></span></div>
         </div>
       </div>
     </section>
@@ -74,10 +76,10 @@ import '../styles/home.css';
       <div class="shell topic-panel">
         <div class="topic-intro">
           <span class="topic-tag">In focus: Trump Accounts</span>
-          <h2 id="topic-heading">Heard the headlines?<br />Here’s what to check next.</h2>
-          <p>Start with account status. Then understand claiming, activation, and the separate $1,000 pilot election—before planning contributions.</p>
+          <h2 id="topic-heading">Trump Account contribution limits</h2>
+          <p>For 2026 and 2027, most family and employer deposits share a $5,000 yearly limit. An employer contribution is part of that total, not an extra allowance. The pilot contribution is separate. <a href="https://www.irs.gov/instructions/i4547">Check the IRS contribution instructions</a> and our calendar-year examples before planning deposits.</p>
           <a class="button" href="/trump-accounts/">Read the plain-English guide <span aria-hidden="true">→</span></a>
-          <p class="topic-source-date">Rules reviewed October 8, 2026 · Sources linked in each guide</p>
+          <p class="topic-source-date">Homepage contribution summary checked November 24, 2026 against IRS instructions. Individual guide review dates are shown on each page.</p>
         </div>
         <div class="topic-guides">
           <a href="/forms/form-4547-guide/"><span class="guide-number" aria-hidden="true">01</span><span><strong>Do I still need Form 4547?</strong><small>What auto enrollment changes—and what it doesn’t.</small></span><span aria-hidden="true">↗</span></a>
@@ -88,10 +90,28 @@ import '../styles/home.css';
       </div>
     </section>
 
+    <section class="section tint" aria-labelledby="form-guide-heading">
+      <div class="article-body shell">
+        <h2 id="form-guide-heading">Form 4547: electing the $1,000 deposit</h2>
+        <p>An account and a pilot election are separate steps. The <a href="https://www.irs.gov/trumpaccounts">IRS Trump Accounts page</a> explains how to claim an automatically opened account and when to elect the pilot contribution. Check the official record first, especially if a form or election is already pending. Our <a href="/forms/form-4547-guide/">Form 4547 guide</a> helps you distinguish those situations; it does not file anything or confirm a payment.</p>
+        <p>The <a href="https://www.irs.gov/faqs/trump-accounts-frequently-asked-questions">IRS eligibility FAQ</a> describes the separate pilot requirements, including the 2025–2028 birth window and U.S. citizenship. Use the checker to understand which question to investigate, then complete any account action through the official service. Never send us a child’s name, Social Security number, tax return, or account credentials. The checker can be explored with fictional answers.</p>
+
+        <h2>Employer Trump Account contributions</h2>
+        <p>If an employer offers a contribution program, ask the benefits team about participation, payment dates, and the receiving account’s readiness. The <a href="https://www.irs.gov/instructions/i4547">IRS instructions</a> describe a $2,500 Section 128 employer limit within the shared $5,000 annual contribution limit. A benefit is not confirmed simply because a calculator has an employer field. Our <a href="/employers/trump-account-benefit-guide/">employer guide</a> separates published guidance from proposed rules and lists questions for HR and payroll.</p>
+        <p>Once you have an illustrative annual employer amount, enter it under Advanced assumptions in the growth calculator. Check the calendar-year contribution table as well as the final balance: monthly family deposits and an annual employer deposit can interact differently in a partial first year. The model cannot know amounts already deposited elsewhere, future benefit changes, or your remaining legal contribution capacity. Keep those checks separate from the projection.</p>
+
+        <h2>How to use a Trump Account growth estimate</h2>
+        <p>Begin with a monthly contribution you want to explore, choose an assumed annual return, and inspect the dates. The homepage example uses a fictional child and a fixed schedule; it is not a prediction for your household. In the <a href="/tools/trump-account-growth-calculator/">full growth calculator</a>, you can change the starting balance, employer deposits, pilot assumption, and fees, then read the yearly table or print the assumptions with the result.</p>
+        <p>Compare scenarios using the same dates and deposit schedule. A larger hypothetical balance may reflect more deposits rather than a better outcome. Read the contribution total, modeled growth, and fee impact separately. The illustration excludes taxes, inflation, withdrawals, and changing market returns. Neither the $1,000 pilot amount nor any investment gain is guaranteed by a result shown here. Our <a href="/methodology/#worked-examples">worked examples and methodology</a> explain what can be reproduced and what the model leaves out.</p>
+        <p>For account selection, return to the purpose of the money. Education, an irrevocable gift, and retirement saving are different questions. The <a href="/guides/child-savings-account-comparison/">five-account reading guide</a> compares purposes and control, while the <a href="/tools/">tools directory</a> explains the two interactive tools. This publication helps you prepare better questions; it does not open accounts, choose investments, or provide personalized tax, legal, investment, or benefits advice.</p>
+        <p class="result-help">Account and pilot summary links checked November 24, 2026 against IRS.gov. Software versions and the review dates of individual sources are listed separately.</p>
+      </div>
+    </section>
+
     <section class="home-trust" aria-labelledby="trust-heading">
       <div class="shell">
         <div class="home-section-heading">
-          <div><div class="eyebrow">Clarity you can check</div><h2 id="trust-heading">Less guesswork. More understanding.</h2></div>
+          <div><div class="eyebrow">Clarity you can check</div><h2 id="trust-heading">How we check Trump Account information</h2></div>
           <a class="home-text-link" href="/methodology/">How we work <span aria-hidden="true">→</span></a>
         </div>
         <div class="trust-grid">

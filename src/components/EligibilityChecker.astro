@@ -22,7 +22,8 @@ const initial = checkEligibility({
       <div class="form-grid">
         <div class="field">
           <label for="birth-date">Child’s date of birth</label>
-          <input id="birth-date" name="birthDate" type="date" required />
+          <input id="birth-date" name="birthDate" type="date" min="1900-01-01" aria-describedby="birth-date-help" required />
+          <small id="birth-date-help">Use a full four-digit year, for example 2026. The separate pilot birth-year window is checked after you complete the date.</small>
         </div>
         <fieldset class="field full">
           <legend>Was the child’s SSN valid for employment and issued before the relevant election?</legend>

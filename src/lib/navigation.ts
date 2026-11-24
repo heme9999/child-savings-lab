@@ -2,7 +2,7 @@ const items = [
   { label: 'Trump Accounts', href: '/trump-accounts/' },
   { label: '529 plans', href: '/guides/529-plans/' },
   { label: 'Tools', href: '/tools/' },
-  { label: 'Compare', href: '/tools/child-savings-account-comparison/' },
+  { label: 'Compare', href: '/guides/child-savings-account-comparison/' },
   { label: 'Sources', href: '/sources/' }
 ];
 

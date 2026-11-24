@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
-import { missingPaths, publicSiteUrl, readBuildManifest, validateHttpPage, validateSitemapConsistency } from './lib/site-manifest.mjs';
+import { missingPaths, permanentRedirects, publicSiteUrl, readBuildManifest, validateHttpPage, validateHttpRedirect, validateSitemapConsistency } from './lib/site-manifest.mjs';
 import { assetMime, collectReleaseAssets, validateAssetResponse } from './lib/seo-checks.mjs';
 
 // Check the hosting layer, not Astro's dev server: a visible error page with HTTP 200 still fails.
@@ -24,6 +24,7 @@ async function main() {
   const cases = [
     ...pages.map((page) => ({ path: page.route, status: 200, page })),
     ...missingPaths.map((path) => ({ path, status: 404, page: notFound })),
+    ...permanentRedirects.map(redirect => ({ ...redirect, status: 301 })),
     { path: '/sitemap-index.xml', status: 200, body: manifest.indexXml, contentType: 'xml' },
     ...sitemap.sitemapUrls.map((url) => ({ path: new URL(url).pathname, status: 200, body: manifest.sitemapFiles.get(new URL(url).pathname), contentType: 'xml' })),
     { path: '/robots.txt', status: 200, body: readFileSync(resolve(root, 'robots.txt'), 'utf8'), contentType: 'text/plain' },
@@ -41,6 +42,14 @@ async function main() {
           const [get, head] = await Promise.all(['GET', 'HEAD'].map((method) => fetch(url, { method, redirect: 'manual', signal: AbortSignal.timeout(15000) })));
           const errors = [];
           if (head.status !== check.status) errors.push(`HEAD expected HTTP ${check.status}, received ${head.status}`);
+          if (check.destination) {
+            for (const [method, response] of [['GET', get], ['HEAD', head]]) {
+              errors.push(...validateHttpRedirect({ status: response.status, location: response.headers.get('location'), destination: check.destination, siteUrl: deployment }).map(message => `${method} ${message}`));
+            }
+            if (errors.length) failures.push(`${check.path}: ${errors.join('; ')}`);
+            console.log(`${errors.length ? 'FAIL' : 'PASS'} GET ${get.status} / HEAD ${head.status} ${check.path} → ${check.destination}`);
+            continue;
+          }
           if (check.assetBytes) {
             const bytes = Buffer.from(await get.arrayBuffer());
             errors.push(...validateAssetResponse({ status: get.status, bytes, contentType: get.headers.get('content-type'), expectedBytes: check.assetBytes, expectedMime: check.expectedMime }));
@@ -72,7 +81,7 @@ async function main() {
     }
     await Promise.all(Array.from({ length: 4 }, worker));
     if (!failures.length) {
-      console.log(`Deployment regression passed at ${deployment.origin}: ${pages.length} public pages, ${missingPaths.length} genuine 404 paths, ${cases.length - pages.length - missingPaths.length - assets.length} sitemap/robots resources, and ${assets.length} JS/CSS/social assets; GET and HEAD checked, asset MIME and SHA-256 matched.`);
+      console.log(`Deployment regression passed at ${deployment.origin}: ${pages.length} public pages, ${missingPaths.length} genuine 404 paths, ${permanentRedirects.length} permanent redirects, ${cases.length - pages.length - missingPaths.length - assets.length - permanentRedirects.length} sitemap/robots resources, and ${assets.length} JS/CSS/social assets; GET and HEAD checked, redirect Locations verified, asset MIME and SHA-256 matched.`);
       return;
     }
     if (attempt === maxAttempts) throw new Error(`Deployment regression failed:\n- ${failures.join('\n- ')}`);

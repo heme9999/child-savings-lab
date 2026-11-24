@@ -54,6 +54,7 @@ export function checkEligibility(input: EligibilityInput): EligibilityResult {
   };
   if (!Number.isInteger(input.checkYear) || input.checkYear < 2026 || input.checkYear > 2100) invalid('checkYear', 'Choose a review year from 2026 through 2100.');
   if (!isValidIsoDate(input.birthDate)) invalid('birthDate', 'Enter a complete, valid date of birth.');
+  else if (Number(input.birthDate.slice(0, 4)) < 1900) invalid('birthDate', 'Check the birth year: enter a full four-digit year from 1900 onward, for example 2026.');
   else if (Number.isInteger(input.checkYear) && input.birthDate > input.checkYear + '-12-31') invalid('birthDate', 'The birth date must be on or before the end of the review year.');
   if (!['unknown', 'auto-account', 'claim-started', 'manual-election-only', 'active-account', 'no-account-confirmed'].includes(input.accountStatus)) invalid('accountStatus', 'Choose an account status, including Unknown if you have not checked.');
   if (!['guardian-or-legal-custodian', 'beneficiary-with-legal-capacity', 'not-sure'].includes(input.claimAuthority)) invalid('claimAuthority', 'Choose a claim-authority answer.');

@@ -6,6 +6,7 @@ import SourceLinks from '../components/SourceLinks.astro';
 
 interface Props {
   title: string;
+  documentTitle?: string;
   description: string;
   eyebrow?: string;
   sourceIds?: string[];
@@ -17,6 +18,7 @@ interface Props {
 
 const {
   title,
+  documentTitle,
   description,
   eyebrow = 'Independent family finance guide',
   sourceIds = [],
@@ -26,7 +28,7 @@ const {
   contents = []
 } = Astro.props;
 ---
-<BaseLayout title={title} description={description} type="article" verifiedAt={verifiedAt}>
+<BaseLayout title={title} documentTitle={documentTitle} description={description} type="article" verifiedAt={verifiedAt}>
   <div class="shell">
     <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: title }]} />
   </div>

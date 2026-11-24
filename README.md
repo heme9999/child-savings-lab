@@ -45,9 +45,9 @@ Calculator inputs stay in the browser. The site does not ask for or store names,
 
 The homepage passes only allowlisted fictional presets through URL fragments to the full growth calculator. Custom financial inputs and birth dates are not serialized. Edited inputs hide stale results; missing required answers do not produce an eligibility rejection. Printed growth reports include their assumptions and calculation version.
 
-The `/tools/` directory explains each tool’s scope. Form errors provide inline descriptions and keyboard-focusable links, preserve existing help text, and reveal invalid advanced fields. Reports preserve the calculation input precision instead of rounding small fee assumptions to zero. DOM feedback tests use jsdom; they do not replace real-browser layout and screen-reader checks.
+The `/tools/` directory distinguishes the two interactive tools from reading guides. The five-account comparison lives at `/guides/child-savings-account-comparison/`; both forms of its old `/tools/` URL permanently redirect there. `/sitemap.xml` permanently redirects to the child sitemap. Production regression checks verify all three redirects with GET/HEAD and exact Location headers. Form errors provide inline descriptions and keyboard-focusable links, preserve existing help text, and reveal invalid advanced fields. Reports preserve the calculation input precision instead of rounding small fee assumptions to zero. DOM feedback tests use jsdom; they do not replace real-browser layout and screen-reader checks.
 
-Mobile navigation is a native disclosure that works without JavaScript; optional enhancements close it on Escape or an outside press. Primary navigation marks the current section and has touch targets at least 44px high. Tool headers put the first inputs within the tested narrow-screen viewports. Explicit tool submission focuses and reveals the result panel instantly; editing still hides stale results. Hover effects require a fine hover-capable pointer, and moving press feedback respects reduced motion. Browser viewport checks do not replace real-phone keyboard, zoom, and touch checks.
+Mobile navigation is a native disclosure that works without JavaScript; optional enhancements close it on Escape or an outside press. Primary navigation marks the current section and has touch targets at least 44px high. Responsive layout and wrapping must be checked in the browser for the page being changed. Explicit tool submission focuses and reveals the result panel instantly; editing still hides stale results. Hover effects require a fine hover-capable pointer, and moving press feedback respects reduced motion. Browser viewport checks do not replace real-phone keyboard, zoom, and touch checks.
 
 Article scope/publication details and contents use native disclosures, while review dates stay visible. The comparison offers an early purpose-first overview. Short eligibility select labels retain full, wrapping explanations that synchronize after selection and native reset. Result panels are not atomic live regions: separate persistent status nodes announce brief updates. The primary growth balance is visually distinct from secondary metrics. Focus colors are checked against light and dark surfaces, and anchor/error navigation is immediate by default.
 
@@ -57,6 +57,7 @@ The production URL allows crawling and indexing. Version and branch preview URLs
 
 ## Documentation
 
+- [Six-week discovery experiment](docs/discovery-experiment-2026-11-24.md)
 - `docs/project-plan.md`
 - `docs/research/serp-audit-2026-10-08.md`
 - `docs/launch-report.md`

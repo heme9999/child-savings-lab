@@ -1,0 +1,5 @@
+# Preserve the former guide URL and its inbound links.
+/tools/child-savings-account-comparison/ /guides/child-savings-account-comparison/ 301
+/tools/child-savings-account-comparison /guides/child-savings-account-comparison/ 301
+# Convenient sitemap entry point; the existing sitemap index remains available.
+/sitemap.xml /sitemap-0.xml 301

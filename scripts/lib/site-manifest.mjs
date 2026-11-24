@@ -2,6 +2,11 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
 export const publicSiteUrl = 'https://child-savings-lab-mvp.pages.dev/';
+export const permanentRedirects = [
+  { path: '/tools/child-savings-account-comparison/', destination: '/guides/child-savings-account-comparison/' },
+  { path: '/tools/child-savings-account-comparison', destination: '/guides/child-savings-account-comparison/' },
+  { path: '/sitemap.xml', destination: '/sitemap-0.xml' }
+];
 export const missingPaths = [
   '/compare/529-plans-vs-custodial-accounts/',
   '/this-page-does-not-exist-12345/',
@@ -116,5 +121,18 @@ export function validateHttpPage({ status, html, headersNoindex = '', expectedSt
   if (typeof expectedPage.html === 'string' && html.trim() !== expectedPage.html.trim()) failures.push('HTML content differs from the built file (stale content or asset references)');
   if (expectedStatus === 404 && !metadata.noindex) failures.push('404 response is missing noindex');
   if (requireIndexable && expectedStatus === 200 && (metadata.noindex || /noindex/i.test(headersNoindex))) failures.push('public page is unexpectedly noindex');
+  return failures;
+}
+
+export function validateHttpRedirect({ status, location, destination, siteUrl = publicSiteUrl }) {
+  const failures = [];
+  if (status !== 301) failures.push(`expected HTTP 301, received ${status}`);
+  if (!location) failures.push('redirect is missing its Location header');
+  else {
+    try {
+      const target = new URL(location, siteUrl);
+      if (target.href !== new URL(destination, siteUrl).href) failures.push('redirect Location differs from the intended same-site destination');
+    } catch { failures.push('redirect Location is not a valid URL'); }
+  }
   return failures;
 }

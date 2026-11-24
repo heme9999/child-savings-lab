@@ -6,15 +6,16 @@ import { pageSchema, websiteSchema, socialCardForPath } from '../lib/seo';
 
 interface Props {
   title: string;
+  documentTitle?: string;
   description: string;
   type?: 'website' | 'article';
   verifiedAt?: string;
   noindex?: boolean;
 }
 
-const { title, description, type = 'website', verifiedAt, noindex = false } = Astro.props;
+const { title, documentTitle, description, type = 'website', verifiedAt, noindex = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
-const fullTitle = title === 'Child Savings Lab' ? title : `${title} | Child Savings Lab`;
+const fullTitle = documentTitle ?? (title === 'Child Savings Lab' ? title : `${title} | Child Savings Lab`);
 const site = Astro.site ?? new URL('/', canonical);
 const jsonLd = pageSchema({ title, description, canonical, site, type, verifiedAt });
 const socialCard = socialCardForPath(Astro.url.pathname);

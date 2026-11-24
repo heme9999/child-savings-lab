@@ -6,7 +6,7 @@ describe('primary navigation location', () => {
     ['/tools/', 'Tools', 'page'],
     ['/tools/trump-account-growth-calculator/', 'Tools', 'true'],
     ['/tools/trump-account-eligibility-checker/', 'Tools', 'true'],
-    ['/tools/child-savings-account-comparison/', 'Compare', 'page'],
+    ['/guides/child-savings-account-comparison/', 'Compare', 'page'],
     ['/compare/trump-account-vs-529/', 'Compare', 'true'],
     ['/guides/529-plans/', '529 plans', 'page'],
     ['/trump-accounts/', 'Trump Accounts', 'page'],
@@ -21,6 +21,6 @@ describe('primary navigation location', () => {
     expect(primaryNavigation(path).filter((item) => item.current)).toHaveLength(0);
   });
   it('normalizes a missing trailing slash without duplicating Compare and Tools', () => {
-    expect(primaryNavigation('/tools/child-savings-account-comparison')).toEqual(primaryNavigation('/tools/child-savings-account-comparison/'));
+    expect(primaryNavigation('/guides/child-savings-account-comparison')).toEqual(primaryNavigation('/guides/child-savings-account-comparison/'));
   });
 });
