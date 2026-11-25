@@ -2,11 +2,12 @@
 import ArticleLayout from '../../layouts/ArticleLayout.astro';
 import { siteContact } from '../../data/site';
 ---
-<ArticleLayout title="Contact" description="How to report a factual issue, source update, calculation concern, accessibility problem, or general question about Child Savings Lab.">
+<ArticleLayout title="Contact" description="How to report a factual issue, source update, calculation concern, accessibility problem, or general question about Child Savings Lab." verifiedAt="2026-11-25" verificationUrl="https://www.irs.gov/trumpaccounts" verificationScope="Publisher contact instructions checked separately; IRS cross-check covers the linked program-help resources." effective="Publisher contact instructions and IRS help links reviewed November 25, 2026">
   <h2>Contact the independent publisher</h2>
   <p><a class="button" href={siteContact.emailHref}>Email the publisher</a></p>
   <p>Child Savings Lab is individually operated. For source corrections, calculator questions, accessibility concerns, privacy requests, or general feedback, email <a href={siteContact.emailHref}>{siteContact.email}</a>.</p>
   <p>This inbox is for questions about the publication and its tools. We do not offer individual tax, legal, investment, payroll, or benefits advice by email. Please do not send financial documents or account credentials.</p>
+  <p>For official account and pilot-election questions, use the <a href="https://www.irs.gov/trumpaccounts">IRS Trump Accounts page</a> and <a href="https://www.irs.gov/faqs/trump-accounts-frequently-asked-questions">IRS questions and answers</a>.</p>
   <h2>Useful details for a report</h2>
   <ul>
     <li>The page URL and the statement or output in question.</li>

@@ -1,10 +1,11 @@
 ---
 import { formatReviewDate } from '../lib/dates';
-interface Props { date: string; effective: string; }
-const { date, effective } = Astro.props;
+interface Props { date: string; effective: string; verificationUrl?: string; verificationScope?: string; }
+const { date, effective, verificationUrl, verificationScope } = Astro.props;
 ---
 <div class="article-meta">
-  <p>Last verified: <time datetime={date} data-review-date>{formatReviewDate(date)}</time></p>
+  <p>Last verified: <time datetime={date} data-review-date>{formatReviewDate(date)}</time>{verificationUrl && <> against <a href={verificationUrl}>IRS.gov</a></>}</p>
+  {verificationScope && <p>{verificationScope}</p>}
   <details>
     <summary>Review scope &amp; publication</summary>
     <p><strong>Effective for:</strong> {effective}</p>

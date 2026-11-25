@@ -14,11 +14,7 @@ const initial = isValidIsoDate(value) ? value : '';
 const [year = '', month = '', day = ''] = initial.split('-');
 const firstYear = Number(minDate.slice(0, 4));
 const lastYear = 2100;
-const pivot = Math.max(firstYear, Math.min(lastYear, Number(year) || new Date().getUTCFullYear()));
-const years = [
-  ...Array.from({ length: pivot - firstYear + 1 }, (_, index) => pivot - index),
-  ...Array.from({ length: lastYear - pivot }, (_, index) => pivot + index + 1)
-];
+const years = Array.from({ length: lastYear - firstYear + 1 }, (_, index) => lastYear - index);
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 ---
 <fieldset class="field date-field" data-date-fields data-min-date={minDate} aria-describedby={`${id}-help`}>
