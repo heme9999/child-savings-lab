@@ -3,6 +3,7 @@ import { FIRST_CONTRIBUTION_DATE, projectGrowth, projectScenarios } from '../lib
 import { previewAssumptions } from '../lib/calculators/preview';
 import { growthAssumptions, contributionNote } from '../lib/calculators/form';
 import GrowthTimeline from './GrowthTimeline.astro';
+import DateFields from './DateFields.astro';
 import { growthDateSummary, growthExtraSummary } from '../lib/forms/assumptions';
 const exampleInput = previewAssumptions;
 const example = projectGrowth(exampleInput);
@@ -43,15 +44,8 @@ defaultAnswers.set('accountFeeRate', '0');
       <details class="form-disclosure" id="date-assumptions">
         <summary>Dates &amp; pilot amount <span class="assumption-summary" id="growth-date-summary">{growthDateSummary(defaultAnswers)}</span></summary>
         <div class="form-grid">
-          <div class="field">
-            <label for="birth-date">Child’s date of birth</label>
-            <input id="birth-date" name="birthDate" type="date" value={exampleInput.birthDate} required />
-          </div>
-          <div class="field">
-            <label for="projection-start-date">Projection start date</label>
-            <input id="projection-start-date" name="projectionStartDate" type="date" min={FIRST_CONTRIBUTION_DATE} value={exampleInput.projectionStartDate} aria-describedby="start-date-help" required />
-            <small id="start-date-help">July 4, 2026 or later, and not before the account can accept deposits.</small>
-          </div>
+          <DateFields id="birth-date" name="birthDate" label="Child’s date of birth" value={exampleInput.birthDate} />
+          <DateFields id="projection-start-date" name="projectionStartDate" label="Projection start date" value={exampleInput.projectionStartDate} minDate={FIRST_CONTRIBUTION_DATE} help="July 4, 2026 or later, and not before the account can accept deposits." />
           <fieldset class="field full">
           <legend>Include the $1,000 pilot amount?</legend>
           <div class="radio-row">
@@ -84,12 +78,12 @@ defaultAnswers.set('accountFeeRate', '0');
           </div>
           <div class="field">
             <label for="fund-expense-rate">Eligible fund expense rate (%)</label>
-            <input id="fund-expense-rate" name="fundExpenseRate" type="number" min="0" max="0.1" step="any" value="0.10" inputmode="decimal" aria-describedby="fund-fee-help" required />
+            <input id="fund-expense-rate" name="fundExpenseRate" type="text" value="0.10" inputmode="decimal" aria-describedby="fund-fee-help" required />
             <small id="fund-fee-help">Maximum annual fund expense rate during the growth period: 0.10%.</small>
           </div>
           <div class="field">
             <label for="account-fee-rate">Separate account/trustee fee (%)</label>
-            <input id="account-fee-rate" name="accountFeeRate" type="number" min="0" max="5" step="any" value="0" inputmode="decimal" aria-describedby="account-fee-help" required />
+            <input id="account-fee-rate" name="accountFeeRate" type="text" value="0" inputmode="decimal" aria-describedby="account-fee-help" required />
             <small id="account-fee-help">Annual modeling assumption; confirm actual trustee fees and treatment.</small>
           </div>
         </div>
@@ -142,8 +136,10 @@ defaultAnswers.set('accountFeeRate', '0');
   import { growthChart } from '../lib/calculators/chart';
   import { inputFromPreviewHash } from '../lib/calculators/preview';
   import { growthDateSummary, growthExtraSummary } from '../lib/forms/assumptions';
+  import { enhanceDateFields } from '../lib/forms/date-fields';
 
   const form = document.querySelector<HTMLFormElement>('#growth-form');
+  if (form) enhanceDateFields(form);
   const errors = document.querySelector<HTMLElement>('#growth-errors');
   const feedback = form && errors ? formFeedback(form, errors) : null;
   const output = document.querySelector<HTMLElement>('#growth-output');

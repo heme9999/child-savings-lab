@@ -144,7 +144,7 @@ else {
     if (!existsSync(target)) failures.push(`Redirect destination is missing from the build: ${destination}`);
   }
 }
-if (!growthHtml.includes('min="2026-07-04"')) failures.push('Growth form must retain the statutory earliest contribution date');
+if (!growthHtml.includes('data-min-date="2026-07-04"')) failures.push('Growth form must retain the statutory earliest contribution date');
 if (!growthHtml.includes('id="growth-timeline"') || !growthHtml.includes('id="growth-yearly-rows"')) failures.push('Growth result must retain its chart and yearly data table');
 if (!/<\/section>\s*<\/div>\s*<section\b[^>]*id="growth-timeline"/.test(growthHtml)) failures.push('Timeline must follow the calculator grid so the sticky result cannot cover it');
 if (!growthHtml.includes('Statutory growth period ends')) failures.push('Growth result must distinguish the model cutoff and statutory growth-period end');

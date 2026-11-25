@@ -8,6 +8,12 @@ describe('calculator input and report contracts', () => {
     expect(Number.isNaN(formNumber(value))).toBe(true);
   });
   it('keeps an explicitly entered zero valid', () => { expect(formNumber('0')).toBe(0); });
+  it.each(['0x01', '0b1', '0o1', '0.10%', '0,10', 'Infinity'])('rejects non-decimal fee input: %s', (value) => {
+    expect(Number.isNaN(formNumber(value))).toBe(true);
+  });
+  it.each(['0.10', '.004', '1e-7'])('preserves decimal fee precision: %s', (value) => {
+    expect(formNumber(value)).toBe(Number(value));
+  });
   it('identifies a blank return rate by its field label', () => {
     const data = new FormData();
     Object.entries(previewAssumptions).forEach(([key, value]) => data.set(key, String(value)));

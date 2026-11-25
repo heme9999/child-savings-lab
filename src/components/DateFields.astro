@@ -1,0 +1,51 @@
+---
+import { isValidIsoDate } from '../lib/dates';
+
+interface Props {
+  id: string;
+  name: string;
+  label: string;
+  value?: string;
+  minDate?: string;
+  help?: string;
+}
+const { id, name, label, value = '', minDate = '1900-01-01', help = 'Choose the month, day, and full year. Fictional dates are welcome.' } = Astro.props;
+const initial = isValidIsoDate(value) ? value : '';
+const [year = '', month = '', day = ''] = initial.split('-');
+const firstYear = Number(minDate.slice(0, 4));
+const lastYear = 2100;
+const pivot = Math.max(firstYear, Math.min(lastYear, Number(year) || new Date().getUTCFullYear()));
+const years = [
+  ...Array.from({ length: pivot - firstYear + 1 }, (_, index) => pivot - index),
+  ...Array.from({ length: lastYear - pivot }, (_, index) => pivot + index + 1)
+];
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+---
+<fieldset class="field date-field" data-date-fields data-min-date={minDate} aria-describedby={`${id}-help`}>
+  <legend>{label}</legend>
+  <input type="hidden" id={id} name={name} value={initial} data-date-value data-feedback-target={`${id}-month`} data-field-label={label} />
+  <div class="date-parts">
+    <div>
+      <label for={`${id}-month`}>Month</label>
+      <select id={`${id}-month`} data-date-part="month" aria-describedby={`${id}-help`} required>
+        <option value="" selected={!month}>Month</option>
+        {months.map((label, index) => <option value={String(index + 1).padStart(2, '0')} selected={Number(month) === index + 1}>{label}</option>)}
+      </select>
+    </div>
+    <div>
+      <label for={`${id}-day`}>Day</label>
+      <select id={`${id}-day`} data-date-part="day" aria-describedby={`${id}-help`} required>
+        <option value="" selected={!day}>Day</option>
+        {Array.from({ length: 31 }, (_, index) => index + 1).map(number => <option value={String(number).padStart(2, '0')} selected={Number(day) === number}>{number}</option>)}
+      </select>
+    </div>
+    <div>
+      <label for={`${id}-year`}>Year</label>
+      <select id={`${id}-year`} data-date-part="year" aria-describedby={`${id}-help`} required>
+        <option value="" selected={!year}>Year</option>
+        {years.map(number => <option value={number} selected={Number(year) === number}>{number}</option>)}
+      </select>
+    </div>
+  </div>
+  <small id={`${id}-help`}>{help}</small>
+</fieldset>

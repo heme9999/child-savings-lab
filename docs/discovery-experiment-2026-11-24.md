@@ -20,6 +20,8 @@ The supplied commit `6881593` and branch `fix/low-cost-2026-11-09` were not foun
 
 The requested guide document title is exactly 74 characters. Its HTML-validation limit is scoped to that one built page; other pages retain the existing 70-character rule. Other recommended HTML checks remain enabled.
 
+The November 25 runtime follow-up replaces the localized native date editor with separate month, day and year selects in both tools. Canonical dates are emitted only when complete and valid; month/year changes clear impossible days. Supported old and future years remain available rather than conflating baseline account questions with the pilot birth window. Fee inputs are decimal text controls, avoiding native numeric accessibility approximations without rounding the calculation. Decimal syntax and existing financial limits remain validated. The pilot default remains No; code changes do not advance source-review dates or deepen the deferred guides.
+
 ## Authorized one-time Search Console operations
 
 Use only the verified `https://child-savings-lab-mvp.pages.dev/` property. Perform URL requests against the published revision. A successful receipt means a request was accepted, not that indexing succeeded.

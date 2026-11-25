@@ -1,6 +1,7 @@
 ---
 import { checkEligibility } from '../lib/eligibility/checkEligibility';
 import { accountStatusOptions, claimAuthorityOptions } from '../data/eligibility-options';
+import DateFields from './DateFields.astro';
 
 const initial = checkEligibility({
   checkYear: 2026,
@@ -20,11 +21,7 @@ const initial = checkEligibility({
     <form id="eligibility-form" novalidate>
       <div id="eligibility-errors"></div>
       <div class="form-grid">
-        <div class="field">
-          <label for="birth-date">Child’s date of birth</label>
-          <input id="birth-date" name="birthDate" type="date" min="1900-01-01" aria-describedby="birth-date-help" required />
-          <small id="birth-date-help">Use a full four-digit year, for example 2026. The separate pilot birth-year window is checked after you complete the date.</small>
-        </div>
+        <DateFields id="birth-date" name="birthDate" label="Child’s date of birth" help="Choose the month, day, and full year. The separate pilot birth-year window is checked after you complete the date." />
         <fieldset class="field full">
           <legend>Was the child’s SSN valid for employment and issued before the relevant election?</legend>
           <div class="radio-row">
@@ -133,6 +130,7 @@ const initial = checkEligibility({
 <script>
   import { checkEligibility } from '../lib/eligibility/checkEligibility';
   import { formNumber } from '../lib/calculators/form';
+  import { enhanceDateFields } from '../lib/forms/date-fields';
   import { formFeedback } from '../lib/forms/feedback';
   import { revealResult } from '../lib/forms/focus';
   import { describeSelection } from '../lib/forms/selection';
@@ -142,6 +140,7 @@ const initial = checkEligibility({
   import type { AccountStatus, ClaimAuthority, EligibilityInput, PilotElectionStatus } from '../lib/eligibility/types';
 
   const form = document.querySelector<HTMLFormElement>('#eligibility-form');
+  if (form) enhanceDateFields(form);
   const account = document.querySelector<HTMLElement>('#account-result');
   const funding = document.querySelector<HTMLElement>('#funding-result');
   const pilot = document.querySelector<HTMLElement>('#pilot-result');

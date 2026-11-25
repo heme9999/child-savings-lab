@@ -9,7 +9,8 @@ export function contributionNote(result: GrowthProjection): string {
 
 // Required blanks remain invalid, rather than Number('') silently becoming zero.
 export function formNumber(value: FormDataEntryValue | null): number {
-  if (typeof value !== 'string' || !value.trim()) return Number.NaN;
+  // Text decimal controls must not accept JavaScript-only numbers such as 0x10.
+  if (typeof value !== 'string' || !/^[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$/.test(value.trim())) return Number.NaN;
   return Number(value);
 }
 

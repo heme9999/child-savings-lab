@@ -26,9 +26,12 @@ export function formFeedback(form: HTMLFormElement, summary: HTMLElement) {
     const list = document.createElement('ul');
     for (const issue of issues) {
       const item = document.createElement('li');
-      const control = issue.field ? form.elements.namedItem(issue.field) : null;
+      const original = issue.field ? form.elements.namedItem(issue.field) : null;
+      const targetId = original instanceof HTMLElement ? original.getAttribute('data-feedback-target') : null;
+      const target = targetId ? form.ownerDocument.getElementById(targetId) : null;
+      const control = target && form.contains(target) ? target : original;
       if (control instanceof HTMLElement && control.id) {
-        const label = (control as HTMLInputElement).labels?.[0]?.textContent?.trim();
+        const label = (original instanceof HTMLElement ? original.getAttribute('data-field-label') : null) || (control as HTMLInputElement).labels?.[0]?.textContent?.trim();
         const message = label && !issue.message.startsWith(label) ? `${label}: ${issue.message}` : issue.message;
         const error = document.createElement('span');
         const id = `${form.id}-${control.id}-error-${marked.length}`;

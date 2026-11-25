@@ -125,6 +125,11 @@ summary > .assumption-summary { display: block; margin-top: .25rem; font-weight:
 .field.full { grid-column: 1 / -1; }
 .field label, fieldset legend { color: var(--deep); font-weight: 750; }
 .field small { color: #61706e; }
+.date-field { min-width: 0; }
+.date-field legend { margin-bottom: .35rem; }
+.date-parts { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .75fr) minmax(0, 1fr); gap: .5rem; }
+.date-parts label { display: block; margin-bottom: .35rem; font-size: .875rem; }
+.date-parts select { min-width: 0; padding-inline: .5rem; }
 .field .selection-detail { font-size: .9rem; color: var(--ink); overflow-wrap: anywhere; }
 input, select { min-height: 46px; width: 100%; padding: .65rem .75rem; border: 1px solid #829791; border-radius: 10px; background: white; color: var(--ink); font-size: 1rem; }
 input[aria-invalid="true"], select[aria-invalid="true"] { border: 2px solid var(--error); }
