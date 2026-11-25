@@ -11,6 +11,8 @@ interface Props {
   eyebrow?: string;
   sourceIds?: string[];
   verifiedAt?: string;
+  verificationUrl?: string;
+  verificationScope?: string;
   effective?: string;
   summary?: string[];
   contents?: { id: string; label: string }[];
@@ -23,6 +25,8 @@ const {
   eyebrow = 'Independent family finance guide',
   sourceIds = [],
   verifiedAt = '2026-10-08',
+  verificationUrl,
+  verificationScope,
   effective = '2026 rules',
   summary = [],
   contents = []
@@ -37,7 +41,7 @@ const {
       <div class="eyebrow">{eyebrow}</div>
       <h1>{title}</h1>
       <p class="lede">{description}</p>
-      <ArticleMeta date={verifiedAt} effective={effective} />
+      <ArticleMeta date={verifiedAt} effective={effective} verificationUrl={verificationUrl} verificationScope={verificationScope} />
     </header>
     <div class="article-body shell">
       {summary.length > 0 && <aside class="quick-summary" aria-label="At a glance"><strong>In 30 seconds</strong><ul>{summary.map((point) => <li>{point}</li>)}</ul></aside>}
