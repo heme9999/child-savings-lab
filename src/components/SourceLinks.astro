@@ -12,4 +12,5 @@ const records = ids.map((id) => sourceById[id]).filter((source): source is Sourc
       <li><a href={source.url} rel="external">{source.publisher}: {source.title}</a> <span class="source-status">{source.status}</span></li>
     ))}
   </ul>
+  <slot />
 </aside>

@@ -48,7 +48,7 @@ const {
       <slot name="overview" />
       {contents.length > 0 && <details class="article-contents print-hide"><summary>On this page <span>{contents.length} sections</span></summary><nav aria-label="On this page"><ol>{contents.map((item) => <li><a href={`#${item.id}`}>{item.label}</a></li>)}</ol></nav></details>}
       <slot />
-      {sourceIds.length > 0 && <SourceLinks ids={sourceIds} />}
+      {sourceIds.length > 0 && <SourceLinks ids={sourceIds}><slot name="additional-sources" /></SourceLinks>}
     </div>
   </article>
 </BaseLayout>
