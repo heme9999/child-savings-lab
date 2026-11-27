@@ -1,10 +1,9 @@
 ---
 import { formatReviewDate } from '../lib/dates';
-interface Props { date?: string; effective?: string; }
-const { date = '2026-10-08', effective = '2026 rules' } = Astro.props;
+interface Props { date: string; label: string; }
+const { date, label } = Astro.props;
 ---
 <div class="verified-badge" role="note">
   <span aria-hidden="true">✓</span>
-  <span><strong>Last verified:</strong> <time datetime={date} data-review-date>{formatReviewDate(date)}</time></span>
-  <span><strong>Effective for:</strong> {effective}</span>
+  <span><strong>{label}:</strong> <time datetime={date} data-review-date>{formatReviewDate(date)}</time></span>
 </div>
