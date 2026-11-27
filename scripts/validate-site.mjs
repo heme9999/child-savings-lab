@@ -110,7 +110,7 @@ for (const file of htmlFiles) {
 
 const homeHtml = readFileSync(routeFile('/'), 'utf8');
 if (pageMetadata(homeHtml).title !== 'Trump Account & Child Savings Calculators | Child Savings Lab') failures.push('Homepage must retain its approved Trump Account and child-savings title');
-if (pageMetadata(homeHtml).h1 !== 'Trump Account calculator and family guide') failures.push('Homepage must retain its approved H1');
+if (pageMetadata(homeHtml).h1 !== 'How to claim your child’s Trump Account') failures.push('Homepage must retain its approved H1');
 if (pageMetadata(readFileSync(routeFile('/trump-accounts/'), 'utf8')).title !== 'Trump Accounts Explained (2026): How They Work, $1,000 Pilot, How to Claim') failures.push('Trump Accounts guide must retain its approved document title');
 const homeHead = homeHtml.match(/<head>(.*?)<\/head>/is)?.[1] ?? '';
 const googleVerification = [...homeHead.matchAll(/<meta name="google-site-verification" content="([^"]+)"/g)];

@@ -3,6 +3,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import VerifiedBadge from '../../components/VerifiedBadge.astro';
 import { sources } from '../../data/sources';
+import { claimContextSources } from '../../data/claim-sources';
+import TrumpRuleNote from '../../components/TrumpRuleNote.astro';
 ---
 <BaseLayout title="Primary source library" description="The official government and regulatory sources used by Child Savings Lab, with status, historical limitations, and individual verification dates." verifiedAt="2026-10-12">
   <div class="shell"><Breadcrumbs items={[{label:'Home',href:'/'},{label:'Sources'}]} /></div>
@@ -28,6 +30,16 @@ import { sources } from '../../data/sources';
         </article>
       ))}
     </div>
+    <section class="article-body" id="claim-update-sources" aria-labelledby="claim-sources-heading">
+      <h2 id="claim-sources-heading">Account claims and gifts: November 27 source check</h2>
+      <p>Government guidance describes account rules. Donor statements and news coverage provide dated context about specific gifts and claims.</p>
+      <ul>
+        {claimContextSources.map(source => (
+          <li><a href={source.url}>{source.title}</a>. {source.publisher}, {source.date}. {source.scope}</li>
+        ))}
+      </ul>
+      <TrumpRuleNote />
+    </section>
     <div class="callout"><strong>Status matters:</strong> temporary regulations are currently effective; proposed rules are not final. Pages relying on proposed details display that limitation.</div>
   </section>
 </BaseLayout>

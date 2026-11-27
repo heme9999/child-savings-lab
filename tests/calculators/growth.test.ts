@@ -34,6 +34,23 @@ describe('growth projection', () => {
     expect(projectGrowth({ ...base, includePilot: true }).totalContributed).toBe(1000);
   });
 
+  it('uses the Dell gift once as opening assets in both the projection and chart', () => {
+    const input = { ...base, includeDell: true, birthDate: '2020-06-15', initialAmount: 50 };
+    const result = projectGrowth(input);
+    expect(result.endingBalance).toBe(300);
+    expect(result.totalContributed).toBe(300);
+    expect(result.yearly.every(row => row.familyContributions === 0 && row.employerContributions === 0)).toBe(true);
+    expect(growthChart(input, result).contributionPath).toMatch(/^M20\.00 20\.00/);
+  });
+
+  it('rejects stacking the Dell and pilot amounts for a child in either cohort', () => {
+    for (const birthDate of ['2024-12-31', '2025-01-01']) {
+      const input = { ...base, birthDate, includeDell: true, includePilot: true };
+      expect(validateGrowthInput(input)).toHaveLength(1);
+      expect(() => projectGrowth(input)).toThrow(/assumption requires a birth date/);
+    }
+  });
+
   it('models monthly family contributions to a target birthday', () => {
     const result = projectGrowth({ ...base, familyContribution: 100, targetAge: 1 });
     expect(result.contributionMonths).toBe(12);

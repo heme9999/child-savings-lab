@@ -2,12 +2,13 @@ import { isValidIsoDate } from '../dates';
 import type { FieldIssue } from '../forms/feedback';
 
 export const FIRST_CONTRIBUTION_DATE = '2026-07-04';
-export const CALCULATION_VERSION = '2026-10-15';
+export const CALCULATION_VERSION = '2026-11-27';
 export type ContributionFrequency = 'monthly' | 'annual';
 
 export interface GrowthInput {
   initialAmount: number;
   includePilot: boolean;
+  includeDell?: boolean;
   familyContribution: number;
   familyFrequency: ContributionFrequency;
   annualEmployerContribution: number;
@@ -72,6 +73,10 @@ export function annualFamilyContribution(input: GrowthInput): number {
   return input.familyFrequency === 'monthly' ? input.familyContribution * 12 : input.familyContribution;
 }
 
+export function modeledOpeningBalance(input: GrowthInput): number {
+  return input.initialAmount + (input.includePilot ? 1000 : 0) + (input.includeDell ? 250 : 0);
+}
+
 // One calendar schedule drives both limit validation and the balance simulation.
 // A month-end equal to the projection start is excluded, as in the original model.
 function* timeline(input: GrowthInput) {
@@ -125,6 +130,14 @@ export function growthInputIssues(input: GrowthInput): FieldIssue<keyof GrowthIn
     if (input[field] < 0) add(field, 'Contribution amounts cannot be negative.');
   }
   if (!isValidIsoDate(input.birthDate)) add('birthDate', 'Enter a complete, valid birth date.');
+  else {
+    if (input.includePilot && (input.birthDate < '2025-01-01' || input.birthDate > '2028-12-31')) {
+      add('includePilot', 'The federal pilot assumption requires a birth date in 2025–2028.');
+    }
+    if (input.includeDell && (input.birthDate < '2016-01-01' || input.birthDate > '2024-12-31')) {
+      add('includeDell', 'The Dell gift assumption requires a birth date in 2016–2024.');
+    }
+  }
   if (!isValidIsoDate(input.projectionStartDate)) add('projectionStartDate', 'Enter a complete, valid projection start date.');
   else if (input.projectionStartDate < FIRST_CONTRIBUTION_DATE) {
     add('projectionStartDate', 'Projection start date must be July 4, 2026 or later; Trump Accounts could not accept contributions before that date.');
@@ -174,7 +187,7 @@ function simulate(input: GrowthInput, annualFeeRate: number): Omit<GrowthProject
   const monthlyGrowth = Math.pow(1 + annualReturn, 1 / 12) - 1;
   const monthlyFee = annualFeeRate / 100 / 12;
   const monthlyNetRate = Math.max(-0.999999, monthlyGrowth - monthlyFee);
-  const opening = input.initialAmount + (input.includePilot ? 1000 : 0);
+  const opening = modeledOpeningBalance(input);
   let balance = opening;
   let totalContributed = opening;
   let months = 0;

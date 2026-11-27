@@ -27,7 +27,8 @@ describe('calculator input and report contracts', () => {
     expect(summary['Pilot assumption']).toBe('Not included');
     expect(summary['Projection start date']).toBe('2026-10-08');
     expect(summary['Annual fund expense rate']).toBe('0.10%');
-    expect(Object.keys(summary)).toHaveLength(11);
+    expect(summary['Dell gift assumption']).toBe('Not included');
+    expect(Object.keys(summary)).toHaveLength(12);
   });
   it.each([[0, '0.00'], [0.1, '0.10'], [0.004, '0.004'], [0.005, '0.005'], [1e-7, '0.0000001'], [1e21, '1000000000000000000000.00'], [0.10000000149011612, '0.10000000149011612']])('preserves report precision for %s', (value, expected) => {
     expect(reportDecimal(value as number)).toBe(expected);

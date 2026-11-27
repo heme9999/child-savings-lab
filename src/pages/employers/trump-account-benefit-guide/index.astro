@@ -1,4 +1,5 @@
 ---
+import TrumpRuleNote from '../../../components/TrumpRuleNote.astro';
 import ArticleLayout from '../../../layouts/ArticleLayout.astro';
 ---
 <ArticleLayout title="Employer guide to Trump Account contributions" description="A status-labeled implementation brief for HR and payroll teams covering account activation, tax treatment, DOL conditions, and proposed Section 128 procedures." sourceIds={['TREASURY-TD-10056','DOL-TR-2026-02','IRS-PROPOSED-EMPLOYER-2026']} effective="Guidance reviewed through October 8, 2026" summary={["Activate a receiving account before sending employer contributions.","The Section 128 ceiling is per employee, not per child; payroll taxes require separate review.","Detailed employer regulations remain proposed. Obtain benefits and payroll advice before implementation."]} contents={[{"id":"framework","label":"Current statutory framework"},{"id":"account-status","label":"Account-status gate added by TD 10056"},{"id":"payroll","label":"Payroll tax treatment"},{"id":"dol-conditions","label":"DOL conditions for avoiding ERISA plan status"},{"id":"proposed-rules","label":"Proposed—not yet final—implementation rules"},{"id":"checklist","label":"Implementation checklist"},{"id":"communications","label":"What not to promise employees"}]}>
@@ -43,4 +44,5 @@ import ArticleLayout from '../../../layouts/ArticleLayout.astro';
     <li>Do not promise investment performance, government insurance, or universal $1,000 pilot eligibility.</li>
   </ul>
   <p>Also review the <a href="/contributions/trump-account-contribution-limits/">contribution limit guide</a>, <a href="https://www.dol.gov/agencies/ebsa/employers-and-advisers/guidance/technical-releases/26-02">DOL Technical Release 2026-02</a>, and <a href="https://www.irs.gov/newsroom/irs-and-payroll-professionals-partners-in-every-paycheck-youtube-video-text-script">IRS payroll guidance</a>.</p>
+  <TrumpRuleNote />
 </ArticleLayout>

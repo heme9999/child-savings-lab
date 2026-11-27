@@ -1,0 +1,15 @@
+---
+import ComparisonTable from './ComparisonTable.astro';
+import { dellGift, irsAccounts, spacexAnnouncement, stockReporting, transferStatement } from '../data/claim-sources';
+const rows = [
+  { label: '$1,000 federal pilot', href: irsAccounts, cells: ['Eligible U.S. citizens born January 1, 2025 through December 31, 2028, including valid SSN and other election requirements.', 'Check account status and make the separate pilot election if eligible. Treasury cannot elect it for you.', 'One-time federal contribution. See current IRS instructions.'] },
+  { label: '$250 Dell contribution', href: dellGift, cells: ['Children born in 2016–2024 in qualifying ZIP codes. The gift administrator reports an October 9, 2026 auto-enrollment cutoff of about $117,300 in ZIP median family income, with exceptions.', 'Use the gift administrator’s ZIP guidance and check the official account record for any deposit.', 'The administrator reports a $6.25 billion commitment for 25 million children and completion of the initial deposits by October 9, 2026.'] },
+  { label: 'SpaceX share pledge', href: spacexAnnouncement, cells: ['SpaceX described “currently active” accounts. The definition and eligibility for claims after November 25 are unconfirmed.', 'Check official account and donor updates for eligibility and transfer instructions.', 'Announced November 25, 2026, details unconfirmed. One company share and a matching Musk pledge, valued at about $255 together at the November 25 close.'] }
+];
+---
+<section aria-labelledby="claim-benefits">
+  <h2 id="claim-benefits">What claiming can unlock, if your child qualifies</h2>
+  <p>Claiming and activating the receiving account lets you manage it and receive eligible private contributions. Check each program’s conditions and look up actual deposits through the official account service.</p>
+  <ComparisonTable caption="Trump Account benefit conditions and announced status" columns={['Benefit', 'Who qualifies', 'What you must do', 'Status and date']} rows={rows} />
+  <p>The stock illustration uses the <a href={stockReporting}>November 25 close of $127.44 per share</a>. <a href={transferStatement}>Musk said on November 26</a> that the company share would transfer in December 2026 and his share after his lockup expires in June 2027. Account cutoffs, transfer mechanics and restrictions for recipients remain unconfirmed.</p>
+</section>

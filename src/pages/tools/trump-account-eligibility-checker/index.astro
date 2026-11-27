@@ -1,4 +1,5 @@
 ---
+import TrumpRuleNote from '../../../components/TrumpRuleNote.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 import EligibilityChecker from '../../../components/EligibilityChecker.astro';
@@ -58,4 +59,5 @@ const schema = {
       <SourceLinks ids={['TREASURY-TD-10056','IRS-FORM-4547-INSTRUCTIONS']} />
     </div>
   </section>
+  <div class="shell"><TrumpRuleNote /></div>
 </BaseLayout>

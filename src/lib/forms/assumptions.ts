@@ -6,7 +6,10 @@ const answer = (data: Answers, name: string) => String(data.get(name) ?? '').tri
 // Display entered precision verbatim. These are local UI summaries, not validated
 // results, and must never turn a blank into zero or imply an eligibility finding.
 export function growthDateSummary(data: Answers): string {
-  return `Born ${answer(data, 'birthDate')} · Start ${answer(data, 'projectionStartDate')} · ${data.get('includePilot') === 'true' ? '$1,000 pilot included' : 'No pilot amount'}`;
+  const gifts = [];
+  if (data.get('includePilot') === 'true') gifts.push('$1,000 pilot assumption');
+  if (data.get('includeDell') === 'true') gifts.push('$250 Dell gift assumption');
+  return `Born ${answer(data, 'birthDate')} · Start ${answer(data, 'projectionStartDate')} · ${gifts.join(' · ') || 'No gift amounts'}`;
 }
 
 export function growthExtraSummary(data: Answers): string {

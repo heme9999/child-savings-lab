@@ -1,13 +1,15 @@
 ---
+import TrumpRuleNote from '../../../components/TrumpRuleNote.astro';
 import ArticleLayout from '../../../layouts/ArticleLayout.astro';
+import { irsAccounts, irsPilot, portal } from '../../../data/claim-sources';
 ---
 <ArticleLayout title="Form 4547 after automatic enrollment" description="Understand when Form 4547 still matters for the $1,000 pilot election or a rare manual-account exception, and why claiming and activation are separate steps." sourceIds={['TREASURY-TD-10056','IRS-TRUMP-ACCOUNTS','IRS-FORM-4547','IRS-FORM-4547-INSTRUCTIONS']} effective="Temporary regulations effective September 30, 2026" summary={["Check official account and pilot-election status before submitting a form.","An auto-account claim, receiving-account activation, and pilot election are separate steps.","This site does not collect or submit official account applications."]} contents={[{"id":"form-purpose","label":"What Form 4547 still does"},{"id":"check-status","label":"Step 1: check official status"},{"id":"claim","label":"Step 2: distinguish an auto-account claim from Form 4547"},{"id":"pilot","label":"Step 3: review the pilot requirements"},{"id":"manual-election","label":"Step 4: use the manual-account election only when instructed"},{"id":"activation","label":"Step 5: complete activation"},{"id":"official-links","label":"Official links"}]}>
   <div class="callout"><strong>Do not start with a duplicate form.</strong> Treasury began broad automatic enrollment on or about October 1, 2026. Check official account and pilot-election status first.</div>
-  <div class="callout"><strong>Privacy boundary:</strong> this guide does not collect or submit a name, SSN, date of birth, address, account number, or taxpayer information.</div>
+  <div class="callout"><strong>Privacy boundary:</strong> this guide does not file forms, confirm payment, or collect or submit a name, SSN, date of birth, address, account number, or taxpayer information.</div>
   <h2 id="form-purpose">What Form 4547 still does</h2>
-  <p>Form 4547 remains relevant for two separate purposes: making the $1,000 pilot contribution election for an eligible child, and making an account election in a rare case where Treasury has not already made one. Treasury expects periodic auto enrollment to eliminate the need for most manual account elections.</p>
+  <p>A claim lets an authorized person take the next step on an existing account. The <a href={irsAccounts}>IRS says Form 4547 is not required to claim an automatically opened account</a>. The form is used to elect the separate $1,000 pilot contribution for an eligible child. Treasury cannot make that election automatically. The <a href={irsPilot}>form instructions</a> also cover elections to establish an initial account when one has not already been established.</p>
   <h2 id="check-status">Step 1: check official status</h2>
-  <p>Determine whether Treasury has established an auto account, whether someone previously made an account election, and whether a pilot election is pending or processed. An unknown or pending status should be resolved before another submission.</p>
+  <p>Start at <a href={portal}>TrumpAccounts.gov</a>. Determine whether Treasury has established an auto account, whether someone previously made an account election, and whether a pilot election is pending or processed. An unknown or pending status should be resolved before another submission.</p>
   <h2 id="claim">Step 2: distinguish an auto-account claim from Form 4547</h2>
   <p>Claiming an auto account uses Treasury’s electronic claim process. A guardian or legal custodian with authority under state law to manage the beneficiary’s property or financial affairs—or a beneficiary with legal capacity—must authenticate identity, prove authority, and complete required consents. A family relationship by itself may not establish the required legal authority.</p>
   <h2 id="pilot">Step 3: review the pilot requirements</h2>
@@ -29,4 +31,5 @@ import ArticleLayout from '../../../layouts/ArticleLayout.astro';
     <li><a href="https://www.irs.gov/forms-pubs/about-form-4547">Current Form 4547 and revision notices</a></li>
     <li><a href="https://www.irs.gov/instructions/i4547">Official Form 4547 instructions</a></li>
   </ul>
+  <TrumpRuleNote />
 </ArticleLayout>

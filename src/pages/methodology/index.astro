@@ -1,4 +1,5 @@
 ---
+import TrumpRuleNote from '../../components/TrumpRuleNote.astro';
 import ArticleLayout from '../../layouts/ArticleLayout.astro';
 import { referenceScenarios } from '../../data/reference-scenarios';
 const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value);
@@ -30,6 +31,14 @@ const usd = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency
   <p>For the zero-return, zero-fee check, $100 × 207 deposits = $20,700. The other rows include a constant assumed return and the selected fee; actual returns will not follow this constant path. Try the inputs in the <a href="/tools/trump-account-growth-calculator/">Trump Account growth calculator</a> and compare the full report assumptions.</p>
   <h2>Comparison policy</h2>
   <p>Accounts are compared by purpose, eligibility, ownership and control, contribution framework, tax treatment, investment limits, withdrawal rules, and age transitions. No account or provider receives a higher position because of compensation.</p>
+  <h2 id="claim-updates">Reviewing account claims and gifts</h2>
+  <p>We identify the date and group for each reported claim rate. Donor statements, program-wide totals and market prices describe different things. Gift eligibility is a separate question for each program. We use official account and donor records to check delivery and record unknowns when those records do not answer a question. See the <a href="/sources/#claim-update-sources">November 27 sources</a>.</p>
+  <ul>
+    <li>After the November 30, 2026 comment deadline, check for extensions, new Treasury or IRS instructions and publication of any final rule. Review affected statements when controlling guidance changes.</li>
+    <li>In December 2026, check the announced company-share transfer, eligible account definition and cutoff. Recheck the personal-share transfer when its stated June 2027 window arrives or new details become public.</li>
+    <li>Keep the November 25 close as a dated market illustration. Revisit the price context when the announced gift’s status changes.</li>
+  </ul>
   <h2>Corrections</h2>
   <p>If an important rule is wrong or outdated, we update the rule record, affected pages, verification date, and tests together. Contact details are on the <a href="/contact/">contact page</a>.</p>
+  <TrumpRuleNote />
 </ArticleLayout>

@@ -2,6 +2,7 @@
 import { checkEligibility } from '../lib/eligibility/checkEligibility';
 import { accountStatusOptions, claimAuthorityOptions } from '../data/eligibility-options';
 import DateFields from './DateFields.astro';
+import { portal, temporaryRule } from '../data/claim-sources';
 
 const initial = checkEligibility({
   checkYear: 2026,
@@ -21,6 +22,17 @@ const initial = checkEligibility({
     <form id="eligibility-form" novalidate>
       <div id="eligibility-errors"></div>
       <div class="form-grid">
+        <div class="field full">
+          <label for="account-status">Has the account been claimed?</label>
+          <select id="account-status" name="accountStatus" aria-describedby="account-status-detail" required>
+            {accountStatusOptions.map((option) => <option value={option.value} selected={option.value === 'unknown'}>{option.label}</option>)}
+          </select>
+          <small class="selection-detail" id="account-status-detail">{accountStatusOptions[0].description}</small>
+        </div>
+        <div id="unclaimed-next-step" class="callout field full" hidden>
+          <strong>Family, friend and employer deposits must wait until the receiving account is claimed and activated.</strong>
+          <span>Check your child’s status at <a href={portal}>TrumpAccounts.gov</a>. The federal pilot requires its own election. <a href={temporaryRule}>The temporary rules</a> allow an elected pilot deposit to enter an auto account.</span>
+        </div>
         <DateFields id="birth-date" name="birthDate" label="Child’s date of birth" help="Choose the month, day, and full year. The separate pilot birth-year window is checked after you complete the date." />
         <fieldset class="field full">
           <legend>Was the child’s SSN valid for employment and issued before the relevant election?</legend>
@@ -30,15 +42,8 @@ const initial = checkEligibility({
             <label class="radio-option"><input type="radio" name="hasEmploymentValidSsn" value="unknown" checked /> Not sure yet</label>
           </div>
         </fieldset>
-        <div class="field full">
-          <label for="account-status">What is the official account status?</label>
-          <select id="account-status" name="accountStatus" aria-describedby="account-status-detail" required>
-            {accountStatusOptions.map((option) => <option value={option.value} selected={option.value === 'unknown'}>{option.label}</option>)}
-          </select>
-          <small class="selection-detail" id="account-status-detail">{accountStatusOptions[0].description}</small>
-        </div>
       </div>
-      <p class="assumption-summary">Unanswered pilot questions stay “Not sure”—they do not mean ineligible. This tool cannot look up IRS records.</p>
+      <p class="assumption-summary">Unanswered pilot questions stay “Not sure”—they do not mean ineligible. This checker cannot look up your child’s account or balance.</p>
       <div class="form-actions">
         <button class="button" type="submit" disabled>Show next steps</button>
         <button class="button secondary" type="reset">Reset</button>
@@ -107,7 +112,7 @@ const initial = checkEligibility({
       <p><span class="status no">{initial.accountPathTitle}</span></p>
     </div>
     <div id="funding-result">
-      <h3>Family or employer contributions</h3>
+      <h3>Family, friend or employer contributions</h3>
       <p><span class="status unknown">Not assessed</span></p>
       <p>{initial.fundingGuidance}</p>
     </div>
@@ -122,7 +127,7 @@ const initial = checkEligibility({
     </div>
     </div>
     <p><strong>Logic and controlling rules checked:</strong> October 12, 2026. Individual source review dates appear in the source library.</p>
-    <p><a href="https://www.irs.gov/trumpaccounts">Continue at the official IRS Trump Accounts page →</a></p>
+    <p><a href={portal}>Check account status at TrumpAccounts.gov →</a></p>
   </section>
 </div>
 <p class="visually-hidden" id="eligibility-announcement" role="status" aria-atomic="true"></p>
@@ -152,7 +157,11 @@ const initial = checkEligibility({
   const heading = document.querySelector<HTMLElement>('#eligibility-results-title');
   const announcement = document.querySelector<HTMLElement>('#eligibility-announcement');
   const contextSummary = document.querySelector<HTMLElement>('#eligibility-context-summary');
+  const unclaimedNextStep = document.getElementById('unclaimed-next-step');
   const syncContextSummary = () => {
+    if (form && unclaimedNextStep) {
+      unclaimedNextStep.hidden = new FormData(form).get('accountStatus') !== 'auto-account';
+    }
     if (form && contextSummary) contextSummary.textContent = eligibilityContextSummary(new FormData(form));
   };
   for (const [id, options] of [['account-status', accountStatusOptions], ['claim-authority', claimAuthorityOptions]] as const) {
@@ -192,7 +201,7 @@ const initial = checkEligibility({
     const list = (items: string[]) => items.length ? `<ul>${items.map((item) => `<li>${item}</li>`).join('')}</ul>` : '';
     account.innerHTML = `<h3>Account status</h3><p><span class="status ${result.accountPath === 'active' ? 'yes' : result.accountPath === 'not-baseline-eligible' ? 'no' : 'unknown'}">${result.accountPathTitle}</span></p>${list(result.accountReasons)}${list(result.accountInformationNeeded)}`;
     const fundingStatus = result.canReceiveFamilyOrEmployerContributions === true ? 'Reported activated' : result.canReceiveFamilyOrEmployerContributions === false ? 'Not ready' : 'Not assessed';
-    funding.innerHTML = `<h3>Family or employer contributions</h3><p><span class="status ${result.canReceiveFamilyOrEmployerContributions === true ? 'yes' : 'unknown'}">${fundingStatus}</span></p><p>${result.fundingGuidance}</p>`;
+    funding.innerHTML = `<h3>Family, friend or employer contributions</h3><p><span class="status ${result.canReceiveFamilyOrEmployerContributions === true ? 'yes' : 'unknown'}">${fundingStatus}</span></p><p>${result.fundingGuidance}</p>`;
     pilot.innerHTML = `<h3>$1,000 pilot election</h3><p><span class="status ${result.pilotStatus === 'potentially-eligible-to-elect' || result.pilotStatus === 'already-processed' ? 'yes' : result.pilotStatus === 'not-potentially-eligible' ? 'no' : 'unknown'}">${result.pilotStatusTitle}</span></p>${list(result.pilotReasons)}${list(result.pilotInformationNeeded)}`;
     detail.innerHTML = `<h3>Next steps</h3>${list(result.requiredActions)}<p><strong>Form 4547:</strong> ${result.formGuidance}</p>`;
     announceResult(announcement, 'Next steps updated. Review account status and the separate pilot election.');
