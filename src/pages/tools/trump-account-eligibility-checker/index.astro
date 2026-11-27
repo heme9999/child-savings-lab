@@ -7,6 +7,7 @@ import SourceLinks from '../../../components/SourceLinks.astro';
 import ToolHero from '../../../components/ToolHero.astro';
 import NextSteps from '../../../components/NextSteps.astro';
 import ToolExplainer from '../../../components/ToolExplainer.astro';
+import { irsAccounts, temporaryRule } from '../../../data/claim-sources';
 const schema = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
@@ -37,7 +38,7 @@ const schema = {
       ]}
       useCase="Use this educational checklist when you are unsure whether to check status, review claiming or activation, or investigate the separate pilot election. It is not an IRS determination or a substitute for advice about your legal authority or tax circumstances."
       questions={[
-        { title: 'Does this checker look up my child’s IRS account?', text: 'No. It uses the answers you report and cannot confirm IRS or trustee records. Use the official IRS link in the result to continue.' },
+        { title: 'Does this checker look up my child’s IRS account?', text: 'No. It uses the answers you report and cannot confirm IRS or trustee records. Use the TrumpAccounts.gov link in the result to check official records.' },
         { title: 'Does having an account mean the pilot amount is confirmed?', text: 'No. The tool treats account status, readiness for family or employer contributions, and the separate pilot election independently. An account-status answer is not confirmation of a pilot payment.' },
         { title: 'Can I leave the pilot questions unanswered?', text: 'Yes. They begin as Not sure or Unknown. Account guidance can still be explored, while missing pilot information stays unresolved rather than being treated as a denial.' },
         { title: 'Is being a parent enough to establish claiming authority?', text: 'The checker does not assume that a family relationship alone establishes the required legal authority. Read the complete explanation beside the selected answer and confirm the applicable requirements.' },
@@ -52,6 +53,8 @@ const schema = {
   </div>
   <section class="section tint">
     <div class="article-body shell">
+      <h2>What changed November 27, 2026</h2>
+      <p>The unclaimed-account path now shows the separate pilot election first. We checked the <a href={irsAccounts}>IRS election guidance</a> and <a href={temporaryRule}>TD 10056</a> for the distinction between an elected pilot deposit and family, friend or employer contributions.</p>
       <h2>What changed on September 30, 2026</h2>
       <p>Temporary regulations introduced broad Treasury auto enrollment. The checker therefore tests baseline age and employment-valid SSN requirements, then routes the user through status checking, auto-account claiming, receiving-account activation, or the rare manual-election exception.</p>
       <p>The separate pilot result evaluates the 2025–2028 birth window, U.S. citizenship, qualifying-child expectation, and whether a pilot election is not made, pending, processed, or unknown. The IRS makes all determinations.</p>

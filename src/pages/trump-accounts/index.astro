@@ -3,15 +3,18 @@ import ArticleLayout from '../../layouts/ArticleLayout.astro';
 import ClaimSnapshot from '../../components/ClaimSnapshot.astro';
 import ClaimBenefits from '../../components/ClaimBenefits.astro';
 import TrumpRuleNote from '../../components/TrumpRuleNote.astro';
-import { dellGift, irsAccounts, irsDepositSnapshot, portal, programDeposits, spacexAnnouncement, ssaFirstNumber, stockReporting, temporaryRule, treasuryAnnualReport } from '../../data/claim-sources';
+import { claimContextSources, dellGift, dellStatement, irsAccounts, irsDepositSnapshot, irsPilot, portal, programDeposits, proposedRule, spacexAnnouncement, ssaFirstNumber, stockReporting, temporaryRule, transferStatement, treasuryAnnualReport, treasuryEnrollment } from '../../data/claim-sources';
 const documentTitle = 'Trump Accounts Explained (2026): How They Work, $1,000 Pilot, How to Claim';
+const primaryClaimUrls = new Set<string>([treasuryEnrollment, dellGift, dellStatement, programDeposits, irsDepositSnapshot, treasuryAnnualReport, spacexAnnouncement, transferStatement, proposedRule]);
+const primaryClaimSources = claimContextSources.filter((source) => primaryClaimUrls.has(source.url));
+const claimReporting = claimContextSources.filter((source) => !primaryClaimUrls.has(source.url));
 ---
-<ArticleLayout title="Trump Accounts: the independent family guide" documentTitle={documentTitle} description="Understand automatic enrollment, claiming and activation, the separate $1,000 pilot election, contributions, investments, and the age-18 transition." verifiedAt="2026-11-25" verificationUrl="https://www.irs.gov/instructions/i4547" verificationScope="IRS account and pilot guidance, the pilot birth window, and the contribution figures were cross-checked November 25, 2026." sourceIds={['TREASURY-TD-10056','IRS-FORM-4547-INSTRUCTIONS','IRS-REV-PROC-2026-25','IRS-PROPOSED-INVESTMENTS-2026']} effective="Temporary regulations effective September 30, 2026" summary={["Start with official account status, not a duplicate account-opening form.","An unclaimed auto account is different from an activated account that can receive family contributions.","The pilot deposit has separate eligibility and election requirements."]} contents={[{"id":"claim-gap","label":"How to claim and check your balance"},{"id":"claim-benefits","label":"What claiming can unlock"},{"id":"overview","label":"What a Trump Account is"},{"id":"auto-enrollment","label":"Automatic enrollment"},{"id":"claim-and-activate","label":"Claiming and activating an auto account"},{"id":"contribution-readiness","label":"Why account state matters for contributions"},{"id":"pilot-election","label":"The separate $1,000 pilot election"},{"id":"contributions","label":"Contributions and investments"},{"id":"withdrawals","label":"Withdrawals and the age-18 transition"},{"id":"next-steps","label":"Next steps"}]}>
+<ArticleLayout title="Trump Accounts: the independent family guide" documentTitle={documentTitle} description="Understand automatic enrollment, claiming and activation, the separate $1,000 pilot election, contributions, investments, and the age-18 transition." verifiedAt="2026-11-27" verificationUrl={irsPilot} verificationScope="IRS rules for claims, pilot elections and contributions were checked alongside the dated enrollment, deposit and gift sources below." sourceIds={['TREASURY-TD-10056','IRS-TRUMP-ACCOUNTS','IRS-FORM-4547-INSTRUCTIONS','IRS-REV-PROC-2026-25','IRS-PROPOSED-INVESTMENTS-2026']} effective="Temporary regulations effective September 30, 2026" summary={["Start with official account status, not a duplicate account-opening form.","An unclaimed auto account is different from an activated account that can receive family contributions.","The pilot deposit has separate eligibility and election requirements."]} contents={[{"id":"claim-gap","label":"How to claim and check your balance"},{"id":"claim-benefits","label":"What claiming can unlock"},{"id":"overview","label":"What a Trump Account is"},{"id":"auto-enrollment","label":"Automatic enrollment"},{"id":"claim-and-activate","label":"Claiming and activating an auto account"},{"id":"contribution-readiness","label":"Why account state matters for contributions"},{"id":"pilot-election","label":"The separate $1,000 pilot election"},{"id":"contributions","label":"Contributions and investments"},{"id":"withdrawals","label":"Withdrawals and the age-18 transition"},{"id":"next-steps","label":"Next steps"}]}>
   <h2 id="claim-gap">How to claim and check your child’s account</h2>
   <p>Check your child’s account status and balance through the authorized service linked from <a href={portal}>TrumpAccounts.gov</a>. Child Savings Lab cannot look up your child’s account or balance.</p>
   <p>TrumpAccounts.gov is the official government portal. For a safer sign-in, use its links to the app or account service. Treasury and its authorized providers say they will never ask for a password or a one-time verification code by email, text, or phone. The <a href={irsAccounts}>IRS also links to the authorized account provider</a>.</p>
   <ClaimSnapshot />
-  <p>On October 29, 2026, the <a href={irsDepositSnapshot}>IRS reported nearly $9 billion in contributions across nearly 70 million accounts</a>. Dividing those rounded totals gives a rough program-wide average of $129 per account. On November 24, <a href={programDeposits}>TrumpAccounts.gov reported that total deposits had exceeded $9 billion</a>. Check the official account service for your child’s own balance.</p>
+  <p>On November 24, 2026, <a href={programDeposits}>TrumpAccounts.gov reported total deposits above $9 billion</a>. The <a href={irsDepositSnapshot}>IRS October 29 snapshot</a> reported nearly $9 billion in contributions and nearly 70 million accounts. Dividing those same-day rounded figures gives a rough average of $129 across all accounts, including those without deposits, as of October 29. Check the official account service for your child’s own balance.</p>
   <ClaimBenefits />
   <p>At the <a href={stockReporting}>November 25 close</a>, two shares for all 70 million accounts would be worth about $17.8 billion. That is an illustration assuming every account qualifies. The <a href={treasuryAnnualReport}>Treasury totals</a> suggest roughly 10 million accounts outside the initial auto-enrolled group. How many of those earlier accounts are active and whether they qualify for the shares are unconfirmed.</p>
   <p><a href={spacexAnnouncement}>SpaceX’s November 25 release</a> also reports a separate personal pledge of more than 2 million shares from its president, Gwynne Shotwell. Distribution details are unknown.</p>
@@ -44,7 +47,7 @@ const documentTitle = 'Trump Accounts Explained (2026): How They Work, $1,000 Pi
   <p><a class="button" href="/tools/trump-account-eligibility-checker/">Check the account path and pilot status</a></p>
   <h2 id="contributions">Contributions and investments</h2>
   <p>For 2026 and 2027, most family, individual, and qualifying Section 128 employer contributions share a <a href="https://www.irs.gov/instructions/i4547">$5,000 annual limit</a>. Section 128 employer contributions have a <a href="https://www.irs.gov/irb/2025-52_IRB">$2,500 per-employee ceiling</a> within that total. The pilot amount, qualified general contributions, and qualified rollovers are excluded from the <a href="https://www.irs.gov/instructions/i4547">$5,000 limit</a>.</p>
-  <p>During the growth period, ordinary assets are limited to qualifying index mutual funds or ETFs. An eligible investment fund may not impose annual fees and expenses above 0.10%; separate trustee or intermediary fees are analyzed separately.</p>
+  <p>During the growth period, ordinary assets are limited to qualifying index mutual funds or ETFs. <a href="https://uscode.house.gov/us/usc/119-136/t26/s530A/">Section 530A</a> caps eligible investment fund fees and expenses at 0.10% annually. Separate trustee or intermediary fees are analyzed separately.</p>
   <h2 id="withdrawals">Withdrawals and the age-18 transition</h2>
   <p>Distributions are tightly limited during the growth period. Starting January 1 of the year the beneficiary turns 18, most traditional IRA rules generally apply. Taxable early distributions may face an additional 10% tax unless an exception applies.</p>
   <h2 id="next-steps">Next steps</h2>
@@ -54,4 +57,17 @@ const documentTitle = 'Trump Accounts Explained (2026): How They Work, $1,000 Pi
     <li>Model only activated-account contributions with the <a href="/tools/trump-account-growth-calculator/">calendar-aware growth calculator</a>.</li>
     <li>Confirm current procedures at the <a href="https://www.irs.gov/trumpaccounts">official IRS page</a>.</li>
   </ul>
+  <Fragment slot="additional-sources">
+    <ul>
+      {primaryClaimSources.map((source) => (
+        <li><a href={source.url} rel="external">{source.publisher}: {source.title}</a> <small>{source.date}</small></li>
+      ))}
+    </ul>
+    <div class="source-kicker">Reporting on claims and gifts</div>
+    <ul>
+      {claimReporting.map((source) => (
+        <li><a href={source.url} rel="external">{source.publisher}: {source.title}</a> <small>{source.date}</small></li>
+      ))}
+    </ul>
+  </Fragment>
 </ArticleLayout>

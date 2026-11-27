@@ -2,7 +2,7 @@
 import { checkEligibility } from '../lib/eligibility/checkEligibility';
 import { accountStatusOptions, claimAuthorityOptions } from '../data/eligibility-options';
 import DateFields from './DateFields.astro';
-import { portal, temporaryRule } from '../data/claim-sources';
+import { irsAccounts, portal, temporaryRule } from '../data/claim-sources';
 
 const initial = checkEligibility({
   checkYear: 2026,
@@ -30,8 +30,8 @@ const initial = checkEligibility({
           <small class="selection-detail" id="account-status-detail">{accountStatusOptions[0].description}</small>
         </div>
         <div id="unclaimed-next-step" class="callout field full" hidden>
-          <strong>Family, friend and employer deposits must wait until the receiving account is claimed and activated.</strong>
-          <span>Check your child’s status at <a href={portal}>TrumpAccounts.gov</a>. The federal pilot requires its own election. <a href={temporaryRule}>The temporary rules</a> allow an elected pilot deposit to enter an auto account.</span>
+          <strong>The $1,000 pilot requires a separate election for an eligible child.</strong>
+          <span><a href={temporaryRule}>The temporary rules</a> allow an elected pilot deposit into an unclaimed auto account. Claim and activate the receiving account before family, friend or employer deposits. Check your child’s status at <a href={portal}>TrumpAccounts.gov</a>.</span>
         </div>
         <DateFields id="birth-date" name="birthDate" label="Child’s date of birth" help="Choose the month, day, and full year. The separate pilot birth-year window is checked after you complete the date." />
         <fieldset class="field full">
@@ -107,6 +107,10 @@ const initial = checkEligibility({
     <h2 id="eligibility-results-title" tabindex="-1">Your next steps</h2>
     <p id="eligibility-state">No eligibility assessment yet. Complete the questions, then select Show next steps. Hypothetical answers are welcome.</p>
     <div id="eligibility-output" hidden>
+    <div id="unclaimed-pilot-result" hidden>
+      <h3>Check the separate $1,000 pilot election first</h3>
+      <p>Without an eligible election, the $1,000 pilot deposit cannot be paid. <a href={irsAccounts}>Check the IRS pilot instructions</a> before filing another election. <a href={temporaryRule}>TD 10056</a> permits the elected deposit to go into an unclaimed auto account.</p>
+    </div>
     <div id="account-result">
       <h3>Account status</h3>
       <p><span class="status no">{initial.accountPathTitle}</span></p>
@@ -158,6 +162,7 @@ const initial = checkEligibility({
   const announcement = document.querySelector<HTMLElement>('#eligibility-announcement');
   const contextSummary = document.querySelector<HTMLElement>('#eligibility-context-summary');
   const unclaimedNextStep = document.getElementById('unclaimed-next-step');
+  const unclaimedPilotResult = document.getElementById('unclaimed-pilot-result');
   const syncContextSummary = () => {
     if (form && unclaimedNextStep) {
       unclaimedNextStep.hidden = new FormData(form).get('accountStatus') !== 'auto-account';
@@ -196,6 +201,7 @@ const initial = checkEligibility({
       state.textContent = 'More information is needed. Eligibility has not been assessed.';
       feedback?.show(result.validationIssues); return;
     }
+    if (unclaimedPilotResult) unclaimedPilotResult.hidden = result.accountPath !== 'claim-auto-account';
     output.hidden = false;
     state.textContent = 'Account status and pilot eligibility are considered separately. These are educational next steps based on reported answers—not an IRS determination.';
     const list = (items: string[]) => items.length ? `<ul>${items.map((item) => `<li>${item}</li>`).join('')}</ul>` : '';
