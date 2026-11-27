@@ -18,6 +18,7 @@ export function growthInputFromForm(data: Pick<FormData, 'get'>): GrowthInput {
   return {
     initialAmount: formNumber(data.get('initialAmount')),
     includePilot: data.get('includePilot') === 'true',
+    includeDell: data.get('includeDell') === 'true',
     familyContribution: formNumber(data.get('familyContribution')),
     familyFrequency: String(data.get('familyFrequency')) as GrowthInput['familyFrequency'],
     annualEmployerContribution: formNumber(data.get('annualEmployerContribution')),
@@ -38,6 +39,7 @@ export function growthAssumptions(input: GrowthInput): [string, string][] {
     ['Existing starting amount', usd(input.initialAmount)],
     ['Family contribution', `${usd(input.familyContribution)} ${input.familyFrequency === 'monthly' ? 'each month-end' : 'each December 31'}`],
     ['Pilot assumption', input.includePilot ? '$1,000 included in the starting balance; eligibility and payment not confirmed' : 'Not included'],
+    ['Dell gift assumption', input.includeDell ? '$250 included in the starting balance; eligibility and payment not confirmed' : 'Not included'],
     ['Annual employer contribution', `${usd(input.annualEmployerContribution)} each December 31`],
     ['Assumed annual return', `${input.annualReturnRate}%`],
     ['Annual fund expense rate', `${reportDecimal(input.fundExpenseRate)}%`],

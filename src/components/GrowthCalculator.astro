@@ -4,6 +4,7 @@ import { previewAssumptions } from '../lib/calculators/preview';
 import { growthAssumptions, contributionNote } from '../lib/calculators/form';
 import GrowthTimeline from './GrowthTimeline.astro';
 import DateFields from './DateFields.astro';
+import { dellGift, irsAccounts } from '../data/claim-sources';
 import { growthDateSummary, growthExtraSummary } from '../lib/forms/assumptions';
 const exampleInput = previewAssumptions;
 const example = projectGrowth(exampleInput);
@@ -17,7 +18,7 @@ defaultAnswers.set('accountFeeRate', '0');
 <div class="tool-layout" data-growth-calculator>
   <section class="tool-panel" aria-labelledby="growth-form-title">
     <h2 id="growth-form-title">Build a scenario</h2>
-    <p class="tool-intro">Prefilled example only. Actual deposits require a claimed, activated receiving account.</p>
+    <p class="tool-intro">The example starts at $0 in a hypothetical claimed, activated account and adds $100 a month. The fictional child was born January 15, 2026, within the pilot birth window. The default leaves both gifts out as a modeling choice.</p>
     <form id="growth-form" novalidate>
       <div id="growth-errors"></div>
       <div class="form-grid growth-essentials">
@@ -42,17 +43,17 @@ defaultAnswers.set('accountFeeRate', '0');
         </div>
       </div>
       <details class="form-disclosure" id="date-assumptions">
-        <summary>Dates &amp; pilot amount <span class="assumption-summary" id="growth-date-summary">{growthDateSummary(defaultAnswers)}</span></summary>
+        <summary>Dates &amp; one-time gifts <span class="assumption-summary" id="growth-date-summary">{growthDateSummary(defaultAnswers)}</span></summary>
         <div class="form-grid">
           <DateFields id="birth-date" name="birthDate" label="Child’s date of birth" value={exampleInput.birthDate} />
           <DateFields id="projection-start-date" name="projectionStartDate" label="Projection start date" value={exampleInput.projectionStartDate} minDate={FIRST_CONTRIBUTION_DATE} help="July 4, 2026 or later, and not before the account can accept deposits." />
           <fieldset class="field full">
-          <legend>Include the $1,000 pilot amount?</legend>
-          <div class="radio-row">
-            <label class="radio-option"><input type="radio" name="includePilot" value="true" /> Yes</label>
-            <label class="radio-option"><input type="radio" name="includePilot" value="false" checked /> No</label>
-          </div>
-          <small>This is a starting-balance assumption, not a check of eligibility or payment timing. <a href="/tools/trump-account-eligibility-checker/">Check the separate pilot requirements.</a></small>
+            <legend>Conditional starting amounts</legend>
+            <label class="radio-option"><input id="include-pilot" type="checkbox" name="includePilot" value="true" aria-describedby="pilot-gift-help" /> Include the $1,000 federal pilot</label>
+            <small id="pilot-gift-help">Use for a child born in 2025–2028 only if you want to model the contribution and the separate <a href={irsAccounts}>IRS pilot conditions</a> apply.</small>
+            <label class="radio-option"><input id="include-dell" type="checkbox" name="includeDell" value="true" aria-describedby="dell-gift-help" /> Include the $250 Dell gift</label>
+            <small id="dell-gift-help">Use for a child born in 2016–2024 if the <a href={dellGift}>Dell gift administrator’s ZIP and enrollment rules</a> apply.</small>
+            <small>Both amounts are optional one-time assumptions at the projection start. Check actual deposits separately and exclude amounts already entered in your starting balance.</small>
           </fieldset>
         </div>
         <p class="assumption-summary">Monthly deposits occur at month-end; yearly deposits at December 31. These dates are fictional example assumptions until you change them.</p>
@@ -97,7 +98,7 @@ defaultAnswers.set('accountFeeRate', '0');
   <section class="result-panel" aria-labelledby="growth-results-title">
     <div class="eyebrow" style="color:#9ed5bf">Illustrative projection</div>
     <h2 id="growth-results-title" tabindex="-1">Your projection at age <span id="result-age">18</span></h2>
-    <p id="growth-state">Worked example: $100/month, 6% assumed return, no pilot amount. Update to calculate your answers.</p>
+    <p id="growth-state">Worked example: an activated account starting at $0 with $100/month, 6% assumed return, and no gift amounts. Update to calculate your answers.</p>
     <div id="growth-output">
       <div class="metric-grid">
         <div class="metric metric-primary"><span>Hypothetical balance</span><strong id="ending-balance">{usd(example.endingBalance)}</strong></div>

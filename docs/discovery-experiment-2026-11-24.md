@@ -33,12 +33,14 @@ Use only the verified `https://child-savings-lab-mvp.pages.dev/` property. Perfo
 
 Actual requests, receipts, quotas, screenshots and private GSC measurements belong in local evidence, not public site content. A CAPTCHA requires the user's confirmation/control before continuing it.
 
+The November 27 follow-up calls for an initial request batch before publishing and a second batch for changed pages after publishing, subject to Google’s quota. The November 25 sitemap cleanup already satisfied the one-time submit step. Recheck its status seven days later. The [methodology](/methodology/#claim-updates) records the post-comment and share-transfer source review schedule.
+
 ## Checkpoints
 
 | Checkpoint | Decision rule |
 | --- | --- |
 | December 8, 2026 | Target at least 8 of the 19 current canonical URLs indexed. If below 8, pause active development on the pages.dev experiment as requested. Preserve the live site and source; do not buy or migrate to a domain automatically. If this release's write/deployment access is still blocked, freeze code work and report it separately. |
-| January 5, 2027 | Continue only if useful inner pages have at least 150 impressions and at least 10 visible, relevant non-brand query rows. Use both thresholds from the supplied main acceptance criteria; the softer alternative is not silently substituted. Otherwise pause active development. |
+| January 5, 2027 | Continue only if useful inner pages have at least 150 impressions in the 28-day review window and at least 10 visible, relevant non-brand query rows. Otherwise pause active development. Record the actual GSC data-through date. |
 | After a passing January 5 review | The user may continue the experiment through April 15, 2027 and then consider deepening Form 4547 and employer explanations. Do not implement that deferred work during the initial experiment. |
 
 Measure current canonical URLs, counting the migrated guide once. Evaluate useful content/tool-page impressions separately from the homepage and legal/trust pages. Record the actual GSC filter, date range, report freshness and selected URL set; do not add page-row totals to replace property-level totals. Count only query rows Google actually exposes, and keep visible query-data limitations beside the result.

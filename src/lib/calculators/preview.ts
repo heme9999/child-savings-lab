@@ -3,6 +3,7 @@ import { projectGrowth, type GrowthInput } from './growth';
 export const previewAssumptions: GrowthInput = {
   initialAmount: 0,
   includePilot: false,
+  includeDell: false,
   familyContribution: 100,
   familyFrequency: 'monthly',
   annualEmployerContribution: 0,

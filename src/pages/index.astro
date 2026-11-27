@@ -3,6 +3,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import SavingsPreview from '../components/SavingsPreview.astro';
 import GoalIllustration from '../components/GoalIllustration.astro';
 import '../styles/home.css';
+import ClaimSnapshot from '../components/ClaimSnapshot.astro';
+import ClaimBenefits from '../components/ClaimBenefits.astro';
+import TrumpRuleNote from '../components/TrumpRuleNote.astro';
+import { portal } from '../data/claim-sources';
 ---
 <BaseLayout title="Trump Account & Child Savings Calculators" description="Use a free Trump Account calculator and eligibility checker, then compare child savings options. Explore source-linked family guides with no signup.">
   <div class="home-page">
@@ -10,11 +14,11 @@ import '../styles/home.css';
       <div class="shell home-hero-grid">
         <div class="home-hero-copy">
           <div class="eyebrow"><span class="little-sun" aria-hidden="true">✳</span> Big futures. Small beginnings.</div>
-          <h1>Trump Account calculator<br /> and <em>family guide</em></h1>
-          <p class="lede">Explore a contribution plan, check your next account step, and compare savings options for a child. Free, independent tools and source-linked guides, with no signup.</p>
+          <h1>How to claim your child’s <em>Trump Account</em></h1>
+          <p class="lede">Check your child’s account status and balance through the official service at TrumpAccounts.gov. Child Savings Lab helps you understand the steps and cannot look up your account.</p>
           <div class="hero-actions">
-            <a class="button" href="/tools/trump-account-growth-calculator/">Open the calculator <span aria-hidden="true">→</span></a>
-            <a class="home-text-link" href="#start">Find my starting point <span aria-hidden="true">↓</span></a>
+            <a class="button" href={portal}>Go to TrumpAccounts.gov <span aria-hidden="true">→</span></a>
+            <a class="home-text-link" href="/trump-accounts/">Read the claim guide <span aria-hidden="true">→</span></a>
           </div>
           <p class="home-hero-reassurance"><span aria-hidden="true">✓</span> No sign-up. No SSNs or account numbers. Just a place to start.</p>
           <div class="home-hero-footnote"><span class="home-footnote-line" aria-hidden="true"></span> Independent education for adults.<br />Not a government site or personalized financial advice.</div>
@@ -22,6 +26,14 @@ import '../styles/home.css';
         <SavingsPreview />
       </div>
     </section>
+
+    <div class="shell section">
+      <h2>What we know about account claims</h2>
+      <ClaimSnapshot />
+      <ClaimBenefits />
+      <TrumpRuleNote />
+      <p class="result-help"><strong>What changed November 27, 2026.</strong> Added a direct route to the government portal and clarified the separate eligibility and timing of announced benefits.</p>
+    </div>
 
     <section class="home-start" id="start" aria-labelledby="start-heading">
       <div class="shell">
@@ -101,7 +113,7 @@ import '../styles/home.css';
         <p>Once you have an illustrative annual employer amount, enter it under Advanced assumptions in the growth calculator. Check the calendar-year contribution table as well as the final balance: monthly family deposits and an annual employer deposit can interact differently in a partial first year. The model cannot know amounts already deposited elsewhere, future benefit changes, or your remaining legal contribution capacity. Keep those checks separate from the projection.</p>
 
         <h2>How to use a Trump Account growth estimate</h2>
-        <p>Begin with a monthly contribution you want to explore, choose an assumed annual return, and inspect the dates. The homepage example uses a fictional child and a fixed schedule; it is not a prediction for your household. In the <a href="/tools/trump-account-growth-calculator/">full growth calculator</a>, you can change the starting balance, employer deposits, pilot assumption, and fees, then read the yearly table or print the assumptions with the result.</p>
+        <p>Begin with a monthly contribution you want to explore, choose an assumed annual return, and inspect the dates. The homepage example uses a fictional child and a fixed schedule; it is not a prediction for your household. In the <a href="/tools/trump-account-growth-calculator/">full growth calculator</a>, you can change the starting balance, employer deposits, one-time gift assumptions, and fees, then read the yearly table or print the assumptions with the result.</p>
         <p>Compare scenarios using the same dates and deposit schedule. A larger hypothetical balance may reflect more deposits rather than a better outcome. Read the contribution total, modeled growth, and fee impact separately. The illustration excludes taxes, inflation, withdrawals, and changing market returns. Neither the $1,000 pilot amount nor any investment gain is guaranteed by a result shown here. Our <a href="/methodology/#worked-examples">worked examples and methodology</a> explain what can be reproduced and what the model leaves out.</p>
         <p>For account selection, return to the purpose of the money. Education, an irrevocable gift, and retirement saving are different questions. The <a href="/guides/child-savings-account-comparison/">five-account reading guide</a> compares purposes and control, while the <a href="/tools/">tools directory</a> explains the two interactive tools. This publication helps you prepare better questions; it does not open accounts, choose investments, or provide personalized tax, legal, investment, or benefits advice.</p>
         <p class="result-help">Account and pilot summary links checked November 24, 2026 against IRS.gov. Software versions and the review dates of individual sources are listed separately.</p>

@@ -1,8 +1,9 @@
-import type { GrowthInput, GrowthProjection } from './growth';
+import { modeledOpeningBalance, type GrowthInput, type GrowthProjection } from './growth';
 
 export function growthChart(input: GrowthInput, projection: GrowthProjection) {
+  const opening = modeledOpeningBalance(input);
   const points = [
-    { date: input.projectionStartDate, balance: input.initialAmount + (input.includePilot ? 1000 : 0), contributed: input.initialAmount + (input.includePilot ? 1000 : 0) },
+    { date: input.projectionStartDate, balance: opening, contributed: opening },
     ...projection.yearly.map((year) => ({ date: year.asOfDate, balance: year.endingBalance, contributed: year.totalContributed }))
   ];
   const start = Date.parse(input.projectionStartDate);

@@ -90,7 +90,7 @@ export function checkEligibility(input: EligibilityInput): EligibilityResult {
       } else if (input.accountStatus === 'auto-account') {
         result.accountPath = 'claim-auto-account';
         result.canReceiveFamilyOrEmployerContributions = false;
-        result.fundingGuidance = 'Family/employer deposits must wait for a permitted receiving account to be claimed and activated.';
+        result.fundingGuidance = 'Family, friend and employer deposits must wait for the receiving account to be claimed and activated. Check status at TrumpAccounts.gov. The pilot contribution requires a separate election.';
         if (input.claimAuthority === 'not-sure') result.accountInformationNeeded.push('Confirm that a guardian or legal custodian has property-management authority, or that the beneficiary has legal capacity. Relationship alone is not enough.');
         result.requiredActions.push('Complete the official claim process, identity authentication, authority verification, and required consent.', 'Activate the receiving account after the claim; the claim alone does not complete establishment.');
       } else {
