@@ -3,6 +3,7 @@ import { checkEligibility } from '../lib/eligibility/checkEligibility';
 import { accountStatusOptions, claimAuthorityOptions } from '../data/eligibility-options';
 import DateFields from './DateFields.astro';
 import { irsAccounts, portal, temporaryRule } from '../data/claim-sources';
+import { formatReviewDate } from '../lib/dates';
 
 const initial = checkEligibility({
   checkYear: 2026,
@@ -130,7 +131,7 @@ const initial = checkEligibility({
       <p><strong>Form 4547:</strong> {initial.formGuidance}</p>
     </div>
     </div>
-    <p><strong>Logic and controlling rules checked:</strong> October 12, 2026. Individual source review dates appear in the source library.</p>
+    <p><strong>Logic and controlling rules checked:</strong> <time datetime={initial.rulesVerifiedAt}>{formatReviewDate(initial.rulesVerifiedAt)}</time>. Individual source review dates appear in the source library.</p>
     <p><a href={portal}>Check account status at TrumpAccounts.gov →</a></p>
   </section>
 </div>

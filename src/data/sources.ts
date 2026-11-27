@@ -22,7 +22,7 @@ export const sources: SourceRecord[] = [
     publisher: 'U.S. Treasury and Internal Revenue Service',
     url: 'https://www.federalregister.gov/documents/2026/09/30/2026-20026/trump-accounts',
     publishedAt: '2026-09-30',
-    verifiedAt: '2026-10-12',
+    verifiedAt: '2026-11-27',
     effectiveFrom: '2026-09-30',
     status: 'temporary regulations',
     note: 'Controlling temporary rules for automatic enrollment, auto accounts, claiming, activation, and qualified general contributions.'
@@ -33,7 +33,7 @@ export const sources: SourceRecord[] = [
     publisher: 'Internal Revenue Service',
     url: 'https://www.irs.gov/trumpaccounts',
     publishedAt: '2026-05-01',
-    verifiedAt: '2026-10-08',
+    verifiedAt: '2026-11-27',
     effectiveFrom: '2026-01-01',
     status: 'official overview',
     note: 'Current IRS entry point for eligibility, online Form 4547 submission, and status checks.'
@@ -55,7 +55,7 @@ export const sources: SourceRecord[] = [
     publisher: 'Internal Revenue Service',
     url: 'https://www.irs.gov/instructions/i4547',
     publishedAt: '2025-12-01',
-    verifiedAt: '2026-10-08',
+    verifiedAt: '2026-11-27',
     effectiveFrom: '2026-01-01',
     status: 'form instructions',
     note: 'Primary source for account, pilot, authorized-individual, contribution, investment, and distribution rules used by the tools.'

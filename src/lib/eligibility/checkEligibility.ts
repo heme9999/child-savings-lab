@@ -1,7 +1,7 @@
 import type { AccountPath, EligibilityInput, EligibilityResult, PilotStatus } from './types';
 import { isValidIsoDate } from '../dates';
 
-const VERIFIED_AT = '2026-10-12';
+export const eligibilityRulesVerifiedAt = '2026-11-27';
 const PILOT_START = '2025-01-01';
 const PILOT_END = '2028-12-31';
 
@@ -42,7 +42,7 @@ export function checkEligibility(input: EligibilityInput): EligibilityResult {
     pilotStatus: 'needs-information', pilotStatusTitle: pilotTitle('needs-information'),
     accountReasons: [], pilotReasons: [], requiredActions: [],
     formGuidance: 'Form 4547 remains relevant to the separate pilot election and rare manual-account exceptions; it is no longer the default account-opening path after auto enrollment began.',
-    sourceIds: ['TREASURY-TD-10056', 'IRS-FORM-4547-INSTRUCTIONS'], rulesVerifiedAt: VERIFIED_AT
+    sourceIds: ['TREASURY-TD-10056', 'IRS-FORM-4547-INSTRUCTIONS'], rulesVerifiedAt: eligibilityRulesVerifiedAt
   };
   const finish = () => {
     result.accountPathTitle = pathTitle(result.accountPath);
